@@ -1,0 +1,5 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	<node name="talkNode" pkg="htbot" type="talkNode" respawn="true" output="screen" ></node>
+	<node pkg="htbot" type="tt" name="tt" output="screen" ></node>     
+</launch>

@@ -1,0 +1,20 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	
+  <include file="$(find htbot)/launch/nav.launch" />
+  <include file="$(find htbot)/launch/map.launch" />    
+	<include file="$(find htbot)/launch/config.launch" />	
+	<node pkg="tf" type="static_transform_publisher" name="laser_joint" args="0.19 0 0.05 0 0 0 /base_link /laser 10"> <!-- 0.27-->
+  </node>
+	<node pkg="tf" type="static_transform_publisher" name="llaser_joint" args="0.0 0.0 0.05 0 0 0 /base_link /llaser 10">
+  </node>
+	<node pkg="tf" type="static_transform_publisher" name="rlaser_joint" args="0.0 0.0 0.05 0 0 0 /base_link /rlaser 10">
+  </node>
+	<node pkg="tf" type="static_transform_publisher" name="tlaser_joint" args="0.25 0.0 0.05 0 0 0 /base_link /tlaser 10">
+  </node>
+	<node pkg="tf" type="static_transform_publisher" name="maplaser_joint" args="0.0 0.0 0.05 0 0 0 /base_link /maplaser 10">
+  </node>
+  <node pkg="tf" type="static_transform_publisher" name="baselink_joint" args="0.0 0 0.050 0 0 0 /base_footprint /base_link 10">
+  </node>
+   
+</launch>

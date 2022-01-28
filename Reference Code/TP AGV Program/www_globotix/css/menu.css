@@ -1,0 +1,54 @@
+.center {
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 90%;
+  border: 0px solid green;
+  padding: 2px;
+}
+
+h1 {
+  margin: auto;
+  margin-top: 10px;
+  width: 80%;
+  text-align: center;
+  padding: 5px;
+}
+
+.button__key {
+    height: 100px;
+    width: 80%;
+    max-width: 150px;
+    margin: 3px;
+    border-radius: 5px;
+    border: none;
+    background: rgba(0,0,0, 0.12);
+    color: #000000;
+    font-size: 1.5em;
+    outline: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: top;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+}
+
+.button__key:active {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+table {
+	margin: auto;
+	width: 90%;
+	padding: 20px;
+	/*background-color: #f1f1c1;*/
+	background-color: #CCDDE0;
+  border: 3px solid green;
+}
+th, td {
+  text-align: center;
+  padding: 2px;
+}

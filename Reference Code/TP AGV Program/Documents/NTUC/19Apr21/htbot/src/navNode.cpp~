@@ -1,0 +1,417 @@
+/*
+ * This node is to navigate the paths and stop points.
+ */
+
+
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+#include <signal.h>
+#include <termios.h>
+#include <stdio.h>
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/thread.hpp"
+#include <tf/transform_listener.h>
+#include <tf/transform_datatypes.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <actionlib/client/simple_action_client.h>
+#include "htbot/Command.h"
+#include "htbot/srvcmd.h"
+#include "boost/algorithm/string.hpp"
+
+using namespace std;
+using namespace boost::algorithm;
+
+bool cmdServiceCallback(htbot::srvcmd::Request &req,htbot::srvcmd::Response &res);
+int findLPIndex(std::string lpstr);
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
+ros::ServiceServer cmd_service;
+std::string LandingPointString[100];
+int numLP;
+
+int findLPIndex(std::string lpstr,int nLP) 
+{
+	int ret;
+	string s1,s2;
+	ret = -99;
+	s2 = lpstr;
+
+	for (int k=0;k<nLP;k++) {
+		s1 = LandingPointString[k];
+		trim(s1);
+		trim(s2);
+		if (s1.compare(s2) == 0) {
+			ret = k;
+			break;
+		}
+	}
+	return ret;
+}
+
+
+bool cmdServiceCallback(htbot::srvcmd::Request &req,htbot::srvcmd::Response &res)
+{
+	ROS_INFO("NavNode Command Services"); 
+	int fi,ti;
+	
+	switch (req.cmd) {
+		case 1: // 
+			ROS_INFO("Nav Command 1 : From : %s. To : %s",req.fromLP.c_str(),req.toLP.c_str());
+			fi = findLPIndex(req.fromLP,numLP);
+			ti = findLPIndex(req.toLP,numLP);
+			ROS_INFO("From Indx = %d. To Indx = %d",fi,ti);
+			moveToLP(fi);
+			//currentLP = fi;
+			//moveToLP(ti);
+			//currentLP = ti;
+			res.status = 1;
+			break;
+		case 2: // 
+			ROS_INFO("Nav Command 2");
+			res.status = 2;
+			break;
+		
+	}  
+	return true;
+}
+
+class NavNode
+{
+public:
+	NavNode();
+	bool sendGoal(double x,double y, double z, double rx, double ry, double rz, double rw);
+	void readPosefromFile();
+	bool sendPose(int);
+	void cmdCallback(const htbot::Command::ConstPtr& msg);	
+	double calposeDist(int id1, int id2);	
+	void readLandingPointsfromFile();
+	void pathplan(int nLP);
+	void moveToLP(int nLP);
+	void readParamfromFile();
+	int findLPIndex(std::string lpstr);
+	
+	FILE *pfp;  // pose data file
+	FILE *lfp;  // landing points data file
+	FILE *lpfp;
+
+	std::string posefile;
+	std::string landfile;
+	std::string paramfile;	
+	double tx,ty,tz;
+	double rx,ry,rz,rw;
+	double otx,oty,otz;
+	double orx,ory,orz,orw;
+	double poseInfo[500][7];
+	int landingPoint[100];  // store index of landing point's pose
+	int numPose,cPose;
+	int currentLP,nextLP;
+	bool nflag;
+	int mapflag;
+	
+	
+private:
+	ros::NodeHandle nh_,ph_;	
+	ros::Subscriber cmd_sub;
+
+	double pathDist;	
+	move_base_msgs::MoveBaseGoal goal;
+	MoveBaseClient ac;	
+};
+
+NavNode::NavNode():
+	ph_("~"),numPose(0),cPose(0),currentLP(0),
+	rx(0.0),ry(0.0),rz(0.0),rw(0.0),
+	tx(0.0),ty(0.0),tz(0.0),nflag(false),
+	ac("move_base", true)
+{
+	ph_.getParam("pose_file",posefile);	
+	ph_.getParam("landing_points_file",landfile);	
+	ph_.getParam("param_file",paramfile);
+	ph_.param("path_distance", pathDist, 3.5);
+	cmd_sub = nh_.subscribe("robot_cmd", 100, &NavNode::cmdCallback,this);
+	
+}
+
+void NavNode::readParamfromFile()
+{
+	int mapflag,noLP;
+	std::string s1;
+	std::string s3;
+	char s2[100];
+	char s21[100];
+	int len;
+	
+
+	ROS_INFO("Param File : %s",paramfile.c_str());
+	lpfp = fopen(paramfile.c_str(), "r");
+  if (lpfp == NULL) {
+  	ROS_INFO("I couldn't open paramdata.dat to read.\n");    
+  	return;
+  }
+	// read mapping flag. 1=mapping done. 0=mapping not done
+	fscanf(lpfp, "%d\n", &mapflag);	
+	if (mapflag >= 0) {
+		// mapping done. read landing points information. load amcl	
+		//system("gnome-terminal -x ~/htstartamcl.sh &");	
+		ROS_INFO("Read Landing Points Info");
+		fscanf(lpfp, "%d\n", &numLP);
+		ROS_INFO("noLP : %d",numLP);		
+		if (noLP > 0) {					
+			for (int k=0;k<numLP;k++) {				
+				fgets(s2,100,lpfp);		
+				len = strlen(s2);	
+				//s1.assign(s2,len);
+				LandingPointString[k].assign(s2,len);
+				ROS_INFO("LP Str %d = %s",k,LandingPointString[k].c_str());
+			}
+		}
+		
+	} 	
+	fclose(lpfp);
+}
+
+
+void NavNode::cmdCallback(const htbot::Command::ConstPtr& msg)
+{
+	char buf [100];
+	int pid;
+
+	//ROS_INFO("htbot NavNode.. Path Dist : %6.2f",pathDist);
+	
+	switch (msg->cmd)
+	{
+		case 10 : // load pose and landing data files		
+			ROS_INFO("NaNode : Start/Load Navigation Function");	
+			nflag = true;				
+			
+			readPosefromFile();
+			readLandingPointsfromFile();
+			// intialise starting landing point to reference starting point.
+			
+			currentLP = 0;  // starting LP			
+			break;
+		case 11 : // move to next LP
+			ROS_INFO("nAVNode : Move to Next LP");	
+			if (nflag) {
+				ROS_INFO("Nav : Move to LP %d",msg->param1);
+				
+				//pathplan(msg->param1);			
+				moveToLP(msg->param1);
+				currentLP = nextLP;
+				
+			} else {
+				ROS_INFO("Navigation Function not started");
+			}
+			break;				
+		case 12 : // stop navigation 
+			ROS_INFO("nAVNode : Stop Navigation");
+			nflag = false;
+			break;
+	}
+}
+
+void NavNode::moveToLP(int nLP)
+{
+	int nidx,cnt;
+	cnt = 0;
+	nidx = landingPoint[nLP];
+	while(true) {
+		if (sendPose(nidx)) {
+			break;
+		}
+		cnt++;
+		if (cnt >= 3) {
+			break;
+		}
+	}
+}
+
+
+void NavNode::pathplan(int nLP)
+{
+	int cidx,nidx,tidx,midx,k;
+	double dist;
+	bool shortcut;
+	// determine the direction to travel in the pose data file (index)
+	// check if there is a point in the pose data that is less that pathDist away.If yes move to that point and change index to that.
+	// else move to the next point in the pose file
+	cidx = landingPoint[currentLP];
+	nidx = landingPoint[nLP];
+	if (nidx > cidx) {
+		// increasing index. travel up the pose file
+		tidx = cidx;		
+		while (true) {
+			tidx++;
+			if (tidx != nidx) {
+				shortcut = false;
+				for (k=tidx;k<=nidx;k++) {
+					dist = calposeDist(cidx,k);
+					if (dist < pathDist) {
+						shortcut = true;
+						break;
+					}
+				}
+				if (shortcut) {
+					// found short cut
+					midx = k;
+				} else {
+					midx = cidx + 1;
+				}				
+				sendPose(midx);
+				cidx = midx;
+			} else {
+				// reach the destination
+				sendPose(nidx);
+				break;
+			}			
+		}
+	} else {
+		// decreasing. travel down the pose file
+		tidx = cidx;		
+		while (true) {
+			tidx--;
+			if (tidx != nidx) {
+				shortcut = false;
+				for (k=tidx;k>=nidx;k--) {
+					dist = calposeDist(cidx,k);
+					if (dist < pathDist) {
+						shortcut = true;
+						break;
+					}
+				}
+				if (shortcut) {
+					// found short cut
+					midx = k;
+				} else {
+					midx = cidx - 1;
+				}				
+				sendPose(midx);
+				cidx = midx;
+			} else {
+				// reach the destination
+				sendPose(nidx);
+				break;
+			}			
+		}
+	}	
+}
+
+double NavNode::calposeDist(int id1, int id2)
+{
+	double dist;
+	tx = poseInfo[id1][0];
+	ty = poseInfo[id1][1];
+	otx = poseInfo[id2][0];
+	oty = poseInfo[id2][1];
+	dist = (tx-otx)*(tx-otx);
+	dist = dist + (ty-oty)*(ty-oty);
+	dist = sqrt(dist);
+	return dist;
+}
+
+
+void NavNode::readPosefromFile() 
+{			
+	pfp = fopen(posefile.c_str(), "r");
+  if (pfp == NULL) {
+  	ROS_INFO("I couldn't open posedata.dat to read.\n");    
+  	return;
+  }
+	// read number of poses
+	fscanf(pfp, "%d\n", &numPose);
+	for (int i=0;i<numPose;i++) {
+		fscanf(pfp, "%lf %lf %lf %lf %lf %lf %lf\n", &tx,&ty,&tz,&rx,&ry,&rz,&rw);
+		poseInfo[i][0] = tx;
+		poseInfo[i][1] = ty;
+		poseInfo[i][2] = tz;
+		poseInfo[i][3] = rx;
+		poseInfo[i][4] = ry;
+		poseInfo[i][5] = rz;
+		poseInfo[i][6] = rw;	
+	}
+	fclose(pfp);
+}
+
+void NavNode::readLandingPointsfromFile() 
+{			
+	int lp;
+	lfp = fopen(landfile.c_str(), "r");
+  if (lfp == NULL) {
+  	ROS_INFO("I couldn't open landdata.dat to read.\n");    
+  	return;
+  }
+	// read number of landing points
+	fscanf(lfp, "%d\n", &numLP);
+	for (int i=0;i<numLP;i++) {
+		fscanf(lfp, "%d\n", &lp);
+		landingPoint[i] = lp;		
+	}
+	fclose(lfp);
+}
+
+
+bool NavNode::sendPose(int i) 
+{
+	bool ret;
+
+	tx = poseInfo[i][0];
+	ty = poseInfo[i][1];
+	tz = poseInfo[i][2];
+	rx = poseInfo[i][3];
+	ry = poseInfo[i][4];
+	rz = poseInfo[i][5];
+	rw = poseInfo[i][6];
+	ret = sendGoal(tx,ty,tz,rx,ry,rz,rw);
+	return ret;
+}
+
+bool NavNode::sendGoal(double x,double y, double z, double rx, double ry, double rz, double rw)
+{
+	char buf [100];
+	
+	goal.target_pose.header.frame_id = "map";
+  goal.target_pose.header.stamp = ros::Time::now();
+  goal.target_pose.pose.position.x = x;
+  goal.target_pose.pose.position.y = y;
+  goal.target_pose.pose.position.z = z;
+  goal.target_pose.pose.orientation.x = rx;
+  goal.target_pose.pose.orientation.y = ry;
+  goal.target_pose.pose.orientation.z = rz;
+  goal.target_pose.pose.orientation.w = rw;  
+	
+  ac.sendGoal(goal);
+  ac.waitForResult();
+	//ROS_INFO("Result is Back");
+  if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    //ROS_INFO("Reached Goal");
+		return true;
+	}
+  else 
+  {
+    //ROS_INFO("Error in Reaching Goal");		
+		return false;
+	}
+}
+
+
+int main(int argc, char** argv)
+{
+	ros::init(argc, argv, "htbot navigation node");
+	
+	NavNode mNode;
+	ros::NodeHandle n;
+
+	mNode.readParamfromFile();
+	cmd_service = n.advertiseService("cmd_service",cmdServiceCallback);
+	ros::MultiThreadedSpinner spinner(4);	
+		
+	spinner.spin();
+	return 0;
+}
+
+
+
+
+

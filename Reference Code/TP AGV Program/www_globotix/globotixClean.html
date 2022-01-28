@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title>
+  <link rel="stylesheet" href="font/material-icons.css">
+  <link rel="stylesheet" href="css/common.css">
+  <script type="text/javascript" src="js/nysKB.js"></script>  
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/globotix.js"></script>
+	<script type="text/javascript" src="js/stat.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body onload="globotixStart()">
+	<div id="topbar" class="center-topbar">
+	<table style="width:98%;padding:1px;border:0px solid black">
+		<tr style="height:20px;padding:1px;font-size:15px;vertical-align:middle">
+			<td id="name" style="width:11.1%;text-align:left;height:20px;padding:1px">Globotix</td>
+			<td id="laser3d" style="width:11.1%;height:20px;padding:1px">l3d</td>
+			<td id="laser2d" style="width:11.1%;height:20px;padding:1px">l2d</td>
+			<td id="cam3d" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="current" style="width:11.1%;height:20px;padding:1px">2.5A</td>
+			<td id="voltage" style="width:11.1%;vertical-align:middle;height:20px;padding:1px">23.6V</td>
+			<td id="batlevel" style="margin-top:5px;vertical-align:middle;width:11.1%;height:20px;padding:1px"></td>
+			<td id="speed" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="time" style="width:11.1%;text-align:right;height:20px;padding:1px">Time</td>
+		</tr>
+	</table>
+	</div>
+	<div class="center-globotix" >
+		<!--img id="image" src="imgs/cleaning.png" width="50%" height="40%" style="margin: auto;margin-left: 25%;margin-top: 20px" /-->
+		<img id="image" src="imgs/cleaning.png" class="imgclean" />
+		<!--img src="imgs/drive_home.png" width="40%" height="60%" style="margin: auto;margin-left: 30%;margin-top: 20px" /-->
+		<p id="mode" style="margin: auto;margin-top: 20px;text-align: center;font-size: 180%">Cleaning</p>
+		<table style="padding:1px;background-color: #ffffff;border:0px solid black">
+			<tr>
+				<td style="width:35%;padding:1px"></td>
+				<td id="pausestart" style="width:15%;text-align:center;height:20px;padding:1px"><h2>Pause</h2></td>
+				<td id="stopText" style="width:15%;text-align:center;height:20px;padding:1px"><h2>Stop</h2></td>
+				<td style="width:35%;padding:1px"></td>
+			</tr>
+			<tr>
+				<td style="width:35%;padding:1px"></td>
+				<td style="width:15%;text-align:center;height:20px;padding:1px"><button id="pause" onclick="pauseClean()" ><i style="font-size: 60px;" class='material-icons'>pause</i></button></td>
+				<td style="width:15%;text-align:center;height:20px;padding:1px"><button id="stopButton" onclick="stopClean()" ><i style="font-size: 60px;" class='material-icons'>stop</i></button></td>
+				<td style="width:35%;padding:1px"></td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

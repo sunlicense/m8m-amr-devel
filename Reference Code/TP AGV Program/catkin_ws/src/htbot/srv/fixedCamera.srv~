@@ -1,0 +1,18 @@
+int8 cameraNo
+string object
+float32 scale
+int16 numframe
+int8 numOfPositiveFrame
+int16 minSizeX
+int16 minSizeY
+bool OCU
+string filename
+cv_bridge::CvImagePtr cv_ptr
+---
+int8 num
+int16 x1
+int16 y1
+int16 x2
+int16 y2
+int16 x3
+int16 y3

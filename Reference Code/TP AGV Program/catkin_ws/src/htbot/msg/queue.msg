@@ -1,0 +1,11 @@
+int8 noQ
+string fLP1
+string tLP1
+string fLP2
+string tLP2
+string fLP3
+string tLP3
+string fLP4
+string tLP4
+string LPName
+string LPInfo

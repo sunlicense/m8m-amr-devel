@@ -1,0 +1,47 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<include file="$(find htbot)/launch/rosbridge_websocket.launch" />
+  <node pkg="htbot" type="webNode" name="webNode" output="screen" required="true">
+		<param name="param_file" value="$(find htbot)/data/param.dat" />		
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />		
+		<param name="posemark_file" value="$(find htbot)/data/posemark.dat" />		
+		<param name="current_group" value="0" />				
+  </node>  
+
+	<include file="$(find htbot)/launch/motor_params_htbot.launch" />	     
+
+	<include file="$(find htbot)/launch/config.launch" />
+
+	<!--include file="$(find htbot)/launch/hokuyo.launch" /-->
+	<include file="$(find htbot)/launch/sick_tim571.launch" />
+	<node name="laserNode" pkg="htbot" type="laserNode" output="screen" ></node>
+	<include file="$(find htbot)/launch/laserlink_sick.launch" />
+	<!--include file="$(find htbot)/launch/sidelaser.launch" /-->
+	<!--include file="$(find htbot)/launch/centrallaser.launch" /-->
+
+	<node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher" ></node>
+	<node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <param name="freq" value="10.0"/>
+    <param name="sensor_timeout" value="1.0"/>
+    <param name="publish_tf" value="true"/>
+    <param name="odom_used" value="true"/>
+    <param name="imu_used" value="false"/>
+    <param name="vo_used" value="false"/>
+    <param name="output_frame" value="odom"/>
+  </node>
+
+	<include file="$(find htbot)/launch/joystick_ms.launch" />
+
+	<!--node name="UnoNode" pkg="rosserial_python" type="serial_node.py" output="screen" >
+		<param name="port" value= "/dev/sensors/Uno"/>
+	</node-->
+
+	<include file="$(find htbot)/launch/move_base_htbot.launch" />
+
+	<include file="$(find htbot)/launch/gmapping_htbot_sick.launch" />
+
+	<!--node name="match" pkg="htbot" type="match" output="screen" ></node-->
+
+	<node name="podom" pkg="htbot" type="podom" output="screen" ></node>
+
+</launch>

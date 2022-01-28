@@ -1,0 +1,155 @@
+/*
+ * Copyright (c) 2010, Willow Garage, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the Willow Garage, Inc. nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+#include <sensor_msgs/Joy.h>
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/thread.hpp"
+#include "ros/console.h"
+
+class HTBOTJoy
+{
+public:
+  HTBOTJoy();
+
+private:
+  void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
+  void publish();
+
+  ros::NodeHandle ph_, nh_;
+
+  int linear_, angular_, deadman_axis_, l_scale_inc_, l_scale_dec_, a_scale_inc_,a_scale_dec_;
+  int prev_btn[4];
+  double l_scale_, a_scale_,l_scale_step_, a_scale_step_,l_scale_max_, a_scale_max_;
+  ros::Publisher vel_pub_;
+  ros::Subscriber joy_sub_;
+
+  geometry_msgs::Twist last_published_;
+  boost::mutex publish_mutex_;
+  bool deadman_pressed_;
+  ros::Timer timer_;
+
+};
+
+HTBOTJoy::HTBOTJoy():
+  ph_("~"),
+  linear_(1),
+  angular_(0),
+  deadman_axis_(4),
+  l_scale_inc_(3),
+  l_scale_dec_(0),
+  a_scale_inc_(1),
+  a_scale_dec_(2),
+  prev_btn(0),
+  l_scale_(0.3),
+  a_scale_(0.3),
+  l_scale_step_(0.1),
+  a_scale_step_(0.1),
+  l_scale_max_(1.0),
+  a_scale_max_(1.0)
+{
+  ph_.param("axis_linear", linear_, linear_);
+  ph_.param("axis_angular", angular_, angular_);
+  ph_.param("axis_deadman", deadman_axis_, deadman_axis_);
+  ph_.param("axis_scale_linear_inc", l_scale_inc_, l_scale_inc_);
+  ph_.param("axis_scale_linear_dec", l_scale_dec_, l_scale_dec_);
+  ph_.param("axis_scale_angular_inc", a_scale_inc_, a_scale_inc_);
+  ph_.param("axis_scale_angular_dec", a_scale_dec_, a_scale_dec_);
+
+  ph_.param("scale_angular", a_scale_, a_scale_);
+  ph_.param("scale_linear", l_scale_, l_scale_);
+  ph_.param("scale_angular_step", a_scale_step_, a_scale_step_);
+  ph_.param("scale_linear_step", l_scale_step_, l_scale_step_);
+  ph_.param("scale_angular_max", a_scale_max_, a_scale_max_);
+  ph_.param("scale_linear_max", l_scale_max_, l_scale_max_);
+
+  vel_pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1);
+  joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &HTBOTJoy::joyCallback, this);
+
+  timer_ = nh_.createTimer(ros::Duration(0.1), boost::bind(&HTBOTJoy::publish, this));
+}
+
+void HTBOTJoy::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
+{ 
+  geometry_msgs::Twist vel;
+  deadman_pressed_ = joy->buttons[deadman_axis_];
+ 
+  if(joy->buttons[l_scale_inc_] != prev_btn[0]){
+  	prev_btn[0]^=1;
+  	if(l_scale_<l_scale_max_ && prev_btn[0]){
+  		l_scale_+=l_scale_step_;
+  		ROS_INFO("\nscale_linear +\nscale_linear:  %.2f\nscale_angular: %.2f\n",l_scale_,a_scale_);
+  	}  	
+  }
+  if(joy->buttons[l_scale_dec_] != prev_btn[1]){
+  	prev_btn[1]^=1;
+  	if(l_scale_>l_scale_step_ && prev_btn[1]){
+  		l_scale_-=l_scale_step_;
+  		ROS_INFO("\nscale_linear -\nscale_linear:  %.2f\nscale_angular: %.2f\n",l_scale_,a_scale_);
+  	}  	
+  }
+  if(joy->buttons[a_scale_inc_] != prev_btn[2]){
+  	prev_btn[2]^=1;
+  	if(a_scale_<a_scale_max_ && prev_btn[2]){
+  		a_scale_+=a_scale_step_;
+  		ROS_INFO("\nscale_angular +\nscale_linear:  %.2f\nscale_angular: %.2f\n",l_scale_,a_scale_);
+  	} 	
+  }
+  if(joy->buttons[a_scale_dec_] != prev_btn[3]){
+  	prev_btn[3]^=1;
+  	if(a_scale_>a_scale_step_ && prev_btn[3]){
+  		a_scale_-=a_scale_step_;
+  		ROS_INFO("\nscale_angular -\nscale_linear:  %.2f\nscale_angular: %.2f\n",l_scale_,a_scale_);
+  	}	
+  }
+ 
+  if (!deadman_pressed_){
+    last_published_.angular.z=0;
+    last_published_.linear.x=0; 
+  }
+  else{
+  	vel.angular.z = a_scale_*joy->axes[angular_];
+  	vel.linear.x = l_scale_*joy->axes[linear_]; 
+  	last_published_ = vel;
+  }
+}
+
+void HTBOTJoy::publish()
+{
+  boost::mutex::scoped_lock lock(publish_mutex_);
+  vel_pub_.publish(last_published_);
+}
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "htbot_joy");
+  HTBOTJoy htbot_joy;
+
+  ros::spin();
+}

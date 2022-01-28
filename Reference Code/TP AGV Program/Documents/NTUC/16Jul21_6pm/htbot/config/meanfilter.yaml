@@ -1,0 +1,5 @@
+scan_filter_chain:
+- name: mean_filter
+  type: laser_filters/MultiChannelMeanFilterDouble
+  params:
+    number_of_observations: 5

@@ -1,0 +1,826 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<style type="text/css" media="screen">
+body { background: #e7e7e7; font-family: Verdana, sans-serif; font-size: 10pt; }
+#page { background: #ffffff; margin: 5px; border: 2px solid #c0c0c0; padding: 5px; }
+#header { background: #4b6983; border: 2px solid #7590ae; text-align: center; padding: 2px; color: #ffffff; }
+#header h1 { color: #ffffff; }
+#body { padding: 5px; }
+span.tt { font-family: monospace; }
+span.bold { font-weight: bold; }
+a:link { text-decoration: none; font-weight: bold; color: #C00; background: #ffc; }
+a:visited { text-decoration: none; font-weight: bold; color: #999; background: #ffc; }
+a:active { text-decoration: none; font-weight: bold; color: #F00; background: #FC0; }
+a:hover { text-decoration: none; color: #C00; background: #FC0; }
+button { border:5px solid black; color:#f00; background:#ccc; padding: 5px}
+table {text-align: center;padding: 1px}
+</style>
+</head>
+<body onload="start()">
+<div id="page">
+ <div id="header">
+ <h4> Tuning Transporter </h4>
+  
+ </div>
+ <div id="body">
+  <table border="0" style="width:100%">
+	<tr>		
+		<td style="height:20px;width:70px;padding:2px;text-align:left;color:#00f">Status : </td>
+		<td id="stat" style="padding:2px;text-align:left;font-size: 10pt"></td>
+	</tr>
+	
+  </table>
+	<table border="1" style="width:100%">		
+	<tr>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="r180r()"><h3>RotateR</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="r180l()"><h3>RotateL</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="straight()"><h3>Forward</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="back()"><h3>Reverse</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="stop()"><h3>StopBot</h3></button></td>
+	</tr>
+	<tr>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="estop_activate()"><h3>eStopS</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="estop_release()"><h3>eStopR</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="lowpower()"><h3>Lowpower</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="fullpower()"><h3>Fullpower</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="localise()"><h3>Localise</h3></button></td>
+	</tr>
+	<tr> 
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="resetDash()"><h3>Reset DashBD</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="shutdown_nopwd()"><h3>Shutdown</h3></button></td>
+		<td ></td> 
+		<td ></td> 		
+		<td style="padding:2px"><button style="height:60px;width:130px;padding:2px" onclick="location.href=`index.html`;"><h3>Main Menu</h3></button></td>
+	</tr>
+	</table>
+
+ </div>
+</div>
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2d.js"></script>
+<script type="text/javascript" src="js/nav2d.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    autostart : 0.0 
+});
+
+var devsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/dev_cmd',
+    serviceType : 'htbot/mqueue'
+});
+var devreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    autostart : 0.0 
+});
+
+var movsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/move_service',
+    serviceType : 'htbot/srvcmd'
+});
+
+var movreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+		fromLP : "",
+		toLP : "",
+		cGP : 0,
+		cLP : 0,
+		fLP : 0,
+		tLP : 0
+});
+
+var scanMsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/scanMatch',
+    serviceType : 'htbot/scanMcmd'
+});
+
+var scanMreq = new ROSLIB.ServiceRequest({
+    cmd : 1
+});
+
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+var bclistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/barcode',
+    messageType : 'htbot/status'
+});
+
+bclistener.subscribe(function(message) {
+    console.log('Received message on ' + bclistener.name + ': ' + message.msg);
+		document.getElementById("bcode").innerHTML = message.msg ;
+		document.getElementById("bcode").style.color = "blue";
+    //listener.unsubscribe();
+});
+
+var listener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/feedback',
+    messageType : 'htbot/status'
+  });
+
+listener.subscribe(function(message) {
+    console.log('Received message on ' + listener.name + ': ' + message.msg);
+		document.getElementById("stat").innerHTML = message.msg ;
+		document.getElementById("stat").style.color = "blue";
+    //listener.unsubscribe();
+});
+
+var listener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/debug',
+    messageType : 'htbot/debug'
+  });
+
+listener.subscribe(function(message) {
+    console.log('Received message on ' + listener.name + ': ' + message.msg);
+		document.getElementById("debug").innerHTML = message.msg ;
+		document.getElementById("debug").style.color = "red";
+    //listener.unsubscribe();
+});
+
+function start() {
+	//ros.connect("ws://192.168.1.122:8080");
+	ros.on('error', function(error) {
+		document.getElementById("stat").innerHTML = "Robot Not Ready. Please Wait..." ;    
+		document.getElementById("stat").style.color = "red";
+  });
+	var status;
+	PM.name = 'RobotReady';
+	PM.get(function(value) {
+    console.log('RobotReady: ' + value);		
+		if (value == 77) {
+			status = "Robot is Ready";
+			document.getElementById("stat").style.color = "green";
+			cmdreq.cmd = 77;		
+			cmdsrv.callService(cmdreq, function(result) {
+    	console.log('Result for service call on '
+      	+ cmdsrv.name
+      	+ ': '
+      	+ result.status);
+  		});
+		} else if (value == 88) {
+			status = "Robot is Ready";
+			document.getElementById("stat").style.color = "green";			
+		} else {
+			status = "Robot Not Ready. Please Wait...";
+			document.getElementById("stat").style.color = "red";
+		}
+		document.getElementById("stat").innerHTML = status;
+		//document.getElementById("robotstatus").style.color = "green";
+  });
+	
+}
+
+function resetDash() {	
+	cmdreq.cmd = 36;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function shutdown_nopwd() {	
+	cmdreq.cmd = 2;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function SLS0() {	
+	scanMreq.cmd = 0;  // save reference scan 0
+	scanMreq.file = "/home/rac/catkin_ws/src/htbot/laser/RefScan0.json";		
+	scanMsrv.callService(scanMreq, function(result) {
+    console.log('Result for service call on '
+      + scanMsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function SLSA() {	
+	scanMreq.cmd = 0;  // save reference scan A
+	scanMreq.file = "/home/rac/catkin_ws/src/htbot/laser/RefScan1.json";		
+	scanMsrv.callService(scanMreq, function(result) {
+    console.log('Result for service call on '
+      + scanMsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function SLSB() {	
+	scanMreq.cmd = 0;  // save reference scan B
+	scanMreq.file = "/home/rac/catkin_ws/src/htbot/laser/RefScan2.json";		
+	scanMsrv.callService(scanMreq, function(result) {
+    console.log('Result for service call on '
+      + scanMsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function SLSC() {	
+	scanMreq.cmd = 0;  // save reference scan C
+	scanMreq.file = "/home/rac/catkin_ws/src/htbot/laser/RefScan3.json";		
+	scanMsrv.callService(scanMreq, function(result) {
+    console.log('Result for service call on '
+      + scanMsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function SLSD() {	
+	scanMreq.cmd = 0;  // save reference scan D
+	scanMreq.file = "/home/rac/catkin_ws/src/htbot/laser/RefScan4.json";		
+	scanMsrv.callService(scanMreq, function(result) {
+    console.log('Result for service call on '
+      + scanMsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function Match() {	
+	scanMreq.cmd = 1;  // save reference scan
+	scanMreq.file = "/home/ssmc/catkin_ws/src/htbot/laser/RefScan0.json";		
+	scanMreq.lp = 0;
+	scanMreq.gp = 0;
+	scanMsrv.callService(scanMreq, function(result) {
+    console.log('Result for service call on '
+      + scanMsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function StnAA() {	
+	scanMreq.cmd = 2;  // save reference scan
+	scanMreq.file = "/home/ssmc/catkin_ws/src/htbot/laser/RefScan0.json";		
+	scanMreq.lp = 0;
+	scanMreq.gp = 0;
+	scanMsrv.callService(scanMreq, function(result) {
+    console.log('Result for service call on '
+      + scanMsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function ipose() {	
+	movreq.cmd = 58;
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function StnA() {	
+	movreq.cmd = 11;
+	movreq.cGP = 0;		
+	movreq.cLP = 1;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function StnB() {	
+	movreq.cmd = 11;
+	movreq.cGP = 0;		
+	movreq.cLP = 2;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function StnC() {	
+	movreq.cmd = 11;
+	movreq.cGP = 0;		
+	movreq.cLP = 3;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function StnD() {	
+	movreq.cmd = 11;
+	movreq.cGP = 0;		
+	movreq.cLP = 4;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function StnE() {	
+	movreq.cmd = 11;
+	movreq.cGP = 0;		
+	movreq.cLP = 5;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function StnF() {	
+	movreq.cmd = 11;
+	movreq.cGP = 0;		
+	movreq.cLP = 6;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function Ref() {	
+	movreq.cmd = 11;
+	movreq.cGP = 0;		
+	movreq.cLP = 0;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function startdev() {	
+	devreq.cmd = 1;	
+	devsrv.callService(devreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function localise() {	
+	cmdreq.cmd = 28;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function r180r() {	
+	cmdreq.cmd = 52;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function r180l() {	
+	cmdreq.cmd = 51;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function straight() {	
+	cmdreq.cmd = 53;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function special() {	
+	movreq.cmd = 54;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function back() {	
+	cmdreq.cmd = 54;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+function cancel() {	
+	movreq.cmd = 55;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function newalign() {	
+	cmdreq.cmd = 14;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function nr180r() {	
+	cmdreq.cmd = 16;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function nr180l() {	
+	cmdreq.cmd = 17;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function nstraight() {	
+	cmdreq.cmd = 18;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function nback() {	
+	cmdreq.cmd = 19;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function ptpM1() {	
+	cmdreq.cmd = 15;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function ptpPS2() {	
+	cmdreq.cmd = 22;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function ptpS2L() {	
+	cmdreq.cmd = 24;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function backPP() {	
+	cmdreq.cmd = 25;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function ptpAlignMove() {	
+	cmdreq.cmd = 26;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function checkplan() {	
+	cmdreq.cmd = 27;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function ptpalign() {	
+	cmdreq.cmd = 20;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function ptpmove() {	
+	cmdreq.cmd = 15;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function ClearMap() {
+	
+	movreq.cmd = 3;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });
+	
+}
+
+function getmap() {
+	
+	movreq.cmd = 31;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });
+	
+}
+
+function go() {
+	
+	movreq.cmd = 48;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });
+	
+}
+
+function lowpower() {
+	movreq.cmd = 4;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });
+}
+
+function fullpower() {
+	movreq.cmd = 41;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });
+}
+
+function laser() {
+	movreq.cmd = 42;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function mstn() {
+	movreq.cmd = 49;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function ref() {
+	movreq.cmd = 43;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function stop() {
+	movreq.cmd = 45;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function test() {
+	movreq.cmd = 44;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function testBCA() {
+	
+	PM.name = 'Password';
+	PM.get(function(value) {
+    console.log('Password: ' + value);				
+		document.getElementById("stat").innerHTML = "Password : "+value ;
+		//document.getElementById("robotstatus").style.color = "green";
+  });
+	
+}
+
+function Slaser() {
+	var status;
+	PM.name = 'saveLeftSideLaserData';
+	PM.set(77);
+	PM.name = 'saveRightSideLaserData';
+	PM.set(77);
+}
+
+function lookObs() {
+	var status;
+	PM.name = 'lookforObs';
+	PM.set(1);
+}
+
+function stoplookObs() {
+	var status;
+	PM.name = 'lookforObs';
+	PM.set(0);
+}
+
+function getObsDist() {
+	var status;
+	PM.name = 'ProfileMoveObsDist';
+	PM.get(function(value) {
+    console.log('Obs Dist : ' + value);						
+		document.getElementById("debug").innerHTML = "Obs Dist : "+value ;
+		//document.getElementById("robotstatus").style.color = "green";
+  });
+}
+
+function estop_activate() {
+	movreq.cmd = 56;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });
+}
+
+function estop_release() {
+	movreq.cmd = 57;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+int8 cmd
+float32 px
+float32 py
+float32 pz
+float32 prx
+float32 pry
+float32 prz
+float32 prw
+float32 gx
+float32 gy
+float32 gz
+float32 grx
+float32 gry
+float32 grz
+float32 grw
+float32 tol

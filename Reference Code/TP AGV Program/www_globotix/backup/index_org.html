@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<link rel="stylesheet" href="js/rac.css">
+<style type="text/css" media="screen">
+body { background: #e7e7e7; font-family: Verdana, sans-serif; font-size: 10pt; }
+#page { background: #ffffff; margin: 5px; border: 2px solid #c0c0c0; padding: 5px; }
+#header { background: #4b6983; border: 2px solid #7590ae; text-align: center; padding: 2px; color: #ffffff; }
+#header h1 { color: #ffffff; }
+#body { padding: 5px; }
+span.tt { font-family: monospace; }
+span.bold { font-weight: bold; }
+a:link { text-decoration: none; font-weight: bold; color: #C00; background: #ffc; }
+a:visited { text-decoration: none; font-weight: bold; color: #999; background: #ffc; }
+a:active { text-decoration: none; font-weight: bold; color: #F00; background: #FC0; }
+a:hover { text-decoration: none; color: #C00; background: #FC0; }
+button { border:5px solid black; color:#f00; background:#ccc; padding: 5px}
+table {text-align: center;padding: 1px}
+</style>
+</head>
+<body onload="start()">
+<div id="page">
+ <div id="header">
+ <h4> Main Menu </h4>
+  
+ </div>
+ <div id="body">
+  <table border="0" style="width:100%">	
+	<tr>		
+		<td style="height:20px;width:70px;padding:2px;text-align:left;color:#00f">Status : </td>
+		<td id="stat" style="padding:2px;text-align:left;font-size: 10pt"></td>
+	</tr>	
+	</table>
+
+	<table border="1" style="width:100%">		
+	<tr> 
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`markLP.html`;"><h2>Mark LP</h2></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`scanLS.html`;"><h2>Scan LP</h2></button></td> 
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`position.html`;"><h2>Robot Pose</h2></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`table_nav.html`;"><h2>Navigate</h2></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`dash.html`;"><h2>DashBoard</h2></button></td> 
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`tune.html`;"><h2>Tuning</h2></button></td> 
+	</tr>
+	<tr>				
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`robotdata.html`;"><h2>RobotData</h2></button></td> 
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`develop.html`;"><h2>Develop</h2></button></td> 
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="savemap()"><h2>Save Map</h2></button></td>		
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`control.html`;"><h2>Control</h2></button></td> 
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`control.html`;"><h2></h2></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="shutdown_nopwd()"><h2>Shutdown</h2></button></td>
+		
+		<!--td style="padding:5px"><button style="height:90px;width:150px" onclick="location.href=`butnav.html`;"><h2>ButtonNav</h2></button></td--> 
+		<!--td style="padding:5px"><button style="height:90px;width:150px;padding:5px" onclick="location.href=`config.html`;"><h2>Config</h2></button></td-->
+		<!--td style="padding:5px"><button style="height:90px;width:150px" onclick="location.href=`map_group.html`;"><h2>Mapping</h2></button></td-->    
+		<!--td style="padding:5px"><button style="height:90px;width:150px" onclick="location.href=`newnav.html`;"><h2>Navigate</h2></button></td-->
+		
+	</tr>
+	</table>
+	
+ </div>
+</div>
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2d.js"></script>
+<script type="text/javascript" src="js/nav2d.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+//var hostIP = "ws://"+location.host+":8080";
+var hostIP = "ws://192.168.1.120:8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    autostart : 0.0 
+});
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+var flistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/feedback',
+    messageType : 'htbot/status'
+  });
+
+var update_move = new ROSLIB.Topic({
+    ros : ros,
+    name : '/move_completed',
+    messageType : 'htbot/status'
+  });
+
+update_move.subscribe(function(message) {
+    updatemove();
+});
+
+
+flistener.subscribe(function(message) {
+    console.log('Received message on ' + flistener.name + ': ' + message.msg);
+		document.getElementById("stat").innerHTML = message.msg ;
+		document.getElementById("stat").style.color = "blue";
+    //listener.unsubscribe();
+});
+
+function start() {
+	//ros.connect("ws://192.168.1.122:8080");
+	ros.on('error', function(error) {
+		document.getElementById("stat").innerHTML = "Robot Not Ready. Please Wait..." ;    
+		document.getElementById("stat").style.color = "red";
+  });
+	var status;
+	PM.name = 'RobotReady';
+	PM.get(function(value) {
+    console.log('RobotReady: ' + value);		
+		if (value == 77) {
+			status = "Robot is Ready";
+			document.getElementById("stat").style.color = "green";
+			cmdreq.cmd = 77;		
+			cmdsrv.callService(cmdreq, function(result) {
+    	console.log('Result for service call on '
+      	+ cmdsrv.name
+      	+ ': '
+      	+ result.status);
+  		});
+		} else if (value == 88) {
+			status = "Robot is Ready";
+			document.getElementById("stat").style.color = "green";			
+		} else {
+			status = "Robot Not Ready. Please Wait...";
+			document.getElementById("stat").style.color = "red";
+		}
+		document.getElementById("stat").innerHTML = status;
+		//document.getElementById("robotstatus").style.color = "green";
+  });
+	
+}
+
+function savemap() {	
+	cmdreq.cmd = 31;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function control() {	
+	alert(" Set ROS Master ");
+	cmdreq.cmd = 44;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });
+}
+
+function shutdown_nopwd() {	
+	cmdreq.cmd = 2;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function shutdown() {	
+	var status;
+	PM.name = 'AdminPwd';
+	PM.get(function(value) {
+    console.log('Admin Password: ' + value);		
+		var inputpwd;	
+		var apasswd;
+		inputpwd = prompt('Enter Password to Shutdown');	
+		if (inputpwd == null) {
+			inputpwd = "xxxx";
+		}
+		inputpwd = inputpwd.trim();
+		apasswd = value;
+		apasswd = apasswd.trim();
+		console.log('InputPwd : ' + inputpwd);
+		if (inputpwd == apasswd) {
+			status = "Robot Shutting Down now....";
+			document.getElementById("stat").innerHTML = status;
+			document.getElementById("stat").style.color = "red";
+			cmdreq.cmd = 2;		
+			cmdsrv.callService(cmdreq, function(result) {
+    	console.log('Result for service call on '
+      	+ cmdsrv.name
+      	+ ': '
+      	+ result.status);
+  		});
+		} else {
+			if (inputpwd == "xxxx") {				
+				//window.history.back();
+				location.replace("index.html");
+			} else {
+				alert("Wrong Password. Returning to Main Menu");
+				location.replace("index.html");
+			}
+		}		
+  });
+}
+
+</script>
+</body>
+</html>

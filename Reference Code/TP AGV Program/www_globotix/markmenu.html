@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title> 
+  <link rel="stylesheet" href="font/material-icons.css">
+  <link rel="stylesheet" href="css/common.css">
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/markmenu.js"></script>
+	<script type="text/javascript" src="js/stat.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body onload="markmenustart()">
+	<div id="topbar" class="center-topbar">
+	<table style="width:98%;padding:1px;border:0px solid black">
+		<tr style="height:20px;padding:1px;font-size:15px;vertical-align:middle">
+			<td id="name" style="width:11.1%;text-align:left;height:20px;padding:1px">Globotix</td>
+			<td id="laser3d" style="width:11.1%;height:20px;padding:1px">l3d</td>
+			<td id="laser2d" style="width:11.1%;height:20px;padding:1px">l2d</td>
+			<td id="cam3d" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="current" style="width:11.1%;height:20px;padding:1px">2.5A</td>
+			<td id="voltage" style="width:11.1%;vertical-align:middle;height:20px;padding:1px">23.6V</td>
+			<td id="batlevel" style="margin-top:5px;vertical-align:middle;width:11.1%;height:20px;padding:1px"></td>
+			<td id="speed" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="time" style="width:11.1%;text-align:right;height:20px;padding:1px">Time</td>
+		</tr>
+	</table>
+	</div>
+	<div class="center">
+	<table style="padding: 20px;">
+  <caption><h1>Map Marking</h1></caption>
+  <tr>
+  	<td><h2>New</h2></td>
+		<td><h2>NoGo</h2></td>
+  	<td><h2>StartP</h2></td>
+  	<td><h2>EndP</h2></td>
+		<td><h2>Dock</h2></td>
+		<td><h2>Save</h2></td>
+  	<td><h2>Return</h2></td>
+  </tr>
+	<tr>
+    <td><button id="resetpos" style="padding: 0px;" onclick="newPOS()" ><img id="resetposIMG" src="imgs/newpos.png" width="80px" height="73px" /></button></td>
+		<td><button style="padding: 0px;" onclick="markNGZ()" ><img src="imgs/nogo.png" width="80px" height="73px" /></button></td>
+    <td><button id="startpos" onclick="markSP()"><img src="imgs/markSP.png" width="70px" height="70px" /></button></td>
+    <td><button id="endpos" onclick="markEP()"><img src="imgs/markEP.png" width="70px" height="70px" /></button></td>
+		<td><button id="dockpos" onclick="markDock()"  ><i class='material-icons-75'>location_on</i></button></td>
+		<td><button id="savepos" onclick="savePos()"  ><i class='material-icons-75'>save</i></button></td>
+    <td><button id="home" onclick="location.replace('mainmenu.html')"  ><i class='material-icons-75'>home</i></button></td>
+  </tr>
+  
+	</table>	
+	<p id="status" class="center" style="text-align: center;">Move AGV to Start/End/Docking Position. Then Click the Button<img src="imgs/markSP.png" width="30px" height="30px" />
+     <img src="imgs/markEP.png" width="30px" height="30px" /><i style="font-size: 30px;" class='material-icons'>location_on</i><br>
+		 Click <img src="imgs/nogo.png" width="35px" height="30px" /> To Start No-Go Zone Marking as AGV moves. Click Again to Stop Marking. Click 
+     <img src="imgs/newpos.png" width="35px" height="30px" /> to Reset All
+	</p>
+	<table>
+		<tr>    			
+  		<td style="width: 12%;"></td>
+			<td style="width: 76%;text-align: left;"><span style="font-size: 110%;">Max Manual Speed Control</span></td>
+  		<td style="width: 12%;"></td>	
+  	</tr> 
+		<tr>
+			<td style="text-align: left;"><span style="font-size: 110%">Linear</span></td>
+			<td style="width: 76%;text-align: left;"><input type="range" oninput="linearValue()" min="1" max="100" value="10" style="width: 95%;" class="myslider" id="linearRange"></td>
+			<td style="text-align: left;"><span id="linear" style="font-size: 100%;"></span></td>
+		</tr>
+		<tr>
+			<td style="text-align: left;"><span style="font-size: 110%">Angular</span></td>
+			<td style="width: 76%;text-align: left;"><input type="range" oninput="angularValue()" min="1" max="100" value="10" style="width: 95%;" class="myslider" id="angularRange"></td>
+			<td style="text-align: left;"><span id="angular" style="font-size: 100%;"></span></td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

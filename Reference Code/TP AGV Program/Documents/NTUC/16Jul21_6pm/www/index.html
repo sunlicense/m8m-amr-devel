@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Globotix AGV</title>
+<style type="text/css" media="screen">
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+li {
+	float : left;
+}
+
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 10px 20px;
+  text-decoration: none;
+	font-size: 20px;
+}
+
+li a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+li a.active {
+  color: white;
+  background-color: #4CAF50;
+}
+.center {
+  margin: auto;
+	float: center
+  width: 60%;
+}
+
+
+.img-container {
+	text-align: center;
+}
+    
+
+button { 
+	color: #f00;
+	background:#ffffff; 
+	padding: 5px
+	font-size: 15px;
+	border: 0px
+}
+
+table {text-align: center;padding: 1px}
+
+</style>
+</head>
+<body>
+
+<table border="0" style="width:100%">
+	<tr> 
+		<td style="padding:1px"><button id="login" style="height:40px;width:100px;padding:1px" onclick="login()"><h3>Login</h3></button></td>
+		<td style="padding:1px"><button id="mapping" style="height:40px;width:100px;padding:1px" onclick="location.href=`mapping.html`;"><h3>Mapping</h3></button></td> 		
+		<td style="padding:1px"><button style="height:40px;width:100px;padding:1px" onclick="location.href=`markLP.html`;"><h3>MarkLP</h3></button></td> 
+		<td style="padding:1px"><button style="height:40px;width:100px;padding:1px" onclick="location.href=`navigation.html`;"><h3>Navigation</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:100px;padding:1px" onclick="location.href=`tune.html`;"><h3>Tune</h3></button></td> 
+		<td style="padding:1px"><button style="height:40px;width:100px;padding:1px" onclick="logout()"><h3>LogOut</h3></button></td>  
+		<td style="padding:1px"><button style="height:40px;width:100px;padding:1px" onclick="shutdown_nopwd()"><h3>Shutdown</h3></button></td>
+	</tr>
+</table>
+
+<div class="img-container">
+	<img src="imgs/main.jpeg" width=90% height=300px alt="rac">
+</div>
+
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2djs.js"></script>
+<script type="text/javascript" src="js/nav2djs.js"></script>
+<script type="text/javascript" type="text/javascript">
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    func : 0.0 
+});
+
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+function start() {
+	/*
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			location.replace("index.html");
+		}
+  });
+	*/
+}
+
+function login() {
+	var passwd = prompt('Enter Password to Shutdown');
+	cmdreq.cmd = 49;	
+	cmdreq.lps = passwd;
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == 1) {
+			alert("Login Successful");
+		} else {
+			alert("Login Password Wrong");
+		}
+  });
+}
+
+function logout() {
+//	cmdreq.cmd = 58;	
+//	cmdsrv.callService(cmdreq, function(result) {
+//   console.log('Result for service call on '
+//      + cmdsrv.name
+//      + ': '
+//      + result.status);
+//  });
+  //alert(" Logout Done ");
+	PM.name = 'closeROSRAC';
+	PM.set(true);
+}
+
+function nav() {
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Please Login First");
+			location.replace("index.html");
+			return;
+		} 
+  });
+	cmdreq.cmd = 84;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });
+}
+
+function shutdown_nopwd() {	
+	/*
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == -1) {
+			alert("Please Login First");
+			location.replace("index.html");
+			return;
+		} else {
+			cmdreq.cmd = 2;	
+			cmdsrv.callService(cmdreq, function(result) {
+    		console.log('Result for service call on '
+      		+ cmdsrv.name
+      		+ ': '
+      		+ result.status);
+  		});
+		}
+  });
+	*/
+	//alert(" Shutdown Done ");
+	PM.name = 'shutdownRAC';
+	PM.set(true);
+}
+
+</script>
+</body>
+</html>
+

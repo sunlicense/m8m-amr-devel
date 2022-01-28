@@ -1,0 +1,12 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	<!--include file="$(find htbot)/launch/sick_tim571.launch" /-->
+	<!--
+	<include file="$(find htbot)/launch/sick_tim_781S_Test.launch" />
+	<include file="$(find htbot)/launch/hokuyo.launch" />
+	<include file="$(find htbot)/launch/laserlink_test.launch" />
+	<include file="$(find htbot)/launch/motor_params.launch" />
+	-->
+	<include file="$(find htbot)/launch/joystick.launch" />
+	<!--node name="movNode" pkg="htbot" type="movNode" output="screen" ></node-->
+</launch>

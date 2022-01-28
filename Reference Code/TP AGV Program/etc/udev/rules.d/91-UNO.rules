@@ -1,0 +1,1 @@
+SUBSYSTEM=="tty", KERNEL=="ttyACM[0-9]*", ATTRS{manufacturer}=="Arduino (www.arduino.cc)", ATTRS{serial}=="7573535343835110F121", MODE="0666", SYMLINK+="sensors/Uno"

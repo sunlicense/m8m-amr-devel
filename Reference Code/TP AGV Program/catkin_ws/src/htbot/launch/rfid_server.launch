@@ -1,0 +1,9 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <node pkg="htbot" type="rfid_server" name="rfid_server" output="screen" respawn="true">
+    <param name="TCPIPaddr" value="192.168.1.110"/>
+		<param name="TCPIPportNum" value="5000"/>
+		<param name="TransporterID" value="TRANSPORTER01"/>
+		<param name="SerialComPort" value="/dev/sensors/RFID"/>
+  </node>
+</launch>

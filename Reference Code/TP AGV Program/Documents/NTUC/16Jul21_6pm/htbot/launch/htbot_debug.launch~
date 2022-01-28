@@ -1,0 +1,6 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  		
+	<node name="debug" pkg="htbot" type="debugNode" output="screen" required="true">
+		<param name="filename" value="$(find htbot)/data/debug.dat" />
+	</node>
+</launch>

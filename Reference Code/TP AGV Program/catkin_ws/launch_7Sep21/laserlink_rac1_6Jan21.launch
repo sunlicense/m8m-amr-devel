@@ -1,0 +1,13 @@
+<!-- -*- mode: XML -*- -->
+<launch>   
+	<node pkg="tf" type="static_transform_publisher" name="bottomPRSjt" args="0 0 0 0 0 0.0 /bottomDRS /bottomPRS 60"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="bottomRSjt" args="0.595 0 0.05 0 0 0 /base_link /bottomDRS 60"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="middlePRSjt" args="0 0 0 0 0 0.0 /middleDRS /middlePRS 60"></node>
+	<node pkg="tf" type="static_transform_publisher" name="middleRSjt" args="0.595 0 0.935 0 0 0 /base_link /middleDRS 60"></node>	
+		
+	<node pkg="tf" type="static_transform_publisher" name="rightDPRSjt" args="0 0 0 0 0 -1.57 /rightDRS /rightPRS 60"></node>
+	<node pkg="tf" type="static_transform_publisher" name="rightRSjt" args="-0.295 -0.303 0.47 -0.79 0 1.57 /base_link /rightDRS 60"></node>
+	<node pkg="tf" type="static_transform_publisher" name="leftRSjt" args="-0.295 0.303 0.47 0.79 0 1.57 /base_link /leftDRS 60"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="leftDPRSjt" args="0 0 0 0 0 -1.57 /leftDRS /leftPRS 60"></node>
+	
+</launch>

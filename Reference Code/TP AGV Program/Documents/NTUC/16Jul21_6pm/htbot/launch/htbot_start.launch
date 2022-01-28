@@ -1,0 +1,7 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<param name="home_dir" value="/home/rac/" />
+	<include file="$(find htbot)/launch/htbot_nav.launch" />
+	<!--include file="$(find htbot)/launch/htbot_map.launch" /-->	
+	<node name="talkNode" pkg="htbot" type="talkNode" output="screen" ></node>
+</launch>

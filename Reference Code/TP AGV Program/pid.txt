@@ -1,0 +1,15 @@
+[WARN] [1567409248.675053]: WebSocketClosedError: Tried to write to a closed websocket
+[WARN] [1567409249.675312]: WebSocketClosedError: Tried to write to a closed websocket
+[WARN] [1567409251.675195]: WebSocketClosedError: Tried to write to a closed websocket
+
+
+[ INFO] [1567409252.072083433]: ---PID : agoal=-3.091. Err=-1.532. PT=-0.015.---
+[ INFO] [1567409252.072155873]: ---IT=-0.015. DT=0.002. TT=-0.029. iTemp=-1.532. d_Temp=-1.532---
+
+
+[ INFO] [1567409302.171988755]: ---PID : agoal=-3.094. Err=-0.758. PT=-0.008.---
+[ INFO] [1567409302.172066861]: ---IT=-0.023. DT=-0.001. TT=-0.031. iTemp=-2.290. d_Temp=-0.758---
+
+[WARN] [1567409303.674906]: WebSocketClosedError: Tried to write to a closed websocket
+[WARN] [1567409304.675001]: WebSocketClosedError: Tried to write to a closed websocket
+[WARN] [1567409305.675366]: WebSocketClosedError:

@@ -1,0 +1,14 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<include file="$(find htbot)/launch/rosbridge_websocket.launch" />
+  <node pkg="htbot" type="dbNode" name="dbNode" output="screen" required="true">
+		<param name="param_file" value="$(find htbot)/data/param.dat" />		
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />
+		<!--param name="landing_points_file" value="$(find htbot)/data/landdata.dat" /-->		
+  </node>  
+	<!--node name="bar" pkg="htbot" type="bar" output="screen" ></node-->
+	<!--node name="movNode" pkg="htbot" type="movNode" output="screen" ></node-->  
+	<node name="talkNode" pkg="htbot" type="talkNode" output="screen" ></node>
+	<!--include file="$(find htbot)/launch/rplidar.launch" /-->
+	<include file="$(find htbot)/launch/htbot_debug.launch" />
+</launch>

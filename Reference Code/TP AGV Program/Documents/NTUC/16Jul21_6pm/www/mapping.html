@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<style type="text/css" media="screen">
+<style>
+
+.center {
+  margin: auto;
+	float: center
+  width: 60%;
+}
+
+
+.img-container {
+	text-align: center;
+	width: 100%;
+	height: 100%
+}
+    
+
+button { 
+	color: #f00;
+	background:#ffffff; 
+	padding: 1px
+	font-size: 15px;
+	border: 0px
+}
+
+table {text-align: center;padding: 1px}
+
+</style>
+</head>
+<body onload="start()">
+
+<table border="0" style="width:100%">
+	<tr> 			
+		<td style="padding:1px"><button style="height:40px;width:120px;padding:1px" onclick="savemap()"><h3>Save Map</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:120px;padding:1px" onclick="location.href=`index.html`;"><h3>Main Menu</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:120px;padding:1px" onclick="shutdown_nopwd()"><h3></h3></button></td>
+	</tr>
+</table>
+<!--table border="0" style="width:100%">
+	<tr>
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:10pt"></td>
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:10pt">Status : </td>
+		<td id="stat" style="padding:2px;text-align:left;font-size: 10pt"></td>
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:10pt"></td>
+	</tr>
+</table-->
+
+<div class="img-container">
+	<div id="nav"></div>
+</div>
+
+<script type="text/javascript" src="njs/easeljs-NEXT.js"></script>
+<script type="text/javascript" src="njs/eventemitter2.js"></script>
+<script type="text/javascript" src="njs/roslib.js"></script>
+<script type="text/javascript" src="njs/ros2d.js"></script>
+<script type="text/javascript" src="njs/nav2d.js"></script>
+<script type="text/javascript" type="text/javascript">
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    func : 0.0 
+});
+
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+
+var chkmodeTimer = function checkOpMode() {
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 2) {
+			alert("Operation Mode has Changed. The main webpage will be loaded");
+			location.replace("index.html");
+		}
+  });
+}
+
+//setInterval(chkmodeTimer,1500);
+
+function start() {
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == -1) {
+			alert("Please Login First");
+			location.replace("index.html");
+		} else {
+			if ((result.status == 55) || (result.status == 0)) {
+				cmdreq.cmd = 79;	
+				cmdsrv.callService(cmdreq, function(result) {
+    			console.log('Result for service call on '
+      		+ cmdsrv.name
+      		+ ': '
+      		+ result.status);
+					if (result.status != 79) {
+						location.replace("index.html");
+					} else {
+						// Create the main viewer.
+						var viewer = new ROS2D.Viewer({
+							divID : 'nav',
+  						width : 1000,
+  						height : 450
+						});
+						// Setup the  client.
+						var nav = NAV2D.OccupancyGridClientNavNYS({
+							ros : ros,
+  						rootObject : viewer.scene,
+  						viewer : viewer,
+							continuous: true
+						});
+					}
+ 			 });
+			} else {
+				var viewer = new ROS2D.Viewer({
+					divID : 'nav',
+  				width : 1000,
+  				height : 450
+				});
+				// Setup the  client.
+				var nav = NAV2D.OccupancyGridClientNavNYS({
+					ros : ros,
+  				rootObject : viewer.scene,
+  				viewer : viewer,
+					continuous: true
+				});
+			}
+		}
+  });
+}
+
+function start_old() {
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Please Login First");
+			location.replace("index.html");
+		} 
+  });
+	document.getElementById("stat").innerHTML = "Loading Mapping Software Modules" ;
+	cmdreq.cmd = 79;
+	cmdreq.LP = 0;	
+	cmdreq.lps = "REF";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == 79) {
+			//document.getElementById("stat").innerHTML = "Mapping Software Modules loading completed" ;
+		} else {
+			//document.getElementById("stat").innerHTML = "Mapping Software Modules loading errors" ;
+			//alert(" Mapping Software Modules Loading Error");
+			location.replace("index.html");
+		}
+  });
+}
+
+function savemap() {	
+	var mapfile;
+	mapfile = prompt('Enter Name for Map to Save');
+	mapfile = mapfile.trim();
+	cmdreq.cmd = 83;	
+	cmdreq.gps = mapfile;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+</script>
+</body>
+</html>
+

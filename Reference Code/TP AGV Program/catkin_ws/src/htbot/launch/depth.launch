@@ -1,0 +1,19 @@
+<!-- -*- mode: XML -*- -->
+<!--- Depth image to laser scan -->
+<launch>
+  <node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan" >
+  	<param name="scan_height" value="1"/> 
+  	<param name="output_frame_id" value="colorscan"/>
+		<param name="range_min" value="0.1"/>
+		<param name="range_max" value="1.2"/>
+  	<remap from="image" to="/d435/aligned_depth_to_infra1/image_raw" />
+		<remap from="camera_info" to="/d435/aligned_depth_to_infra1/camera_info" />		
+		<!--remap from="camera_info" to="/d435/aligned_depth_to_color/camera_info" /-->
+		<!--remap from="image" to="/d435/aligned_depth_to_color/image_raw" /-->
+		<!--remap from="camera_info" to="/d435/depth/camera_info" /-->
+		<!--remap from="image" to="/d435/depth/image_rect_raw" /-->
+		<remap from="scan" to="depth" />
+	</node>
+	
+</launch>
+

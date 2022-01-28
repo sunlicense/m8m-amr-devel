@@ -1,0 +1,10 @@
+<!-- -*- mode: XML -*- -->
+<launch>   	
+	<node pkg="tf" type="static_transform_publisher" name="base_jt" args="0.0 0.0 0.0 0 0 0 /base_footprint /base_link 66" launch-prefix="taskset -c 2"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="sickFjt" args="0.384 0.0 0.0 0 0 0 /base_link /sickF 66" launch-prefix="taskset -c 2"></node>
+	<node pkg="tf" type="static_transform_publisher" name="Rearjt" args="-0.39 0.0 0.0 3.1416 0 0 /base_link /lrear 66" launch-prefix="taskset -c 3"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="Rightjt" args="0.1 -0.31 0.0 -1.571 0 0 /base_link /lright 66" launch-prefix="taskset -c 3"></node>
+	<node pkg="tf" type="static_transform_publisher" name="Leftjt" args="0.11 0.315 0.0 1.571 0 0 /base_link /lleft 66" launch-prefix="taskset -c 3"></node>
+	<node pkg="tf" type="static_transform_publisher" name="ref_jt" args="0.384 0.0 0.0 0 0 0 /base_link /refscan 66" launch-prefix="taskset -c 4"></node>
+	<node pkg="tf" type="static_transform_publisher" name="maplaser_jt" args="0.0 0.0 0.0 0 0 0 /base_link /maplaser 66" launch-prefix="taskset -c 2"></node>
+</launch>

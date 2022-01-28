@@ -1,0 +1,6 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  		
+	<node name="event" pkg="htbot" type="eventNode" output="screen" required="true">
+		<param name="filename" value="$(find htbot)/data/event.dat" />
+	</node>
+</launch>

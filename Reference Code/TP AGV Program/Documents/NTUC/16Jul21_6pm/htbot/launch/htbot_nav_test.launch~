@@ -1,0 +1,26 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<include file="$(find htbot)/launch/rosbridge_websocket.launch" />
+  <node pkg="htbot" type="dbNode" name="dbNode" output="screen" required="true">
+		<param name="param_file" value="$(find htbot)/data/param.dat" />		
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />		
+		<param name="posemark_file" value="$(find htbot)/data/posemark.dat" />
+		<param name="current_group" value="0" />							
+  </node>  
+	<include file="$(find htbot)/launch/hokuyo.launch" />
+	<include file="$(find htbot)/launch/htbot.launch" />	
+	<node name="UnoNode" pkg="rosserial_python" type="serial_node.py" output="screen" >
+		<param name="port" value= "/dev/sensors/Uno"/>
+	</node>
+	<node name="movNode" pkg="htbot" type="movNode" output="screen" ></node>  
+	<param name="clear_time" value="10.0" /> <!-- 13 -->
+	<param name="charging_type" value="0" /> <!-- 0=docking. 1=swap or wire-->
+	<param name="DEGPERIDX" value="0.23" /> <!-- degree per index -->
+	<param name="FIRSTMOVE" value="0.35" /> <!-- stage 1 move to charger -->
+	<param name="FINALMOVE" value="0.8" /> <!-- final move to charger -->
+	<node name="sgoal" pkg="htbot" type="sgoal" output="screen" ></node>	
+	<include file="$(find htbot)/launch/move_base_htbot.launch" />
+	<include file="$(find htbot)/launch/amcl_htbot.launch" />
+	<include file="$(find htbot)/launch/htbot_debug.launch" />
+	<node name="clearNode" pkg="htbot" type="clearNode" output="screen" ></node>	
+</launch>

@@ -1,0 +1,179 @@
+/*
+ * This node is to play sound 
+ */
+/* 	History
+*		Date Modified : 15.7.2015
+*		Changes :
+*/
+
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+#include <signal.h>
+#include <stdio.h>
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/thread.hpp"
+#include <tf/transform_listener.h>
+#include <tf/transform_datatypes.h>
+#include <geometry_msgs/TransformStamped.h>
+#include "htbot/move_status.h"
+#include "htbot/status.h"
+#include "boost/algorithm/string.hpp"
+#include <math.h>
+#include "htbot/clear.h"
+#include "htbot/sound.h"
+#include "std_srvs/Empty.h"
+#include <actionlib_msgs/GoalID.h>
+
+using namespace std;
+
+ros::Subscriber play_sub;
+ros::Publisher cancel_pub;
+//#define XU4
+// prototype
+bool moveflag;
+int movecount;
+
+void publish_cancel()
+{
+	actionlib_msgs::GoalID gid;
+	gid.id = "Cancel Goal";
+	gid.stamp = ros::Time::now();
+	cancel_pub.publish(gid);
+	ROS_INFO("Cancel Goal");
+	return;
+}
+
+void timercallback(const ros::TimerEvent& event)
+{
+	if (moveflag) {
+		if (movecount > 104) {  // 26 secs
+			movecount = 0;
+			system("gnome-terminal -x pkill aplay &");
+		}
+		if (movecount == 1) {
+			system("gnome-terminal -x aplay ~/sound/ssmc.wav &");
+		}			
+		movecount++;
+	} else {
+		if (movecount == 99) {
+			system("gnome-terminal -x pkill aplay &");
+			movecount = 0;
+		}
+	}
+}
+
+
+bool sound(const htbot::sound::ConstPtr& msg)
+{
+	int id;
+
+	id = msg->id;
+
+	switch (id) {
+		case 1:			
+			system("gnome-terminal -x aplay ~/sound/well.wav &");		
+			sleep(3);
+			break;
+		case 2:		
+			system("gnome-terminal -x aplay ~/sound/good_bad_ugly.wav &");
+			sleep(9);
+			break;
+		case 3:
+			system("gnome-terminal -x aplay ~/sound/honk.wav &");
+			sleep(2);
+			break;
+		case 4:
+			system("gnome-terminal -x aplay ~/sound/navigation.wav &");
+			sleep(3);
+			break;
+		case 5:
+			system("gnome-terminal -x aplay ~/sound/mapping.wav &");
+			sleep(3);
+			break;
+		case 6:
+			system("gnome-terminal -x aplay ~/sound/odom.wav &");
+			sleep(3);
+			break;
+		case 7:
+			system("gnome-terminal -x aplay ~/sound/obstacle.wav &");
+			sleep(3);
+			break;
+		case 8:
+			system("gnome-terminal -x aplay ~/sound/moving.wav &");
+			sleep(2);
+			break;
+		case 9:
+			system("gnome-terminal -x aplay ~/sound/clear.wav &");
+			sleep(1);
+			break;
+		case 10:
+			system("gnome-terminal -x aplay ~/sound/load.wav &");
+			sleep(1);
+			break;
+		case 11:
+			system("gnome-terminal -x aplay ~/sound/unload.wav &");
+			sleep(1);
+			break;
+		case 12:
+			system("gnome-terminal -x aplay ~/sound/crash_x.wav &");
+			sleep(2);
+			break;
+		case 13:
+			system("gnome-terminal -x aplay ~/sound/emsw.wav &");
+			publish_cancel();
+			sleep(2);
+			break;
+		case 14:  // robot need space
+			system("gnome-terminal -x aplay ~/sound/needspace.wav &");
+			sleep(2);
+			break;
+		case 15:  // buzzer_x 
+			system("gnome-terminal -x aplay ~/sound/buzzer_x.wav &");
+			sleep(2);
+			break;
+		case 16:  // buzzer_x 
+			system("gnome-terminal -x aplay ~/sound/Batlow.wav &");
+			sleep(2);
+			break;
+		case 17:  // nav abort 
+			system("gnome-terminal -x aplay ~/sound/Abort.wav &");
+			sleep(3);
+			break;
+		case 18:  // estop releaseed 
+			system("gnome-terminal -x aplay ~/sound/estoprel.wav &");
+			sleep(2);
+			break;
+		case 19:  // move music 
+			moveflag = true;
+			movecount = 1;			
+			break;
+		case 20:  // battery low 
+			system("gnome-terminal -x aplay ~/sound/Batlow.wav &");
+			sleep(2);
+			break;
+		case 99:  // kill aplay 
+			moveflag = false;
+			movecount = 99;
+			break;
+	}
+		
+  return true;
+}
+
+int main(int argc, char **argv)
+{
+	ros::init(argc, argv, "Sound Server");
+  ros::NodeHandle n;
+
+	moveflag = false;
+	play_sub = n.subscribe<htbot::sound>("sound", 1, sound);  // 
+  cancel_pub = n.advertise<actionlib_msgs::GoalID>("/move_base_nys/cancel",1);
+	ros::Timer timer = n.createTimer(ros::Duration(0.25), timercallback);
+  //ROS_INFO("Ready to Play Sound.");
+  ros::spin();
+
+  return 0;
+}
+
+
+

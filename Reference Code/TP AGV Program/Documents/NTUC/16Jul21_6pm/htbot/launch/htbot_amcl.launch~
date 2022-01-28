@@ -1,0 +1,15 @@
+<!-- -*- mode: XML -*- -->
+<launch>	
+	<!--include file="$(find htbot)/launch/nav.launch" /-->
+	<!--node name="tgoal" pkg="htbot" type="tgoal" output="screen" ></node-->
+	<!--node name="bar" pkg="htbot" type="bar" output="screen" ></node-->
+	<node name="sgoal" pkg="htbot" type="sgoal" output="screen" ></node>
+	<!--include file="$(find htbot)/launch/joystick.launch" /-->
+	<node name="movNode" pkg="htbot" type="movNode" output="screen" ></node> 
+	<param name="clear_time" value="10.0" /> <!-- 13 -->
+	<include file="$(find htbot)/launch/hokuyo.launch" />
+  <include file="$(find htbot)/launch/htbot.launch" />  
+  <include file="$(find htbot)/launch/move_base_htbot.launch" />  
+  <include file="$(find htbot)/launch/amcl_htbot.launch" />        
+	<node name="clearNode" pkg="htbot" type="clearNode" output="screen" ></node>  
+</launch>

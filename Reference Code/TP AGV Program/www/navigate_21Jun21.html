@@ -1,0 +1,786 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<style type="text/css" media="screen">
+<style>
+/* History : 
+		date updated : 6.5.21 12.10 pm
+*/
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+li {
+	float : left;
+}
+
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 10px 20px;
+  text-decoration: none;
+	font-size: 20px;
+}
+
+li a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+li a.active {
+  color: white;
+  background-color: #4CAF50;
+}
+.center {
+  margin: auto;
+	float: center
+  width: 60%;
+}
+
+
+.img-container {
+	text-align: center;
+}
+    
+
+button { 
+	color: #f00;
+	background:#ffffff; 
+	padding: 1px
+	font-size: 20px;
+	border: 0px
+}
+
+.center-topbar {
+  margin: auto;
+  margin-top: 1px;
+  width: 100%;
+	height: 30px;
+  border: 1px solid green;
+  padding: 1px;
+	border-radius: 10px;
+	background-color: #CCDDE0;
+}
+
+table {text-align: center;padding: 1px}
+
+</style>
+</head>
+<body onload="start()">
+<div id="topbar" class="center-topbar">
+	<table style="width:100%;padding:1px;border:0px solid black">
+		<tr style="height:20px;padding:1px;font-size:13px;vertical-align:middle">			
+			<td id="amclx" style="width:27%;height:17px;padding:1px">amclX</td>
+			<!--td id="amcly" style="width:11.1%;height:20px;padding:1px">amclY</td-->
+			<!--td id="amcla" style="width:11.1%;height:20px;padding:1px">amclA</td-->
+			<td id="robotposediff" style="width:10.5%;height:20px;padding:1px">pose</td>
+			<td id="voltage" style="width:10.5%;vertical-align:middle;height:20px;padding:1px">23.6V</td>
+			<td id="current" style="margin-top:5px;vertical-align:middle;width:10.5%;height:20px;padding:1px">2.5A</td>
+			<td id="motor" style="margin-top:5px;vertical-align:middle;width:10.5%;height:20px;padding:1px">ON</td>
+			<td id="speed" style="width:10.5%;height:20px;padding:1px">speed</td>
+			<td id="poseX" style="width:10.5%;height:20px;padding:1px">poseX</td>
+			<td id="poseY" style="width:10.5%;height:20px;padding:1px">poseY</td>
+		</tr>
+	</table>
+</div>
+<table border="0" style="width:100%">
+	<tr>		
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L3Ward3()"><h3>L3Ward3</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L5Ward5()"><h3>L5Ward5</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L11Kitchen()"><h3>L11Kitchen</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LFIN()"><h3>LFIN</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LFLD()"><h3>LFLD</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LFLBD()"><h3>LFLBD</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LBLD()"><h3>LBLD</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LBLB()"><h3>LBLB</h3></button></td>									
+	</tr>
+	<tr>					
+		<td style="padding:1px"><button style="height:35px;width:130px;padding:1px" onclick="LULB()"><h3>LULB</h3></button></td>	
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LURET()"><h3>LURET</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LUENT()"><h3>LUENT</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LFOUT()"><h3>LFOUT</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L1LRm3()"><h3>L1LRm3</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="refpoint()"><h3>Ref</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="Docking()"><h3>Dock</h3></button></td>	
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="Cancel()"><h3>Cancel</h3></button></td>	
+	</tr>
+	<tr>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="freemotor()"><h3>MotorOff</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="Onmotor()"><h3>MotorOn</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="EStop()"><h3>EStop</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:130px;padding:1px" onclick="EStopoff()"><h3>EStopRel</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="Jackup()"><h3>JackUp</h3></button></td>		
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="JackDown()"><h3>JackDw</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="picktrolley()"><h3>PickTly</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="droptrolley()"><h3>DropTly</h3></button></td>	
+	</tr>
+	<tr>			
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L3Ward3T()"><h3>L3Ward3T</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L5Ward5T()"><h3>L5Ward5T</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L11KitchenT()"><h3>L11KitchenT</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L1LRm3T()"><h3>L1LRm3T</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="refpointT()"><h3>RefT</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="DockingT()"><h3>DockT</h3></button></td>				
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick=""><h3></h3></button></td>			
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="location.href=`index.html`;"><h3>Main Menu</h3></button></td>
+	</tr>
+</table>
+
+<div class="img-container">
+	<img src="imgs/nav.jpeg" width=90% height=150px alt="rac">
+</div>
+<div class="img-container">
+<table border="0" style="width:100%">
+	<tr>		
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:10pt"></td>
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:10pt">Status : </td>
+		<td id="stat" style="padding:2px;text-align:left;font-size: 10pt"></td>
+		<td style="height:15px;width:90px;padding:2px;text-align:left;color:#f0f;font-size:10pt">Stns in Q :</td>
+		<td id="qno" style="padding:2px;text-align:left;font-size: 10pt;width:70px"></td>
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:10pt"></td>
+	</tr>
+</table> 
+</div>
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2djs.js"></script>
+<script type="text/javascript" src="js/nav2djs.js"></script>
+<script type="text/javascript" type="text/javascript">
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    func : 0.0 
+});
+
+var amcllistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/robotstatus',
+    messageType : 'htbot/robot'
+  });
+
+amcllistener.subscribe(function(message) {
+	//console.log('Received message on ' + amcllistener.name + ': ' + message.robotposediff.toFixed(1));
+	document.getElementById("amclx").innerHTML = "amcl [X="+message.amclx.toFixed(2)+" Y="+message.amcly.toFixed(2)+" A="+message.amcla.toFixed(2)+"]" ;
+	//document.getElementById("amcly").innerHTML = "amclY : "+message.amcly.toFixed(2) ;
+	//document.getElementById("amcla").innerHTML = "amclA : "+message.amcla.toFixed(2) ;
+	document.getElementById("robotposediff").innerHTML = "poseD:"+message.robotposediff.toFixed(1) ;		
+});
+
+var poselistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/robot_pose',
+    messageType : 'geometry_msgs/Pose'
+  });
+
+poselistener.subscribe(function(message) {
+	document.getElementById("poseX").innerHTML = "<img src='imgs/pX.png' width='20px' height='17px' /> : "+message.position.x.toFixed(1)+"m";	
+	document.getElementById("poseY").innerHTML = "<img src='imgs/pY.png' width='20px' height='17px' /> : "+message.position.y.toFixed(1)+"m";	
+});
+
+var statlistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/stat',
+    messageType : 'htbot/stat'
+  });
+
+statlistener.subscribe(function(message) {	
+	//console.log('Received message on ' + statlistener.name + ': ' + message.avgvolt.toFixed(1));
+	document.getElementById("voltage").innerHTML = "<img src='imgs/motor.png' width='20px' height='16px' /> : "+message.avgvolt.toFixed(1)+"V" ;
+	document.getElementById("current").innerHTML = "<img src='imgs/motor.png' width='20px' height='16px' /> : "+message.avgcurr.toFixed(1)+"A" ;
+});
+
+var speedlistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/speed',
+    messageType : 'htbot/stat_speed'
+  });
+
+speedlistener.subscribe(function(message) {
+	document.getElementById("speed").innerHTML = "<img src='imgs/speed.png' width='20px' height='16px' /> : "+message.linear.toFixed(1)+"m/s";	
+});
+
+var qlistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/queue',
+    messageType : 'htbot/queue'
+  });
+
+qlistener.subscribe(function(message) {
+    //console.log('Received message on ' + qlistener.name + ': ' + message.msg);
+		document.getElementById("qno").innerHTML = message.noQ ;
+		//document.getElementById("queue1").innerHTML = message.fLP1 ;
+		//document.getElementById("queue2").innerHTML = message.fLP2 ;
+		//document.getElementById("queue3").innerHTML = message.fLP3 ;
+    //listener.unsubscribe();
+});
+
+var flistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/feedback',
+    messageType : 'htbot/status'
+});
+
+flistener.subscribe(function(message) {
+    //console.log('Received message on ' + flistener.name + ': ' + message.msg);
+		document.getElementById("stat").innerHTML = message.msg ;
+		document.getElementById("stat").style.color = "blue";
+});
+
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+var button = new ROSLIB.Topic({
+    ros : ros,
+    name : '/button',
+    messageType : 'std_msgs/UInt16'
+});
+
+var fbutton = new ROSLIB.Topic({
+    ros : ros,
+    name : '/fbutton',
+    messageType : 'std_msgs/UInt16'
+});
+
+var task = new ROSLIB.Topic({
+    ros : ros,
+    name : '/fr_fleet',
+    messageType : 'htbot/task'
+});
+
+var chkmodeTimer = function checkOpMode() {
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Operation Mode has Changed. The main webpage will be loaded");
+			location.replace("index.html");
+		}
+  });
+}
+
+//setInterval(chkmodeTimer,1500);
+
+function start() {
+	/*
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == 55) {
+			document.getElementById("motor").innerHTML = "<img src='imgs/motor.png' width='20px' height='17px' /> : ON" ;
+		} else {
+			document.getElementById("motor").innerHTML = "<img src='imgs/motor.png' width='20px' height='17px' /> : OFF" ;
+		}
+  });
+	
+	*/
+}
+
+function picktrolley() {	
+	alert("------ Pick Trolley -----");
+	cmdreq.cmd = 105;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function droptrolley() {	
+	alert("------ Drop Trolley -----");
+	cmdreq.cmd = 105;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("stat").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function EStop() {	
+	alert("------ Activate EStop -----");
+	var msg = new ROSLIB.Message({
+		data : 15,  // Estop
+	});
+	button.publish(msg);
+} 
+
+function EStopoff() {	
+	alert("------ Release EStop -----");
+	var msg = new ROSLIB.Message({
+		data : 16,  // Estop Release
+	});
+	button.publish(msg);
+}
+
+function zeroStart() {	
+	//alert("---- Start Localisation Check --------");
+	//document.getElementById("stat").innerHTML = "Zero Refernce" ;
+	PM.name = 'ZeroLocalisation';
+	PM.set(true);
+	//location.replace("robotdata.html");
+}
+
+function zero() {	
+	alert("---- Start Localisation Check --------");
+	document.getElementById("stat").innerHTML = "Zero Reference" ;
+	PM.name = 'ZeroReference';
+	PM.set(true);
+	//location.replace("robotdata.html");
+}
+
+function rezero() {	
+	alert("---- Start Localisation Check --------");
+	document.getElementById("stat").innerHTML = "Restart Localisation" ;
+	PM.name = 'restart_localisation';
+	PM.set(true);
+	//location.replace("robotdata.html");
+}
+
+function refpointT() {	
+	alert("---- Move to refpoint Task -------");
+	var msg = new ROSLIB.Message({
+		cmd : 4,  
+		toLP : 0,
+		type : 1
+	});
+	task.publish(msg);
+}
+
+function refpoint() {	
+	alert("---- Move To Reference Point --------");
+	document.getElementById("stat").innerHTML = "Moving To Reference Point" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 0;	
+	cmdreq.lps = "REF";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function freemotor() {	
+	alert("---- Release Motor --------");
+	document.getElementById("stat").innerHTML = "Free Motor" ;
+	cmdreq.cmd = 40;
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("motor").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+		document.getElementById("motor").innerHTML = "<img src='imgs/motor.png' width='25px' height='18px' /> : OFF" ;
+  });	
+}
+
+function Onmotor() {	
+	alert("---- Engage Motor --------");
+	document.getElementById("stat").innerHTML = "Engage Motor" ;
+	cmdreq.cmd = 59;
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		document.getElementById("motor").innerHTML = "<img src='imgs/motor.png' width='25px' height='18px' /> : ON" ;
+  });	
+}
+
+function DockingT() {	
+	alert("---- Move to Docking Task -------");
+	var msg = new ROSLIB.Message({
+		cmd : 4,  
+		toLP : 1,
+		type : 1
+	});
+	task.publish(msg);
+}
+
+function Docking() {	
+	alert("---- Move To Docking Station --------");
+	document.getElementById("stat").innerHTML = "Moving To Docking Station" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 1;	
+	cmdreq.lps = "DOCK";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LFOUT() {	
+	alert("---- Move too Outside of Lift -------");
+	document.getElementById("stat").innerHTML = "Moving To LFOUT" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 45;	
+	cmdreq.lps = "LFOUT";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LURET() {	
+	alert("---- Move too Laundry Door Entrance Return-------");
+	document.getElementById("stat").innerHTML = "Moving To LURET" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 87;	
+	cmdreq.lps = "LURET";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LUENT() {	
+	alert("---- Move too Laundry Door Entrance -------");
+	document.getElementById("stat").innerHTML = "Moving To LUENT" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 88;	
+	cmdreq.lps = "LUENT";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LFLBD() {	
+	alert("---- Move too LiftArea Lobby Door -------");
+	document.getElementById("stat").innerHTML = "Moving To LFLBD" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 46;	
+	cmdreq.lps = "LFLBD";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+
+function LFIN() {	
+	alert("---- Move into Lift -------");
+	document.getElementById("stat").innerHTML = "Moving To LFIN" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 48;	
+	cmdreq.lps = "LFIN";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function L3Ward3T() {	
+	alert("---- Move to L3Ward3 Task -------");
+	var msg = new ROSLIB.Message({
+		cmd : 4,  
+		toLP : 3,
+		type : 1
+	});
+	task.publish(msg);
+}
+
+function L3Ward3() {	
+	alert("---- Move to L3Ward3 -------");
+	document.getElementById("stat").innerHTML = "Moving To L3Ward3" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 3;	
+	cmdreq.lps = "L3Ward3";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function L5Ward5T() {	
+	alert("---- Move to L5Ward5 Task -------");
+	var msg = new ROSLIB.Message({
+		cmd : 4,  
+		toLP : 5,
+		type : 1
+	});
+	task.publish(msg);
+}
+
+function L5Ward5() {	
+	alert("---- Move to L5Ward5 -------");
+	document.getElementById("stat").innerHTML = "Moving To L5Ward5" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 5;	
+	cmdreq.lps = "L5Ward5";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function L11KitchenT() {	
+	alert("---- Move to L11Kitchen Task -------");
+	var msg = new ROSLIB.Message({
+		cmd : 4,  
+		toLP : 3,
+		type : 11
+	});
+	task.publish(msg);
+}
+
+function L11Kitchen() {	
+	alert("---- Move to L11Kitchen -------");
+	document.getElementById("stat").innerHTML = "Moving To L11Kitchen" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 11;	
+	cmdreq.lps = "L11Kitchen";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LFLD() {	
+	alert("---- Move to LFLD -------");
+	document.getElementById("stat").innerHTML = "Moving To LFLD" ;
+	//alert("Move to Station 3");
+	cmdreq.cmd = 11;
+	cmdreq.LP = 49;	
+	cmdreq.lps = "LFLD";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LBRA() {	
+	alert("---- Move to LBRA -------");
+	document.getElementById("stat").innerHTML = "Moving LBRA" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 69;	
+	cmdreq.lps = "LBRA";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LBLD() {	
+	alert("---- Move to LBLD -------");
+	document.getElementById("stat").innerHTML = "Moving To LBLD" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 68;	
+	cmdreq.lps = "LBLD";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LBLB() {	
+	alert("---- Move to LBLB -------");
+	document.getElementById("stat").innerHTML = "Moving To LBLB" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 67;	
+	cmdreq.lps = "LBLB";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function L1LRm3T() {	
+	alert("---- Move to L1LRm3 Task -------");
+	var msg = new ROSLIB.Message({
+		cmd : 4,  
+		toLP : 73,
+		type : 1
+	});
+	task.publish(msg);
+}
+
+function L1LRm3() {	
+	alert("---- Move to L1LRm3 -------");
+	document.getElementById("stat").innerHTML = "Moving To L1LRm3" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 73;	
+	cmdreq.lps = "L1LRm3";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LULB() {	
+	alert("---- Move to LULB -------");
+	document.getElementById("stat").innerHTML = "Moving To LULB" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 89;	
+	cmdreq.lps = "LULB";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LFRA() {	
+	alert("---- Move to LFRA -------");
+	document.getElementById("stat").innerHTML = "Moving To LFRA" ;
+	cmdreq.cmd = 11;
+	cmdreq.LP = 47;	
+	cmdreq.lps = "LFRA";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function Cancel() {	
+	alert("---- Abort/Cancel Navigation -------");
+	document.getElementById("stat").innerHTML = "Abort/Cancel Navigation" ;
+	cmdreq.cmd = 29;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function Jackup() {		
+	alert("---- Move Jack Up -------");
+	var msg = new ROSLIB.Message({
+		data : 602,  
+	});
+	fbutton.publish(msg);
+	//PM.name = 'UPJACK';
+	//PM.set(true);
+	//PM.name = 'ACTIVATEJACK';
+	//PM.set(true);
+}
+
+function JackDown() {		
+	alert("---- Move Jack Down -------");
+	var msg = new ROSLIB.Message({
+		data : 603,  
+	});
+	fbutton.publish(msg);
+	//PM.name = 'UPJACK';
+	//PM.set(false);
+	//PM.name = 'ACTIVATEJACK';
+	//PM.set(true);
+}
+
+function logout() {
+	alert("---- Logout -------");
+	PM.name = 'closeROSRAC';
+	PM.set(true);
+}
+
+function shutdown_nopwd() {	
+	alert("---- Shutdown -------");
+	document.getElementById("stat").innerHTML = "Shutdown Activated" ;
+	cmdreq.cmd = 2;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,52 @@
+controller_frequency: 20.0 #10.0 #14.0 #to run control loop and send vel cmd
+#recovery_behaviors: [{name: conservative_reset, type: clear_costmap_recovery/ClearCostmapRecovery}, {name: rotate_recovery, type: rotate_recovery/RotateRecovery}, {name: aggressive_reset, type: clear_costmap_recovery/ClearCostmapRecovery}]
+conservative_reset:
+ reset_distance: 3.0
+aggressive_reset:
+ reset_distance: 3.5
+#costmap_reset:
+# reset_distance: 2.0
+clearing_rotation_allowed: false
+recovery_behavior_enabled: false
+planner_patience: 5.0 # time planner will wait in an attempt to find a valid plan before space clearing
+controller_patience: 15.0 # time to wait for valid control cmd before clearing
+#base_global_planner: carrot_planner/CarrotPlanner # navfn/NavfnROS
+#base_global_planner: navfn/NavfnROS
+
+TrajectoryPlannerROS:
+# Robot Configuration Parameters
+  max_vel_x: 0.75 #0.6 #0.55
+  min_vel_x: 0.15 #0.15 #0.09
+  escape_vel: -0.015 #-0.05 #-0.1
+  escape_reset_dist: 0.08 #0.1
+  escape_reset_theta: 0.78 #0.5 #0.7854 #1.0472
+  max_rotational_vel: 0.3 #0.35 #0.4
+  min_in_place_rotational_vel: 0.18 #0.15 #0.3
+  
+  acc_lim_th: 0.02 #0.11 #0.2 #3.0
+  acc_lim_x: 0.02 #0.11 #0.2 #1.5 #2.5 2.0
+  acc_lim_y: 0.02 #0.11 #0.2 #1.5 #2.5 2.0
+  
+  holonomic_robot: false
+
+# Goal Tolerance Parameters
+  yaw_goal_tolerance: 0.09 #0.12 #0.15
+  xy_goal_tolerance: 0.22 #0.18
+  latch_xy_goal_tolerance: true #false #true #false
+
+# Forward Simulation Parameters
+  sim_time: 1.5 #2.0 #1.8
+  vx_samples: 20 #30 #20 #8 #15 #8
+  vtheta_samples: 20 #30 #20
+
+# Trajectory Scoring Parameters
+  meter_scoring: true
+  path_distance_bias: 1.6 #0.05 #1.5 #0.7 #0.6 #3.0 #2.5 #0.6
+  goal_distance_bias: 1.0 #35.0 #1.7 #1.2 #1.0 #3.8 #0.8 #0.8
+  occdist_scale: 0.03 #0.045 #0.01
+  heading_lookahead: 0.625 #0.325
+  dwa: false #true
+#  publish_cost_grid_pc: true
+
+# Oscillation Prevention Parameters
+  oscillation_reset_dist: 0.05 #0.05

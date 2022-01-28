@@ -1,0 +1,41 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <node pkg="htbot" type="UsbEpos" name="UsbEpos" respawn="true" output="screen" launch-prefix="taskset -c 2" >
+    <param name="LEFT_MOTOR" value= "/dev/sensors/LEFTMOTOR"/>
+    <param name="RIGHT_MOTOR" value= "/dev/sensors/RIGHTMOTOR"/>
+		<param name="PBAUDL" type="int" value= "4"/>
+		<param name="EBAUDL" type="int" value= "4"/>
+		<param name="PBAUDR" type="int" value= "4"/>
+		<param name="EBAUDR" type="int" value= "4"/>
+		<param name="CHANGEBAUDRATEL" type="int" value= "0"/>
+		<param name="CHANGEBAUDRATER" type="int" value= "0"/>
+    <param name="AXLE_LEN" value="531.0"/> <!-- 438 520 --><!-- 437 -->
+    <param name="WHEEL_DIA" value="200.0"/> <!-- 170 --><!-- 200 -->
+    <param name="GEAR_RATIO" value="32.0"/> <!-- 43 --><!-- 81 -->
+    <param name="STEPS_PER_REV" value="2000"/>
+    <param name="wheel_circum_correction" value="0.996"/> <!--0.983 0.9733--><!--0.955-->
+    <param name="wheel_base_correction" value="1.0025"/>
+    <param name="odom_angular_scale_correction" value="1.0"/>
+
+    <param name="CurrentRegulatorPGain" value="937"/> <!-- 980 937 -->
+    <param name="CurrentRegulatorIGain" value="656"/>  <!-- 700 656 -->
+    <param name="MotorMaxContinuousCurrent" value="5800"/>
+
+    <param name="PositionPGain" value="2200"/> <!-- 2646 2200 2646 -->
+    <param name="PositionIGain" value="45"/> <!-- 48 50 48 43 -->
+    <param name="PositionDGain" value="611"/> <!-- 100 611 -->
+    <param name="PositionProfileAcceleration" value="900"/> <!--900 1350 1200 3000 -->
+    <param name="PositionProfileDeceleration" value="900"/> <!--900 9990 5000 4200 6000 -->
+    <param name="PositionProfileVelocity" value="400"/> <!--600 700 450 1600 2000 -->
+    <param name="MaxProfileVelocity" value="4500"/> <!-- 7000 5000 6000 -->
+		<param name="MaxProfileVelocityMD" value="400"/> <!-- 6000 -->
+
+    <param name="VelocityPGain" value="850"/> <!-- 850 -->
+    <param name="VelocityIGain" value="250"/> <!-- 200 -->
+    <param name="MaxFollowError" value="860000"/>
+    <param name="PositionProfileWindow" value="1000"/> <!--400 200-->
+    <param name="PositionProfileWindowTime" value="1"/> <!-- 50 250 -->
+    <param name="CurrentModeSetting" value="0"/>
+    <param name="ThermalTimeConstantWinding" value="41"/><!--1316-->
+  </node> <!--htbot node -->
+</launch>

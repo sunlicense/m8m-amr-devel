@@ -1,0 +1,371 @@
+/*
+ * This node is to remote control the transporter to create map and define 
+ * the paths and stop points.
+ */
+
+
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+#include <signal.h>
+#include <termios.h>
+#include <stdio.h>
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/thread.hpp"
+#include <tf/transform_listener.h>
+#include <tf/transform_datatypes.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <actionlib/client/simple_action_client.h>
+#include "htbot/Command.h"
+
+
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
+
+class MapNode
+{
+public:
+	MapNode();
+	bool getPose();
+	void setupSendGoal();
+	void sendGoal(double x,double y, double z, double rx, double ry, double rz, double rw);
+	bool openDataFile();
+	void storePose();	
+	void savePose();
+	void readPose();
+	void sendPose(int);
+	void cmdCallback(const htbot::Command::ConstPtr& msg);
+	void monitorPose();
+	double calposeDist();
+	void saveLandPt();
+	
+	FILE *pfp;  // pose data file
+	FILE *lfp;  // landing points data file
+
+	std::string posefile;
+	std::string landfile;
+	double tx,ty,tz;
+	double rx,ry,rz,rw;
+	double otx,oty,otz;
+	double orx,ory,orz,orw;
+	double poseInfo[500][7];
+	int landingPoint[100];  // store index of landing point's pose
+	bool mflag;
+	int numPose,cPose,numLP;
+	
+	
+private:
+	ros::NodeHandle nh_,ph_;
+
+	ros::Time first_publish_;
+	ros::Time last_publish_;	
+	
+	ros::Subscriber cmd_sub;
+
+	double rate,poseDist;
+	tf::TransformListener listener;
+	tf::StampedTransform transform;
+	geometry_msgs::TransformStamped robotpose;
+	move_base_msgs::MoveBaseGoal goal;
+	MoveBaseClient ac;	
+};
+
+MapNode::MapNode():
+	ph_("~"),mflag(false),numPose(0),cPose(0),numLP(0),
+	rx(0.0),ry(0.0),rz(0.0),rw(0.0),
+	tx(0.0),ty(0.0),tz(0.0),
+	ac("move_base", true)
+{
+	ph_.getParam("pose_file",posefile);	
+	ph_.getParam("landing_points_file",landfile);	
+	ph_.param("pose_monitor_rate", rate, 1.0);
+	ph_.param("pose_distance", poseDist, 2.5);
+	cmd_sub = ph_.subscribe("robot_cmd", 100, &MapNode::cmdCallback,this);
+	
+}
+
+
+void MapNode::cmdCallback(const htbot::Command::ConstPtr& msg)
+{
+	char buf [100];
+	int pid;
+
+	//ROS_INFO("htbot MapNode..");
+	
+	switch (msg->cmd)
+	{
+		case 30 : // initialise map. starting mapping process. first landing point is the starting location
+			//set flag to start mapping. reset the mapping functions
+			ROS_INFO("MapNode : Start Mapping");
+			tx = 0.0;
+			ty = 0.0;
+			tz = 0.0;
+			otx = 0.0;
+			oty = 0.0;
+			otz = 0.0;
+			mflag = true;
+			cPose = 0; // counter for pose array
+			numPose = 0;  // number of pose
+			numLP = 0;  // 
+			//set flag to start pose monitoring and recording waypoints -about 2.5m apart- in pose arrays
+			break;
+		case 31 : // mark and save next landing points 
+			// rotate on the spot and get pose and save pose	
+			ROS_INFO("MapNode : Mark/Save LP");	
+			
+			if (mflag) {	
+				if (getPose()) {  // get robot pose.
+					landingPoint[numLP] = numPose;  // store landing point's pose index
+					storePose(); // store pose into array if pose ok
+					numLP++;
+					// rotate robot
+					//ROS_INFO("Rotating Robot to get better map");
+					//sendGoal(tx,ty,tz,rx,ry,0.0,1.0);
+					//sendGoal(tx,ty,tz,rx,ry,rz,rw);
+				}
+			}
+			
+			break;
+		case 32 : // stop mapping process
+			// set flag to stop mapping. 
+			ROS_INFO("MapNode : Stop Mapping");	
+			mflag = false;			
+			break;		
+		case 33 :  // save map 
+			// save map to file		
+			ROS_INFO("MapNode : Save Map");				
+			sprintf(buf,"rosrun map_server map_saver -f /home/transporter/catkin_ws/src/htbot/maps/docmap");
+			system(buf);	
+			//savePose();
+			//saveLandPt();			
+			break;		
+		case 34 :  // save pose arrays
+			// save  pose to file		
+			ROS_INFO("MapNode : Save Pose");				
+			//sprintf(buf,"rosrun map_server map_saver -f /home/transporter/catkin_ws/src/htbot/maps/docmap");
+			//system(buf);	
+			mflag = false; 
+			savePose();
+			saveLandPt();
+	}
+}
+
+double MapNode::calposeDist()
+{
+	double dist;
+	dist = (tx-otx)*(tx-otx);
+	dist = dist + (ty-oty)*(ty-oty);
+	dist = sqrt(dist);
+	return dist;
+}
+
+void MapNode::monitorPose()
+{
+	ros::Rate r(rate);
+	
+	while(ros::ok())
+	{
+		// monitor pose tasks
+		//ROS_INFO("Monitoring Pose...");		
+		if (mflag) {
+			if (getPose()) {
+				// pose ok
+				// check if distance > 2.5m
+				if (calposeDist() > poseDist) {			
+					storePose(); // store pose into array if pose ok
+					ROS_INFO("Storing Pose...");	
+				}
+			}
+		}
+		ros::spinOnce();  // need tp spin otherwise cannot receive robot_cmd
+		r.sleep();
+	}
+}
+
+void MapNode::setupSendGoal()
+{
+	while(!ac.waitForServer(ros::Duration(5.0))){
+    ROS_INFO("Waiting for the move_base action server to come up");
+  }
+  ROS_INFO("Done SetUpSendGoal");
+}
+
+bool MapNode::openDataFile() 
+{
+	pfp = fopen(posefile.c_str(), "w");
+  if (pfp == NULL) {
+  	ROS_INFO("I couldn't open posedata.dat for writing.\n");    
+  	return false;
+  }  
+  return true;
+}
+
+void MapNode::storePose() 
+{		
+	poseInfo[numPose][0] = tx;
+	poseInfo[numPose][1] = ty;
+	poseInfo[numPose][2] = tz;
+	poseInfo[numPose][3] = rx;
+	poseInfo[numPose][4] = ry;
+	poseInfo[numPose][5] = rz;
+	poseInfo[numPose][6] = rw;	
+	numPose++;		
+	otx = tx;
+	oty = ty;
+	otz = tz;
+	orx = rx;
+	ory = ry;
+	orz = rz;
+	orw = rw;
+}
+
+void MapNode::readPose() 
+{		
+	pfp = fopen(posefile.c_str(), "r");
+  if (pfp == NULL) {
+  	ROS_INFO("I couldn't open posedata.dat to read.\n");    
+  	return;
+  }
+	for (int i=0;i<7;i++) {
+		fscanf(pfp, "%lf %lf %lf %lf %lf %lf %lf\n", &tx,&ty,&tz,&rx,&ry,&rz,&rw);
+		poseInfo[i][0] = tx;
+		poseInfo[i][1] = ty;
+		poseInfo[i][2] = tz;
+		poseInfo[i][3] = rx;
+		poseInfo[i][4] = ry;
+		poseInfo[i][5] = rz;
+		poseInfo[i][6] = rw;	
+	}
+	fclose(pfp);
+}
+
+void MapNode::savePose() 
+{		
+	pfp = fopen(posefile.c_str(), "w");
+  if (pfp == NULL) {
+  	ROS_INFO("I couldn't open posedata.dat for writing.\n");    
+  	return;
+  }
+	fprintf(pfp,"%d\n",numPose);
+	for (int i=0;i<numPose;i++) {
+		tx = poseInfo[i][0];
+		ty = poseInfo[i][1];
+		tz = poseInfo[i][2];
+		rx = poseInfo[i][3];
+		ry = poseInfo[i][4];
+		rz = poseInfo[i][5];
+		rw = poseInfo[i][6];
+		fprintf(pfp,"%.3f %.3f %.3f %.3f %.3f %.3f %.3f\n",tx,ty,tz,rx,ry,rz,rw);	
+	}
+  fclose(pfp);	
+}
+
+void MapNode::saveLandPt() 
+{		
+	int idx;
+	lfp = fopen(landfile.c_str(), "w");
+  if (lfp == NULL) {
+  	ROS_INFO("I couldn't open landdata.dat for writing.\n");    
+  	return;
+  }
+	fprintf(lfp,"%d\n",numLP);
+	for (int i=0;i<numLP;i++) {
+		idx = landingPoint[i];		
+		fprintf(lfp,"%d\n",idx);	
+	}
+  fclose(lfp);	
+}
+
+void MapNode::sendPose(int i) 
+{
+	tx = poseInfo[i][0];
+	ty = poseInfo[i][1];
+	tz = poseInfo[i][2];
+	rx = poseInfo[i][3];
+	ry = poseInfo[i][4];
+	rz = poseInfo[i][5];
+	rw = poseInfo[i][6];
+	sendGoal(tx,ty,tz,rx,ry,rz,rw);
+}
+
+void MapNode::sendGoal(double x,double y, double z, double rx, double ry, double rz, double rw)
+{
+	char buf [100];
+	
+	goal.target_pose.header.frame_id = "map";
+  goal.target_pose.header.stamp = ros::Time::now();
+  goal.target_pose.pose.position.x = x;
+  goal.target_pose.pose.position.y = y;
+  goal.target_pose.pose.position.z = z;
+  goal.target_pose.pose.orientation.x = rx;
+  goal.target_pose.pose.orientation.y = ry;
+  goal.target_pose.pose.orientation.z = rz;
+  goal.target_pose.pose.orientation.w = rw;  
+
+	sprintf(buf," Sending Goal           ");
+	printf("\033[%d;%dH%s\n",24,10,buf);	
+  ac.sendGoal(goal);
+  sprintf(buf," Wait for Completion   ");
+	printf("\033[%d;%dH%s\n",25,10,buf);
+  ac.waitForResult();
+	//ROS_INFO("Result is Back");
+  if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    sprintf(buf," Horray Reached Goal   ");
+		printf("\033[%d;%dH%s\n",26,10,buf);
+	}
+  else 
+  {
+    sprintf(buf," Error in Reaching Goal");
+		printf("\033[%d;%dH%s\n",26,10,buf);		
+	}
+	sleep(2);
+	sprintf(buf,"                       ");
+	printf("\033[%d;%dH%s\n",24,10,buf);
+	printf("\033[%d;%dH%s\n",25,10,buf);
+	printf("\033[%d;%dH%s\n",26,10,buf);
+}
+
+bool MapNode::getPose() 
+{
+	char buf [100];	
+	try
+	{
+		listener.lookupTransform("/map", "/base_link", ros::Time(0), transform);
+		tf::transformStampedTFToMsg(transform,robotpose);
+		tx = robotpose.transform.translation.x;
+		ty = robotpose.transform.translation.y;
+		tz = robotpose.transform.translation.z;
+		rx = robotpose.transform.rotation.x;
+		ry = robotpose.transform.rotation.y;
+		rz = robotpose.transform.rotation.z;
+		rw = robotpose.transform.rotation.w;
+		return true;
+	}
+	catch (tf::TransformException ex)
+	{
+		ROS_INFO("%s",ex.what());	
+		return false;	
+	}
+}
+
+
+int main(int argc, char** argv)
+{
+	ros::init(argc, argv, "htbot mapping node");
+	
+	MapNode mNode;
+	ros::NodeHandle n;
+	ros::MultiThreadedSpinner spinner(4);	
+		
+	mNode.readPose();
+	boost::thread my_thread(boost::bind(&MapNode::monitorPose, &mNode));		
+	my_thread.interrupt() ;
+	my_thread.join() ;
+	spinner.spin();
+	return 0;
+}
+
+
+
+

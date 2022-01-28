@@ -1,0 +1,14 @@
+int8 cmd
+int16 startidx
+int16 lastidx
+int16 numgoal
+float32 x
+float32 y
+float32 z
+float32 rx
+float32 ry
+float32 rz
+float32 rw
+float32 pd
+float32 pa
+int8 opt

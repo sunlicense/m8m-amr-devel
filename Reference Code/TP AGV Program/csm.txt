@@ -1,0 +1,25 @@
+# activate main ROS install
+source /opt/ros/melodic/setup.bash
+
+# update local indices
+sudo apt update
+rosdep update
+
+# catkin-tools supports workspaces with 'mixed' build types, (ie:
+# catkin and non-catkin packages). We could also use catkin_make_isolated.
+sudo apt install python-catkin-tools
+
+# create workspace (skip if you already have one)
+mkdir -p $HOME/catkin_ws/src
+cd $HOME/catkin_ws
+
+# clone all sources
+git clone https://github.com/AndreaCensi/csm.git src/csm
+git clone https://github.com/ccny-ros-pkg/scan_tools.git src/scan_tools
+
+# install all dependencies (note: not adding '-y' here, so you'll have to
+# accept all installation commands manually)
+rosdep install --from-paths $HOME/catkin_ws/src --ignore-src
+
+# build the workspace (or: catkin_make_isolated)
+catkin build

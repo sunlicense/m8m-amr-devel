@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-TW"><head>
+ <title>TP AGV-Bot</title>
+ <meta name="keywords" content="industry 4.0, cloud based">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <!-- Required meta tags -->
+ <meta charset="utf-8">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge">
+ <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+ <link rel="icon" href="https://www.starwing.com.tw/img/icon_sw.jpg">
+
+ <link media="all" type="text/css" rel="stylesheet" href="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/frontend-de4eecaaa5.css">
+
+<link rel="stylesheet" href="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/frontstyle20190108.css">
+
+<script async="" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/analytics.js"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-109897682-2', 'auto', 't0', {'userId': '9c83069fe86fe5e0cc97542d09bf557bd31c2892'});ga('set', 'anonymizeIp', true);ga('send', 'pageview');</script>
+    </head>
+
+    
+    <body><nav class="navbar navbar-expand-md">
+  <div class="container container-header">
+    <div class="mobile-memu-btn" data-ga-event="" data-ga-ec="Header" data-ga-ea="漢堡選單icon (白底藍線條,圓形,常駐左上)" data-ga-el="en">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <a class="navbar-brand" href="https://www.starwing.com.tw/en" data-ga-event="" data-ga-ec="Header" data-ga-ea="天奕科技 Starwing Logo" data-ga-el="en">
+      <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/logo_sw_head.png" alt="STARWING Logo">
+    </a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link d-none d-md-block" href="https://www.starwing.com.tw/en/product" id="technology_link" aria-haspopup="true" aria-expanded="false" data-ga-event="" data-ga-ec="Header" data-ga-ea="技術" data-ga-el="en">Product</a>
+          <a class="nav-link d-md-none" href="https://www.starwing.com.tw/en/product" id="technology_link" aria-haspopup="true" aria-expanded="false" data-ga-event="" data-ga-ec="Header" data-ga-ea="技術" data-ga-el="en">Product</a>
+          <!-- <div class="dropdown-menu technology__fixed-en " aria-labelledby="technology_link">
+            <a class="dropdown-item" href="https://www.starwing.com.tw/en/technology#sips" data-ga-event data-ga-ec="Header" data-ga-ea="SiPS" data-ga-el="en">SiPS</a>
+            <a class="dropdown-item" href="https://www.starwing.com.tw/en/technology#hardware" data-ga-event data-ga-ec="Header" data-ga-ea="定位設備" data-ga-el="en">Hardware</a>
+          </div> -->
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link d-none d-md-block" href="https://www.starwing.com.tw/en/applications" id="applications_link" aria-haspopup="true" aria-expanded="false" data-ga-event="" data-ga-ec="Header" data-ga-ea="方案" data-ga-el="en">Applications</a>
+          <a class="nav-link d-md-none" href="#" id="applications_link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-ga-event="" data-ga-ec="Header" data-ga-ea="方案" data-ga-el="en">Applications</a>
+          <div class="dropdown-menu applications__fixed-en" aria-labelledby="applications_link">
+                          <a class="dropdown-item" href="https://www.starwing.com.tw/en/applications#app18" data-ga-event="" data-ga-ec="Header" data-ga-ea="工廠產線" data-ga-el="en">Factory</a>
+                          <a class="dropdown-item" href="https://www.starwing.com.tw/en/applications#app10" data-ga-event="" data-ga-ec="Header" data-ga-ea="倉儲物流" data-ga-el="en">Warehouse/Logistics</a>
+                          <a class="dropdown-item" href="https://www.starwing.com.tw/en/applications#app9" data-ga-event="" data-ga-ec="Header" data-ga-ea="醫療院所" data-ga-el="en">Medical Center</a>
+                          <a class="dropdown-item" href="https://www.starwing.com.tw/en/applications#app19" data-ga-event="" data-ga-ec="Header" data-ga-ea="長照中心" data-ga-el="en">Care Center</a>
+                          <a class="dropdown-item" href="https://www.starwing.com.tw/en/applications#app20" data-ga-event="" data-ga-ec="Header" data-ga-ea="監獄看守所" data-ga-el="en">Prison</a>
+                          <a class="dropdown-item" href="https://www.starwing.com.tw/en/applications#app12" data-ga-event="" data-ga-ec="Header" data-ga-ea="活動展覽" data-ga-el="en">Exhibition</a>
+                    </div></li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://www.starwing.com.tw/en/show_cases" data-ga-event="" data-ga-ec="Header" data-ga-ea="案例" data-ga-el="en">Show Cases</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://www.starwing.com.tw/en/reports" data-ga-event="" data-ga-ec="Header" data-ga-ea="報導" data-ga-el="en">Reports</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link d-none d-md-block" href="https://www.starwing.com.tw/en/about" id="about_link" aria-haspopup="true" aria-expanded="false" data-ga-event="" data-ga-ec="Header" data-ga-ea="關於" data-ga-el="en">About</a>
+          <a class="nav-link d-md-none" href="#" id="about_link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-ga-event="" data-ga-ec="Header" data-ga-ea="關於" data-ga-el="en">About</a>
+          <div class="dropdown-menu about__fixed-en" aria-labelledby="about_link">
+            <a class="dropdown-item" href="https://www.starwing.com.tw/en/about#about-us" data-ga-event="" data-ga-ec="Header" data-ga-ea="公司簡介" data-ga-el="en">About Us</a>
+            <a class="dropdown-item" href="https://www.starwing.com.tw/en/about#latest-news" data-ga-event="" data-ga-ec="Header" data-ga-ea="最新消息" data-ga-el="en">Latest News</a>
+            <a class="dropdown-item" href="https://www.starwing.com.tw/en/about#faq" data-ga-event="" data-ga-ec="Header" data-ga-ea="問與答" data-ga-el="en">FAQ</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link d-none d-md-block" href="#" id="languages_link" aria-haspopup="true" aria-expanded="false" data-ga-event="" data-ga-ec="Header" data-ga-ea="Language" data-ga-el="en">Language</a>
+          <a class="nav-link d-md-none" href="#" id="languages_link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-ga-event="" data-ga-ec="Header" data-ga-ea="Language" data-ga-el="en">Language</a>
+          <div class="dropdown-menu languages__fixed" aria-labelledby="languages_link">
+                          <a class="dropdown-item" href="https://www.starwing.com.tw/en/locale/en" data-ga-event="" data-ga-ec="Header" data-ga-ea="English" data-ga-el="en">English</a>
+                          <a class="dropdown-item" href="https://www.starwing.com.tw/en/locale/tw" data-ga-event="" data-ga-ec="Header" data-ga-ea="繁體中文" data-ga-el="en">繁體中文</a>
+                      </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="mobile-navbar-fill d-none"></div>
+
+        <section class="banner-wall" data-ga-event="" data-ga-ec="產品" data-ga-ea="Banner: 產品 | Technology 最先進的軟硬體技術，最完整的工程維運能力" data-ga-el="en">
+    <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/banner_technology_tit_20190917.png" alt="Technology | The most advanced software and hardware technology, the most complete engineering maintenance" class="banner-title">
+    <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/banner_technology_20190917.png" alt="Technology | The most advanced software and hardware technology, the most complete engineering maintenance" class="bg-img">
+  </section>
+
+    <div class="container text-center pt-100 mb-100 sips-block" id="sips">
+    <div class="container">
+      <h1 class="section-title" data-ga-event="" data-ga-ec="產品" data-ga-ea="Title: SiPS 公分級室內定位系統 Centimeter-Level Indoor Positioning System" data-ga-el="en">
+        SiPS        <p>
+                      ( STARWING intelligent indoor <br class="d-md-none">positioning system )
+                  </p>
+      </h1>
+
+      <p class="summary-txt mb-100 summary-txt__fixed-en" lang="en">
+        SiPS is the most advanced indoor positioning solution in the 
+world. It combines the unique AOA(Angle-of-Arrival) signal tracking 
+device with A.I. computing and analysis technology. With AOA device, the
+ positioning accuracy reaches centimeter-level, 10 times superior than 
+industry average. By adopting A.I. technology of machine learning and 
+neural network, SiPS can explore the insightful information behind those
+ location data, such as historical path tracing, path prediction, 
+behavior analysis, heatmap analysis, and friendship map. SiPS’s total 
+solution includes hardware, software, interface customization, system 
+integration and cloud service. SiPS has assisted numerous customers in 
+smart field upgrade, such as. equipment automatize, asset &amp; 
+personnel tracking, behavior analysis, security surveillance.      </p>
+
+       
+        <div class="chart_sips_en">
+          <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/chart_sips.png" alt="Technology | The most advanced software and hardware technology, the most complete engineering maintenance" class="chart_sips_img_en">
+        </div>
+            
+    </div>
+  </div>
+
+
+    <div class="container-gray text-center pt-100  sips-block" id="hardware">
+    <div class="container">
+      <h1 class="section-title" data-ga-event="" data-ga-ec="產品" data-ga-ea="Title: 定位架構 Hardware" data-ga-el="en">
+        Structure of Indoor Positioning        <p>
+                  </p>
+      </h1>
+
+      <div class="summary-list mb-100">
+        <ul>
+          <li>Tech concept: AOA (Angle of Arrival)</li>
+          <li>Accuracy: 30cm</li>
+        </ul>
+      </div>
+
+      <div class="card-group">
+        <div>
+          <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/soip_chart_new.png" class="bg-img">
+        </div>
+        <!-- <div class="card">
+          <img class="card-img-top" src="/img/p_sips_1.png" alt="Forward Positioning" data-ga-event data-ga-ec="產品" data-ga-ea="Image: SiPS 正向定位" data-ga-el="en">
+          <div class="card-body">
+            <h4 class="card-title">Forward Positioning</h4>
+            <ul>
+              <li>product.目的</li>
+              product.SiPS.正向.目的敘述              <li>Target Fields</li>
+              Malls, exhibition venues, stations, airports              <li>Applications</li>
+              Indoor navigation, LBS push notifications, interactive guiding            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <img class="card-img-top" src="/img/p_sips_2.png" alt="Reverse Positioning" data-ga-event data-ga-ec="產品" data-ga-ea="Image: SiPS 反向定位" data-ga-el="en">
+          <div class="card-body">
+            <h4 class="card-title">Reverse Positioning</h4>
+            <ul>
+              <li>product.目的</li>
+              product.SiPS.反向.目的敘述              <li>Target Fields</li>
+              Health care facilities, factory warehousing,transportation, etc.              <li>Applications</li>
+              Personnel monitoring, asset management, disaster prevention and rescue, equipment automation            </ul>
+          </div>
+        </div> -->
+      </div>
+
+    </div>
+  </div>
+
+    <div class="text-center pt-100 mb-100 " id="hardware">
+    <div class="container">
+      <h1 class="section-title" data-ga-event="" data-ga-ec="產品" data-ga-ea="Title: 定位設備 Hardware" data-ga-el="en">
+        Hardware        <p>
+                  </p>
+      </h1>
+
+      <p class="summary-txt">Various Types of Equipment<br>Leading The World in Specifications</p>
+
+      <div class="row hardware-block pt-50">
+        <div class="col-md-12 mb-30">
+          <div class="row">
+            <div class="col-md-6 hardware-img">
+              <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/p_locator.png" alt="product.定位設備 - AOA Receiver" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 多天線定位盤" data-ga-el="en">
+            </div>
+            <div class="col-md-6 hardware-body">
+              <h4 class="hardware-title">
+                AOA Receiver                <img class="ml-10" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/quuppalogo.png">
+              </h4>
+              <ul>
+                <li>Dimension: Φ20cm,H4cm</li>
+                <li>Weight: 500g</li>
+                <li>Signal: BLE 4.0</li>
+                <li>Transmission: Ethernet</li>
+                <li>Power: POE(2W) or DC 12V/500mA</li>
+                <li>Temperature: 0-60。C</li>
+                <li>Installation: Screw, Magnet, Hang...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 mb-30">
+          <div class="row">
+            <div class="col-md-6 hardware-img">
+              <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/tag02_sd.png" style="top:60%" alt="product.定位設備 - Tag" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 定位標籤" data-ga-el="en">
+            </div>
+            <div class="col-md-6 hardware-body">
+              <h4 class="hardware-title">
+                Tag                <img class="ml-10" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/quuppalogo.png">
+              </h4>
+              <ul>
+                <li>Dimension: Φ3.9cm</li>
+                <li>Weight: 13g</li>
+                <li>Button: 1</li>
+                <li>IP Ratings: IP67</li>
+                <li>Battery Life: 6-9months(CR2032，irreplaceable)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 mb-30">
+          <div class="row">
+            <div class="col-md-6 hardware-img">
+              <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/p_tag03_sd.png" style="top:60%" alt="product.定位設備 - Wearable Positioning Tag" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 佩掛型定位標籤" data-ga-el="en">
+            </div>
+            <div class="col-md-6 hardware-body">
+              <h4 class="hardware-title">Tag</h4>
+              <ul>
+                <li>Dimension: Φ3.4cm</li>
+                <li>Weight: 7.5g</li>
+                <li>Button: 1</li>
+                <li>Extension: RFID</li>
+                <li>IP Ratings: IP57</li>
+                <li>Battery Life: 3~6 months(CR2032，replaceable)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-12 mb-30">
+          <div class="row">
+            <div class="col-md-6 hardware-img">
+              <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/p_tag04blk_sd.png" style="top:70%" alt="product.定位設備 - Card Type Positioning Tag" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 卡片型定位標籤" data-ga-el="en">
+            </div>
+            <div class="col-md-6 hardware-body">
+              <h4 class="hardware-title">Card Type <br class="d-md-none">Positioning Tag</h4>
+              <ul>
+                <li>Dimension: L8.6 x W5.6cm</li>
+                <li>Weight: 28g</li>
+                <li>Button: 1</li>
+                <li>Extension: RFID</li>
+                <li>Battery Life: 1~3 months(wireless charging)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 mb-30">
+          <div class="row">
+            <div class="col-md-6 hardware-img">
+              <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/p_tag05_sd.png" style="top:60%" alt="product.定位設備 - Smart Bracelet Positioning Tag" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 智慧手環定位標籤" data-ga-el="en">
+            </div>
+            <div class="col-md-6 hardware-body">
+              <h4 class="hardware-title">Smart Bracelet <br class="d-md-none">Positioning Tag</h4>
+              <ul>
+                <li>Dimension: L23 x W2 x H1.1cm</li>
+                <li>Weight: 23g</li>
+                <li>Button: 1</li>
+                <li>Display: 0.96“IPS</li>
+                <li>Functions: Heart rate, Calories, Blood</li>
+                <li>IP Ratings: IP67</li>
+                <li>Battery Life: 5~7days(USB charging)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 mb-30">
+          <div class="row">
+            <div class="col-md-6 hardware-img">
+              <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/p_tag08_sd.png" style="top:60%" alt="product.定位設備 - Smart Bracelet Positioning Tag" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 智慧手環定位標籤" data-ga-el="en">
+            </div>
+            <div class="col-md-6 hardware-body">
+              <h4 class="hardware-title">Anti-tamper bracelet</h4>
+              <ul>
+                <li>Dimension: Φ3.8XD1.6XL27cm</li>
+                <li>Weight: 65 g</li>
+                <li>IP Ratings: IP68</li>
+                <li>Battery Life: 3~6months (Lithium battery/magnetic charging)</li>
+                <li>Remove: must remove with special magnet</li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 mb-100">
+          <div class="row">
+            <div class="col-md-6 hardware-img">
+              <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/p_tag06_sd.png" style="top:100%" alt="product.定位設備 - Smart Bracelet Positioning Tag" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 智慧手環定位標籤" data-ga-el="en">
+            </div>
+            <div class="col-md-6 hardware-body">
+              <h4 class="hardware-title">Tag - Smartphone</h4>
+              <ul>
+                <li>OS: iOS 10.0 or above, Android 8.0 or above </li>
+                <li>Spec: General</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="container-gray text-center pt-100  sips-block" id="hardware">
+    <div class="container">
+      <h1 class="section-title" data-ga-event="" data-ga-ec="產品" data-ga-ea="Title: 管理系統 Hardware" data-ga-el="en">
+        Management System        <p>
+                  </p>
+      </h1>
+
+      <p class="summary-txt mb-100 summary-txt__fixed-en" lang="en">
+        Visual Interface Management<br>Capable of Existing System Integration      </p>
+
+      <div class="row manage-row justify-content-md-center">
+        <div class="col-md-4">
+          <h4 class="hardware-title h-90">Cross-cloud multi-screen management</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/ms_icon_001.png" alt="Cross-cloud multi-screen management - Cross-cloud multi-screen management" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 多屏跨雲管理" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title h-90">API Concatenation</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/ms_icon_002.png" alt="API Concatenation - API Concatenation" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: API串接" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title h-90">Map modeling</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/ms_icon_003.png" alt="Map modeling - Map modeling" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 地圖建模" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title">Data Storage</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/ms_icon_004.png" alt="Data Storage - Data Storage" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 資料儲存" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title">Cloud Monitoring</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/ms_icon_005.png" alt="Cloud Monitoring - Cloud Monitoring" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 雲端監控" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title">Mobile Application</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/ms_icon_006.png" alt="Mobile Application - Mobile Application" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 行動軟體" data-ga-el="en">
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="ai-div text-center pt-100 mb-100  sips-block" id="hardware">
+    <div class="container">
+      <h1 class="section-title" data-ga-event="" data-ga-ec="產品" data-ga-ea="Title: AI分析引擎 Hardware" data-ga-el="en">
+        A.I. Analysis Engine        <p>
+                  </p>
+      </h1>
+
+      <p class="summary-txt mb-100 summary-txt__fixed-en" lang="en">
+        From Positioning To Analysis<br>"Aim Accurately" and "See Thoroughly"      </p>
+
+      <div class="row ai-row">
+        <div class="col-md-4">
+          <h4 class="hardware-title">Path Tracing</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/aiae_icon_001.png" alt="Path Tracing - Path Tracing" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 軌跡追蹤" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title">Path Forecast</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/aiae_icon_002.png" alt="Path Forecast - Path Forecast" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 路徑預測" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title">Heatmap Analysis</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/aiae_icon_003.png" alt="Heatmap Analysis - Heatmap Analysis" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 熱點分佈" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title">Security Alert</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/aiae_icon_004.png" alt="Security Alert - Security Alert" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 安全預警" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title">Friendship Map</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/aiae_icon_005.png" alt="Friendship Map - Friendship Map" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 好友地圖" data-ga-el="en">
+        </div>
+        <div class="col-md-4">
+          <h4 class="hardware-title">Behavior Analysis</h4>
+          <img class="prod-img" src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/aiae_icon_006.png" alt="Behavior Analysis - Behavior Analysis" data-ga-event="" data-ga-ec="產品" data-ga-ea="Image: 行為分析" data-ga-el="en">
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <footer class="bg-gray">
+  <a href="https://www.starwing.com.tw/en/service" class="help-btn" data-ga-event="" data-ga-ec="Footer" data-ga-ea="填寫需求表單 (藍底白字,常駐置右底)" data-ga-el="en" style="position: fixed; top: auto; bottom: 0px;">
+    Inquiry Form<i class="fa fa-chevron-up fa-fw"></i>
+  </a>
+  <a href="https://www.starwing.com.tw/en/service" class="mobile-help-btn" data-ga-event="" data-ga-ec="Footer" data-ga-ea="填寫需求表單icon (藍底白線條,圓形,常駐右下)" data-ga-el="en" style="position: fixed; top: auto; bottom: 12px;">
+    <i class="fa fa-edit fa-2x"></i>
+  </a>
+  <div class="container container-footer">
+    <div class="company-logo">
+      <img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/logo_sw_foot.png" alt="STARWING Logo" data-ga-event="" data-ga-ec="Footer" data-ga-ea="天奕科技 Starwing Logo" data-ga-el="en">
+    </div>
+    <div class="divide-line"></div>
+    <div class="contact-info">
+      <!-- <p>Tel : <a href="tel:+886-2-2327-9988" data-ga-event data-ga-ec="Footer" data-ga-ea="+886 2-2327-9998" data-ga-el="en">+886 2-2327-9998</a></p> -->
+      <p>E-mail : <a href="mailto:service@starwing.com.tw" data-ga-event="" data-ga-ec="Footer" data-ga-ea="service@starwing.com.tw" data-ga-el="en">service@starwing.com.tw</a></p>
+      <p>Copyright © 2017 STARWING Technology Co.</p>
+    </div>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/%E5%A4%A9%E5%A5%95%E7%A7%91%E6%8A%80%E5%AE%A4%E5%85%A7%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%B5%B1%E5%B0%88%E5%AE%B6-1407123992731662/?modal=admin_todo_tour" target="_blank" data-ga-event="" data-ga-ec="Footer" data-ga-ea="FB icon" data-ga-el="en"><img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/icon_fb.png" alt="STARWING Facebook"></a>
+      <a href="https://www.youtube.com/channel/UCMxl_R6-7IOzCwSJnrnGq7g/videos" target="_blank" data-ga-event="" data-ga-ec="Footer" data-ga-ea="Youtube icon" data-ga-el="en"><img src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/icon_youtube.png" alt="STARWING Youtube"></a>
+    </div>
+  </div>
+</footer>
+
+
+    <link media="all" type="text/css" rel="stylesheet" href="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/jquery.css">
+
+
+<script src="Product%20-%20STARWING%20|%20Centimeter-Level%20Indoor%20Positioning%20Solution%20Provider_files/frontend-45ce026448.js"></script>
+
+
+
+</body></html>

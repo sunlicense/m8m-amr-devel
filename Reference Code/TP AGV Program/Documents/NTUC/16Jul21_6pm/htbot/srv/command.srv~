@@ -1,0 +1,6 @@
+int8 object_type
+---
+int8 status
+int8 numtarget
+float32[10] radian_from_centre
+float32[10] range_value

@@ -1,0 +1,40 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/htbot_generate_messages_nodejs"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/robot.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/Command.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/queue.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/motorcmd.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/lumstatus.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/go.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/path.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/move.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/debug.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/ultraSS.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/dyna.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/status.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/clear.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/odom.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/stat.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/scanCmd.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/task.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/agv_status.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/move_status.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/stat_speed.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/goal.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/weblaser.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/navstatus.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/sound.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/cleanlist.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/velstat.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/msg/lift.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/srv/mqueue.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/srv/scanMcmd.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/srv/sendgoal.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/srv/Empty.js"
+  "/home/rac/catkin_ws/devel/share/gennodejs/ros/htbot/srv/srvcmd.js"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang )
+  include(CMakeFiles/htbot_generate_messages_nodejs.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

@@ -1,0 +1,45 @@
+#include "boost/algorithm/string.hpp"
+#include <signal.h>
+#include <stdio.h>
+
+using namespace std;
+using namespace boost::algorithm;
+main()
+{
+		/*
+    char arr[50],len;
+    int count=0;
+		const char *cstr ;
+		double tx,ty,tz,rx,ry,rz,rw,pre_dist,pre_angle,pre_dist1,pre_angle1,post_dist,post_angle,post_dist1,post_angle1,align,autostart;
+		std::string s1,s2;
+
+    FILE *pfp= fopen("/home/racnys/catkin_ws/src/htbot/data/posedata.dat", "r");
+
+    while(true) {
+			if (fscanf(pfp,"%s %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",arr,&tx,&ty,&tz,&rx,&ry,&rz,&rw,&pre_dist,&pre_angle,&pre_dist1,&pre_angle1,&post_dist,&post_angle,&post_dist1,&post_angle1,&align,&autostart) == EOF) {
+				break;
+			}
+			s1.assign(arr,strlen(arr));
+			printf("\nInput : LPName : %s. tx : %.3f. autost : %.3f",s1.c_str(),tx,autostart);
+		}
+		printf("\n");
+
+		s1 = "shutdown -h now";
+		s2 = "sudo "+s1;
+		printf("\ns1 : %s. s2 : %s\n",s1.c_str(),s2.c_str());
+		cstr = s2.c_str();
+		system(cstr);
+		*/
+		std::string lps, s1;
+		std::size_t found;
+		printf("\nTest\n");
+		lps = "power";
+		s1 = "Power-a12";
+		found = s1.find(lps);
+		if (found!=std::string::npos) {
+			printf("\nFOund\n");
+		} else {
+			printf("\nNot found\n");
+		}
+		return 0;
+}

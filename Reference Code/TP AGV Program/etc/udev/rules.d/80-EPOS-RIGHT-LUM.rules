@@ -1,0 +1,1 @@
+SUBSYSTEM=="tty", KERNEL=="ttyUSB[0-9]*", ATTRS{serial}=="FTY111F2", ATTRS{product}=="Chipi-X", MODE="0666", SYMLINK+="sensors/RIGHTMOTOR"

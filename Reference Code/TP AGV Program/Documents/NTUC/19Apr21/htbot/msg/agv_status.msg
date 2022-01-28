@@ -1,0 +1,9 @@
+int8 cmd
+time time
+int8 status
+int8 location
+time arrival
+int8 b_level
+int8 e_status
+int8 complete
+int8 lastLP

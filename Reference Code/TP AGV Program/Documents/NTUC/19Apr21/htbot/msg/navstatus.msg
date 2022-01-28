@@ -1,0 +1,10 @@
+int8 stn0
+int8 stn1
+int8 stn2
+int8 stn3
+int8 stn4
+int8 stn5
+int8 stn6
+int8 stn7
+int8 stn8
+int8 stn9

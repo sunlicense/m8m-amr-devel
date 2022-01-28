@@ -1,0 +1,7 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+  <node pkg="htbot" type="STNode" name="stNode" output="screen" required="true">
+		<param name="param_file" value="$(find htbot)/data/param.dat" />										
+  </node>  
+	<node name="talkNode" pkg="htbot" type="talkNode" output="screen" ></node>
+</launch>

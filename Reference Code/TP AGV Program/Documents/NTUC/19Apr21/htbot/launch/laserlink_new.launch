@@ -1,0 +1,21 @@
+<!-- -*- mode: XML -*- -->
+<launch>   	
+	<node pkg="tf" type="static_transform_publisher" name="base_jt" args="0.0 0.0 0.0 0 0 0 /base_footprint /base_link 66"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="sickFjt" args="0.4367 -0.37124 0.05 -0.79854 0 0 /base_link /sickF 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="sickRjt" args="-0.4367 0.37124 0.05 2.356 0.0 0.0 /base_link /sickR 66"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="sickCjt" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /sickC 66"></node>  
+	<node pkg="tf" type="static_transform_publisher" name="maplaser_jt" args="0.0 0.0 0.0 0 0 0 /base_link /maplaser 66"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="refscan_jt" args="0.27 0.0 0.0 0 0 0 /base_link /refscan 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="rs_jt" args="0.48 0.0 1.26 0.0 0.0 0.0 /base_link /RoboSense 66"></node>
+	<!--
+	<node pkg="tf" type="static_transform_publisher" name="bottomPRSjt" args="0 0 0 0 0 0.0 /bottomDRS /bottomPRS 66"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="bottomRSjt" args="0.25 0 0.05 0 0 0 /base_link /bottomDRS 66"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="middlePRSjt" args="0 0 0 0 0 0.0 /middleDRS /middlePRS 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="middleRSjt" args="0.25 0 0.4 0 0 0 /base_link /middleDRS 66"></node>	
+		
+	<node pkg="tf" type="static_transform_publisher" name="rightDPRSjt" args="0 0 0 0 0 -1.57 /rightDRS /rightPRS 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="rightPRSjt" args="0 -0.15 0.6 -1.57 0 1.57 /base_link /rightDRS 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="leftRSjt" args="0 0.15 0.6 1.571 0 1.57 /base_link /leftDRS 66"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="leftDPRSjt" args="0 0 0 0 0 -1.57 /leftDRS /leftPRS 66"></node>
+	-->
+</launch>

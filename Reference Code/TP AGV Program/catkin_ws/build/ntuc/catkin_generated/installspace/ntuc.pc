@@ -1,0 +1,8 @@
+prefix=/home/rac/catkin_ws/install
+
+Name: ntuc
+Description: Description of ntuc
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: 

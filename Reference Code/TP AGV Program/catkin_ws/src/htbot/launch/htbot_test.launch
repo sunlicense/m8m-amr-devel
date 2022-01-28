@@ -1,0 +1,6 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<arg name="map_file" default="$(find htbot)/maps/docmap.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" respawn="false" args="$(arg map_file)" />
+	<node name="fmclient" pkg="htbot" type="fmclient" output="screen" ></node>
+</launch>

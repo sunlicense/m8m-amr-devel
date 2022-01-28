@@ -1,0 +1,6 @@
+<!-- -*- mode: XML -*- -->
+<launch>	
+  <include file="$(find transporter)/launch/turtlebot/minimal.launch" />
+  <include file="$(find transporter)/launch/turtlebot/gmapping_demo.launch" />  
+   
+</launch>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title>
+  <link rel="stylesheet" href="font/material-icons.css">
+  <link rel="stylesheet" href="css/common.css">
+  <script type="text/javascript" src="js/nysKB.js"></script>  
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body onload="globotixStart()">
+	<div class="center-globotix" >
+		<img id="image" src="imgs/cleaning.png" width="50%" height="60%" style="margin: auto;margin-left: 25%;margin-top: 20px" />
+		<!--img src="imgs/drive_home.png" width="40%" height="60%" style="margin: auto;margin-left: 30%;margin-top: 20px" /-->
+		<p id="mode" style="margin: auto;margin-top: 20px;text-align: center;font-size: 180%">Cleaning</p>
+		<p id="pause" style="margin: auto;margin-top: 20px;text-align: center;font-size: 110%">Single Tap to Pause. Double Tap to Stop Cleaning </p>
+	</div>
+</body>
+</html>

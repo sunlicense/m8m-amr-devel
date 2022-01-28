@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title> 
+  <link rel="stylesheet" href="font/material-icons.css">
+  <link rel="stylesheet" href="css/common.css">
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/mainmenu.js"></script>
+	<script type="text/javascript" src="js/stat.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body onload="mainmenustart()">
+	<div id="topbar" class="center-topbar">
+	<table style="width:98%;padding:1px;border:0px solid black">
+		<tr style="height:20px;padding:1px;font-size:15px;vertical-align:middle">
+			<td id="name" style="width:11.1%;text-align:left;height:20px;padding:1px">Globotix</td>
+			<td id="laser3d" style="width:11.1%;height:20px;padding:1px">l3d</td>
+			<td id="laser2d" style="width:11.1%;height:20px;padding:1px">l2d</td>
+			<td id="cam3d" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="current" style="width:11.1%;height:20px;padding:1px">2.5A</td>
+			<td id="voltage" style="width:11.1%;vertical-align:middle;height:20px;padding:1px">23.6V</td>
+			<td id="batlevel" style="margin-top:5px;vertical-align:middle;width:11.1%;height:20px;padding:1px"></td>
+			<td id="speed" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="time" style="width:11.1%;text-align:right;height:20px;padding:1px">Time</td>
+		</tr>
+	</table>
+	</div>
+	<div class="center">
+	<table style="padding: 20px;">
+  <caption><h1>RAC AGV</h1></caption>
+  <tr>
+  	<td><h2>Manual</h2></td>
+  	<td><h2>Auto</h2></td>
+  	<td><h2>Map</h2></td>
+		<td><h2>MarkP</h2></td>
+  	<td><h2>Sync</h2></td>
+		<!--td><h2>Sync-Ext</h2></td-->
+  	<td><h2>Logout</h2></td>
+		<td><h2>Exit</h2></td>
+		<td><h2>Power</h2></td>
+  </tr>
+	<tr>
+    <td><button  onclick="location.replace('manual.html')" ><i class='material-icons-75'>build</i></button></td>
+    <td><button  onclick="location.replace('auto.html')"  ><i class='material-icons-75'>flash_auto</i></button></td>
+    <td><button  onclick="location.replace('learn_ready.html')"  ><i class='material-icons-75'>map</i></button></td>
+		<td><button  onclick="location.replace('mark_select.html')"  ><i class='material-icons-75'>location_on</i></button></td>
+    <td><button  onclick="location.replace('syncIP.html')"  ><i class='material-icons-75'>sync</i></button></td>
+		<!--td><button  onclick="location.replace('syncExt.html')"  ><i class='material-icons-75'>sync</i></button></td-->
+    <td><button  onclick="logout()"  ><i class='material-icons-75'>exit_to_app</i></button></td>
+		<td><button  onclick="exitsys()"  ><i class='material-icons-75'>power_settings_new</i></button></td>
+		<td><button  onclick="shutdown_nopwd()"  ><i class='material-icons-75'>settings_power</i></button></td>
+  </tr>
+  <!--tr>
+    <td><button type="button" onclick="location.replace('manual.html')" class="button__key" ><i class='material-icons-75'>build</i></button></td>
+    <td><button type="button" onclick="location.replace('auto.html')" class="button__key" ><i class='material-icons-75'>flash_auto</i></button></td>
+    <td><button type="button" onclick="location.replace('map.html')" class="button__key" ><i class='material-icons-75'>map</i></button></td>
+    <td><button type="button" onclick="location.replace('sync.html')" class="button__key" ><i class='material-icons-75'>sync</i></button></td>
+    <td><button type="button" onclick="logout()" class="button__key" ><i class='material-icons-75'>exit_to_app</i></button></td>
+  </tr-->
+  
+	</table>	
+	<p id="status" class="center" style="text-align: center;"></p>
+</div>
+</body>
+</html>

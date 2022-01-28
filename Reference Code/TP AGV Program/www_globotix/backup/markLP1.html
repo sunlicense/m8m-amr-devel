@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<style type="text/css" media="screen">
+body { background: #e7e7e7; font-family: Verdana, sans-serif; font-size: 10pt; }
+#page { background: #ffffff; margin: 5px; border: 2px solid #c0c0c0; padding: 5px; }
+#header { background: #4b6983; border: 2px solid #7590ae; text-align: center; padding: 2px; color: #ffffff; }
+#header h1 { color: #ffffff; }
+#body { padding: 5px; }
+span.tt { font-family: monospace; }
+span.bold { font-weight: bold; }
+a:link { text-decoration: none; font-weight: bold; color: #C00; background: #ffc; }
+a:visited { text-decoration: none; font-weight: bold; color: #999; background: #ffc; }
+a:active { text-decoration: none; font-weight: bold; color: #F00; background: #FC0; }
+a:hover { text-decoration: none; color: #C00; background: #FC0; }
+button { border:5px solid black; color:#f00; background:#ccc; padding: 5px}
+table {text-align: center;padding: 1px}
+</style>
+</head>
+<body onload="start()">
+<div id="page">
+ <div id="header">
+ <h4> Mark Stations </h4>
+  
+ </div>
+ <div id="body">
+  <table border="0" style="width:100%">
+	<tr>		
+		<td style="height:20px;width:70px;padding:2px;text-align:left;color:#00f;font-size:10pt">Status : </td>
+		<td id="stat" style="padding:2px;text-align:left;font-size: 10pt"></td>
+	</tr>
+	<!--tr>		
+		<td style="height:30px;width:170px;padding:2px;text-align:left;color:#900;font-size:10pt">Debug Info : </td>
+		<td id="debug" style="padding:2px;text-align:left;font-size: 13pt"></td>
+	</tr-->
+	
+  </table>
+
+  <table border="1" style="width:100%">		
+	<tr>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="STN1()"><h3>STN1</h3></button></td> 
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="STN2()"><h3>STN2</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="STN3()"><h3>STN3</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="STN4()"><h3>STN4</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="STN5()"><h3>STN5</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="STN6()"><h3>STN6</h3></button></td>		
+	</tr>
+	<tr>	
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="Docking()"><h3>Docking</h3></button></td>	
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="REFPT()"><h3>Refernce</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="STN7()"><h3>STN7</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="STN8()"><h3>STN8</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="MSave()"><h3>Save Mark</h3></button></td>
+		<td style="padding:2px"><button style="height:60px;width:110px;padding:2px" onclick="location.href=`index.html`;"><h3>Main Menu</h3></button></td>
+	</tr>	
+	</table>
+		
+ </div>
+</div>
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2d.js"></script>
+<script type="text/javascript" src="js/nav2d.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    autostart : 0.0 
+});
+
+var movsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/move_service',
+    serviceType : 'htbot/srvcmd'
+});
+var movreq = new ROSLIB.ServiceRequest({
+    cmd : 1
+});
+
+var scanMsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/scanMatch',
+    serviceType : 'htbot/scanMcmd'
+});
+
+var scanMreq = new ROSLIB.ServiceRequest({
+    cmd : 1
+});
+
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+var slistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/feedback',
+    messageType : 'htbot/status'
+  });
+
+slistener.subscribe(function(message) {
+    console.log('Received message on ' + slistener.name + ': ' + message.msg);
+		document.getElementById("stat").innerHTML = message.msg ;
+		document.getElementById("stat").style.color = "blue";
+    //listener.unsubscribe();
+});
+
+var dlistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/debug',
+    messageType : 'htbot/debug'
+  });
+
+dlistener.subscribe(function(message) {
+    console.log('Received message on ' + dlistener.name + ': ' + message.msg);
+		document.getElementById("debug").innerHTML = message.msg ;
+		document.getElementById("debug").style.color = "red";
+    //listener.unsubscribe();
+});
+
+function start() {
+	//ros.connect("ws://192.168.1.122:8080");
+	ros.on('error', function(error) {
+		document.getElementById("stat").innerHTML = "Robot Not Ready. Please Wait..." ;    
+		document.getElementById("stat").style.color = "red";
+  });
+	var status;
+	PM.name = 'RobotReady';
+	PM.get(function(value) {
+    console.log('RobotReady: ' + value);		
+		if (value == 77) {
+			status = "Robot is Ready";
+			document.getElementById("stat").style.color = "green";
+			cmdreq.cmd = 77;		
+			cmdsrv.callService(cmdreq, function(result) {
+    	console.log('Result for service call on '
+      	+ cmdsrv.name
+      	+ ': '
+      	+ result.status);
+  		});
+		} else if (value == 88) {
+			status = "Robot is Ready";
+			document.getElementById("stat").style.color = "green";			
+		} else {
+			status = "Robot Not Ready. Please Wait...";
+			document.getElementById("stat").style.color = "red";
+		}
+		document.getElementById("stat").innerHTML = status;
+		//document.getElementById("robotstatus").style.color = "green";
+  });
+	
+}
+
+function notused() {	
+	alert("Function Not Used");
+}
+
+function Docking() {	
+	alert("Mark Docking Station");
+	cmdreq.cmd = 46;		//40
+	cmdreq.lps = "DOCK";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function MSave() {	
+	alert("Save Marking of LP");
+	cmdreq.cmd = 38;		
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function STN1() {	
+	alert("Mark Station 1");
+	cmdreq.cmd = 46;//40		
+	cmdreq.lps = "STN1";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function STN2() {	
+	alert("Mark Station 2");
+	cmdreq.cmd = 46;	//36	
+	cmdreq.lps = "STN2";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function STN3() {	
+	alert("Mark Station 3");
+	cmdreq.cmd = 46;	// 36	
+	cmdreq.lps = "STN3";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function STN4() {	
+	alert("Mark Station 4");
+	cmdreq.cmd = 46;	// 36	
+	cmdreq.lps = "STN4";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function STN5() {	
+	alert("Mark Station 5");
+	cmdreq.cmd = 46;	// 36	
+	cmdreq.lps = "STN5";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function STN6() {	
+	alert("Mark Station 6");
+	cmdreq.cmd = 46;		// 36
+	cmdreq.lps = "STN6";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function STN7() {	
+	alert("Mark Station 7");
+	cmdreq.cmd = 46;		// 36
+	cmdreq.lps = "STN7";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function STN8() {	
+	alert("Mark Station 8");
+	cmdreq.cmd = 46;		// 36
+	cmdreq.lps = "STN8";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function REFPT() {	
+	alert("Mark Reference Point");
+	cmdreq.cmd = 46;		// 36
+	cmdreq.lps = "REF";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function STNL() {	
+	alert("mark STNL");
+	cmdreq.cmd = 46;		// 36
+	cmdreq.lps = "STNL";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function MLPJ() {	
+	alert("mark STNJ");
+	cmdreq.cmd = 46;		// 36
+	cmdreq.lps = "STNJ";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+</script>
+</body>
+</html>

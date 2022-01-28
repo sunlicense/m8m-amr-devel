@@ -1,0 +1,23 @@
+<!--   mode: XML     -->
+
+<launch>
+    <!-- Start opc server node --> 
+     <!--
+     <param name="OPC_SERVER_ADDRESS" value="10.0.5.105:4840" />
+     <param name="OPC_SERVER_ADDRESS" value="192.168.1.21:4840" />
+	-->
+
+    <!-- Start lift proxy node (lift controller opcua client) -->    
+    <param name="LIFT_OPC_SERVER" value="10.0.5.105:8085" /> 
+    <node name="lift_proxy" pkg="ntuc" type="lift_proxy.py" output="screen" launch-prefix="taskset -c 5" respawn="true" respawn_delay="7">
+    </node> 
+    <!-- Start Rosbridge Server --> 
+<!-- 
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" > 
+
+     <arg name="address" value="192.168.1.128"/> 
+
+     <arg name="port" value="8085"/>
+  </include>
+-->
+</launch>

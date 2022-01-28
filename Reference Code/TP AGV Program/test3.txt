@@ -1,0 +1,587 @@
+[INFO] [1623915150.819305]: Inside if newTask..2.1623915149.11.4
+[ INFO] [1623915150.856998475]: ------------------ WebNode : Task cmd : 2. ------------------
+[ INFO] [1623915150.859201885]: ------------- WebNode : new Task : fromLP=11. toLP=4. trolley=1-----------
+[ INFO] [1623915150.958038427]: --------- NTUC : Planning : otarget=0. target=11. ------------
+[ INFO] [1623915151.007622905]: ----------- MovNode 2200: LAUNDRYAREA_TO_LIFTAREA ---------------
+Playing WAVE '/home/rac/sound/ssmc.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Stereo
+[ INFO] [1623915151.557136837]: ---------MovNode 2201 : Move To LUENT  -----------
+[ INFO] [1623915151.808795318]: 
+---------- MovNode : checkpath tx=8.981. ty=3.418 ---------------------
+
+[ INFO] [1623915151.808819566]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915151.810468788]: ------ checkPlan_Node : Found Plan : size=34
+[ INFO] [1623915151.811189023]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915152.207977081]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915152.607584845]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915161.148571532]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915162.350902069]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915162.807597109]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915162.808900443]: 
+----------- MovNode Move Completed : OLP=0. NLP=88 -----------
+
+[ INFO] [1623915162.808924592]: 
+----------- MovNode clf : Floor=1. --------------
+
+[ INFO] [1623915163.107581665]: ---------- MovNode 152 : redirect mstate=2202. ---------
+[ INFO] [1623915163.307802874]: ---------- MoveNode : dbRequestS. Point : LULB. -------
+[ INFO] [1623915163.608867240]: 
+---------- MovNode : checkpath tx=9.538. ty=5.188 ---------------------
+
+[ INFO] [1623915163.608891957]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915163.610643344]: ------ checkPlan_Node : Found Plan : size=73
+[ INFO] [1623915163.611057207]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915164.008035033]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915168.607672933]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915177.492168924]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915184.225769221]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915184.807627914]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915184.809091573]: 
+----------- MovNode Move Completed : OLP=88. NLP=89 -----------
+
+[ INFO] [1623915184.809118282]: 
+----------- MovNode clf : Floor=1. --------------
+
+[ INFO] [1623915185.107627124]: ---------- MovNode 152 : redirect mstate=2203. ---------
+[ INFO] [1623915185.607617197]: ---------MovNode 2203 : Checking loadingBay Status  -----------
+[ INFO] [1623915185.608293385]: ---------MovNode 2203 : loadingBay Clear  -----------
+[ INFO] [1623915186.007584642]: ---------- MoveNode : dbRequestS. Point : LBLD. -------
+[ INFO] [1623915186.057094998]: ---------MovNode 2204 : Move To LBLD  -----------
+[ INFO] [1623915186.308712192]: 
+---------- MovNode : checkpath tx=7.752. ty=2.966 ---------------------
+
+[ INFO] [1623915186.308735872]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915186.310950237]: ------ checkPlan_Node : Found Plan : size=110
+[ INFO] [1623915186.311806369]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915186.707989659]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915189.607535881]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915199.621595838]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915203.354798976]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915203.807619128]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915203.809172805]: 
+----------- MovNode Move Completed : OLP=89. NLP=60 -----------
+
+[ INFO] [1623915203.809192599]: 
+----------- MovNode clf : Floor=1. --------------
+
+l[ INFO] [1623915211.807611311]: ---------- MovNode 152 : redirect mstate=2205. ---------
+[ INFO] [1623915212.107607208]: -------------MovNode 2205 : Request to open Lobby Door. ----------------
+Playing WAVE '/home/rac/sound/RequestLobbyDoorOpen.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915212.507677824]: -------------MovNode 2206 : : Lobby Door Command Received. ----------------
+[ INFO] [1623915214.807588185]: -------------MovNode 2207 : Lobby Door Command Activated. ----------------
+Playing WAVE '/home/rac/sound/LobbyDoorOpened.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915217.007587012]: ---------- MoveNode : dbRequestS. Point : LFLD. -------
+[ INFO] [1623915217.057074663]: ---------MovNode 2209 : Go to LFLD -----------
+[ INFO] [1623915217.308999875]: 
+---------- MovNode : checkpath tx=5.291. ty=2.755 ---------------------
+
+[ INFO] [1623915217.309022386]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915217.310868977]: ------ checkPlan_Node : Found Plan : size=101
+[ INFO] [1623915217.311468693]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915217.708356161]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915218.107578585]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915228.333937655]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915228.932545507]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915229.307618091]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915229.308904045]: 
+----------- MovNode Move Completed : OLP=60. NLP=49 -----------
+
+[ INFO] [1623915229.308924211]: 
+----------- MovNode clf : Floor=1. --------------
+
+l[ INFO] [1623915237.107605172]: ---------- MovNode 152 : redirect mstate=2210. ---------
+[ INFO] [1623915237.607646237]: ------------- MovNode 2210 :  AGV Requesting for Lift  ----------------
+[ INFO] [1623915237.607684160]: ---- Lift Cmd : cmd=0. cf=1. df=0. beacon=0. -------
+Command to lift to COME to floor 1
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift arrived at floor 1. Able to enter lift.
+[ INFO] [1623915243.107587564]: ----------- from lift : cmd = 10 ----------------
+[ INFO] [1623915243.107617392]: ----------- from lift : Lift ready for AGV to enter. cmd = 10 ----------------
+[ INFO] [1623915245.407580140]: -------------MovNode 2213 : AGV Move into lift ----------------
+[ INFO] [1623915245.407607361]: ---------- MoveNode : dbRequestS. Point : LFIN. -------
+Playing WAVE '/home/rac/sound/MoveIntoLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915245.754760257]: 
+---------- MovNode : checkpath tx=3.521. ty=2.676 ---------------------
+
+[ INFO] [1623915245.754791067]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915245.756060972]: ------ checkPlan_Node : Found Plan : size=72
+[ INFO] [1623915245.757058815]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915246.108040216]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915246.507581064]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915253.007669226]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915253.009123266]: 
+----------- MovNode Move Completed : OLP=49. NLP=48 -----------
+
+[ INFO] [1623915253.009148216]: 
+----------- MovNode clf : Floor=1. --------------
+
+[ INFO] [1623915253.307576076]: ---------- MovNode 152 : redirect mstate=2219. ---------
+[ INFO] [1623915253.807643641]: ---- Lift Cmd : cmd=1. cf=1. df=0. beacon=0. -------
+Entered, lift closing door
+[ INFO] [1623915262.207591415]: ---- RestoreLP : tx=3.65. ty=5.22. pd=2.00. pa=190.00. pd1=2.00. pa1=190.00. lp=11. ---
+[ INFO] [1623915262.207631189]: 
+----------- MovNode clf : Floor=11. --------------
+
+[ INFO] [1623915262.207666188]: ---- Lift Cmd : cmd=2. cf=1. df=11. beacon=0. -------
+Command to lift to GOTO floor 11
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift reached floor 11. Able to exit Lift.
+[ INFO] [1623915268.408809518]: ----------- from lift : cmd = 11 ----------------
+[ INFO] [1623915268.408840697]: ----------- from lift : Lift ready for AGV to exit. cmd = 11 ----------------
+[ INFO] [1623915270.408167065]: ---------- MovNode 2223 : Move out of Lift to Ward  ----------
+Playing WAVE '/home/rac/sound/MoveOutOfLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915270.754332384]: 
+---------- MovNode : checkpath tx=3.650. ty=5.221 ---------------------
+
+[ INFO] [1623915270.754355282]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915270.756647297]: ------ checkPlan_Node : Found Plan : size=165
+[ INFO] [1623915270.757752678]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915271.107977969]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915271.507576919]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915283.897464618]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915290.697409969]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915291.207598915]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915291.209024851]: 
+----------- MovNode Move Completed : OLP=48. NLP=11 -----------
+
+[ INFO] [1623915291.209049827]: 
+----------- MovNode clf : Floor=11. --------------
+
+l[ INFO] [1623915301.508851134]: ---- Lift Cmd : cmd=3. cf=32622. df=-1590792636. beacon=0. -------
+[ INFO] [1623915301.508878325]: ---- Lift Cmd : cmd=8. cf=32622. df=-1590792636. beacon=1. -------
+Exited, lift closing door
+Activate/DeActivate Beacon, /to_lift [1]
+[ INFO] [1623915302.007618151]: ------------- MovNode 160 : Jack is down.------------
+[ INFO] [1623915302.307588668]: ------------- MovNode 161 : Rotate 90 Clockwise. -----------
+[ INFO] [1623915306.707580519]: -------- MovNode 162 : Move into Trolley. ----------
+[ INFO] [1623915306.757698696]: ---------- UsbEp : move into trolley. type=1.00. width=0.32. ------------
+[ INFO] [1623915306.807707160]: -------------- moveAGVintoTrolley -------------------------
+[ INFO] [1623915306.832830568]: ------- Detected Right Leg. id=119. ld=0.697 an=0.870 -------
+[ INFO] [1623915306.832880832]: ------- Detected Left Leg. id=416. ld=0.684 an=0.841 -------
+[ INFO] [1623915306.913161821]: ------- moveAGVintoTrolley : Start Front Laser Alignment -----------
+[ INFO] [1623915306.915295216]: --- TrolleyAlign : rlidx=119. rldist=0.697. rlAn=0.870. llidx=416. lldist=0.684. llAn=0.841. ---
+[ INFO] [1623915306.915713074]: ----- ant=1.710601. rra=0.685. hh=0.441. xx=0.540. dxx=-0.005 -----------
+[ INFO] [1623915306.915732292]: ----- dra=0.885354. dan=-0.016. -----------
+[ INFO] [1623915306.915748460]: ----- Turn=89.103054. dxxx=-0.011. dan=-0.016. agvx=0.006. agvy=0.384 -----------
+[ INFO] [1623915316.763912529]: ------- moveAGVintoTrolley : End  Front Laser Alignment -----------
+[ INFO] [1623915325.098857393]: ------- Detected Right Leg. id=93. ld=0.662 an=1.019 -------
+[ INFO] [1623915325.098894288]: ------- Detected Left Leg. id=417. ld=0.623 an=0.847 -------
+[ INFO] [1623915325.185593166]: ------- moveAGVintoTrolley : Start Trolley 2nd front leg Laser Alignment -----------
+[ INFO] [1623915325.188109338]: --- 2nd FrontTrolleyAlign : rlidx=93. rldist=0.662. rlAn=1.019. llidx=417. lldist=0.623. llAn=0.847. ---
+[ INFO] [1623915325.188741630]: -----2nd frontalign : ant=1.866110. rra=0.591. hh=0.369. xx=0.550. dxx=-0.015 -----------
+[ INFO] [1623915325.188822111]: -----2nd frontalign : dra=0.979981. dan=0.039. -----------
+[ INFO] [1623915325.188881455]: -----2nd frontalign : Turn=92.261351. dxxx=0.000. dan=0.039. agvx=0.015 -----------
+[ INFO] [1623915325.597533577]: --------- 2nd frontalign : : Adjust. Turn=-2.261351. -----------
+[ INFO] [1623915325.597562191]: --------- 2nd frontalign  : Adjust. Move=0.432460. -----------
+[ INFO] [1623915334.964361538]: ------- Detected Right Leg. id=55. ld=0.385 an=1.238 -------
+[ INFO] [1623915334.964393364]: ------- Detected Left Leg. id=481. ld=0.359 an=1.215 -------
+[ INFO] [1623915335.036600245]: ------- moveAGVintoTrolley : Start Trolley left Side Laser Alignment -----------
+[ INFO] [1623915335.038667798]: --- LeftSide TrolleyAlign : rlidx=55. rldist=0.385. rlAn=1.238. llidx=481. lldist=0.359. llAn=1.215. ---
+[ INFO] [1623915335.039080798]: ----- ant=2.453590. rra=0.347. hh=0.131. xx=0.362. dxx=-0.027 -----------
+[ INFO] [1623915335.039099335]: ----- dra=1.223620. dan=0.015. -----------
+[ INFO] [1623915335.039115595]: ----- Turn=90.841909. dxxx=-0.021. dan=0.015. agvx=0.006 -----------
+[ INFO] [1623915335.301607236]: --------- LeftSide : Adjust. Turn=-0.841909. -----------
+[ INFO] [1623915335.301636222]: --------- LeftSide : No Adjust. Move=-0.000047. -----------
+[ INFO] [1623915335.301656070]: ------------ UsbEpos : Finish moveAGVintoTrolley ------------------
+[ INFO] [1623915358.407596056]: ----------- MovNode 164 : Jack is Up. -----------
+[ INFO] [1623915358.707636037]: ------------- MovNode 1640 : Rotate 90 Clockwise. -----------
+[ INFO] [1623915363.707580410]: ---------- MovNode 2224 : AGV outside of Lift. ----------
+[ INFO] [1623915365.307942351]: ------------ MovNode 3600 : Job in queue. ----------
+[ INFO] [1623915365.458363275]: --------- NTUC : Planning : otarget=11. target=4. ------------
+[ INFO] [1623915365.458385700]: 
+----------- MovNode clf : Floor=4. --------------
+
+[ INFO] [1623915365.507578214]: ----------- MovNode : LIFTAREA_TO_LIFTAREA ---------------
+Playing WAVE '/home/rac/sound/ssmc.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Stereo
+[ INFO] [1623915366.509513457]: 
+---------- MovNode : checkpath tx=5.291. ty=2.755 ---------------------
+
+[ INFO] [1623915366.509540778]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915366.511384477]: ------ checkPlan_Node : Found Plan : size=173
+[ INFO] [1623915366.512126265]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915366.908086368]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915367.307595837]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915380.530217100]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915386.129935278]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915386.507728506]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915386.509220061]: 
+----------- MovNode Move Completed : OLP=11. NLP=49 -----------
+
+[ INFO] [1623915386.509247962]: 
+----------- MovNode clf : Floor=11. --------------
+
+l[ INFO] [1623915395.507576492]: ---------- MovNode 152 : redirect mstate=3052. ---------
+[ INFO] [1623915395.707588739]: -------------MovNode 3052 : AGV Requesting for Lift  ----------------
+[ INFO] [1623915395.707616778]: ---- Lift Cmd : cmd=0. cf=11. df=0. beacon=0. -------
+Command to lift to COME to floor 11
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift arrived at floor 11. Able to enter lift.
+[ INFO] [1623915402.007590761]: ----------- from lift : cmd = 10 ----------------
+[ INFO] [1623915402.007615822]: ----------- from lift : Lift ready for AGV to enter. cmd = 10 ----------------
+[ INFO] [1623915402.207635316]: ------------- MovNode 3053 : AGV Move into lift ----------------
+[ INFO] [1623915404.407627769]: -------------MovNode 3055 : AGV Move into lift ----------------
+[ INFO] [1623915404.407654678]: ---------- MoveNode : dbRequestS. Point : LFIN. -------
+Playing WAVE '/home/rac/sound/MoveIntoLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915404.708865522]: 
+---------- MovNode : checkpath tx=3.521. ty=2.676 ---------------------
+
+[ INFO] [1623915404.708898828]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915404.710252166]: ------ checkPlan_Node : Found Plan : size=73
+[ INFO] [1623915404.711347379]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915405.107940600]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915405.507575554]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915412.007599002]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915412.009114503]: 
+----------- MovNode Move Completed : OLP=49. NLP=48 -----------
+
+[ INFO] [1623915412.009134299]: 
+----------- MovNode clf : Floor=11. --------------
+
+[ INFO] [1623915412.307577775]: ---------- MovNode 152 : redirect mstate=3056. ---------
+[ INFO] [1623915412.807613796]: ---- Lift Cmd : cmd=1. cf=11. df=0. beacon=0. -------
+[ INFO] [1623915412.807668539]: ---------- MovNode 3056 : Lower Jack. ----------
+Entered, lift closing door
+[ INFO] [1623915434.807583773]: ---------- MovNode 3057 : Turn around inside lift. ----------
+[ INFO] [1623915442.807593141]: ---------- MovNode 3058 : Raise Jack. ----------
+[ INFO] [1623915464.807594037]: ---------- MovNode 3059 : Ask for lift. ----------
+[ INFO] [1623915464.807633023]: ---- RestoreLP : tx=3.65. ty=5.22. pd=2.00. pa=190.00. pd1=2.00. pa1=190.00. lp=4. ---
+[ INFO] [1623915464.807676496]: 
+----------- MovNode clf : Floor=4. --------------
+
+[ INFO] [1623915464.807698862]: ---- Lift Cmd : cmd=2. cf=11. df=4. beacon=0. -------
+Command to lift to GOTO floor 4
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift reached floor 4. Able to exit Lift.
+[ INFO] [1623915471.008437920]: ----------- from lift : cmd = 11 ----------------
+[ INFO] [1623915471.008461649]: ----------- from lift : Lift ready for AGV to exit. cmd = 11 ----------------
+[ INFO] [1623915471.908102331]: ---------- MovNode 3065 : Move out of Lift to Ward . ----------
+Playing WAVE '/home/rac/sound/MoveOutOfLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915472.208772036]: 
+---------- MovNode : checkpath tx=3.650. ty=5.221 ---------------------
+
+[ INFO] [1623915472.208795442]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915472.210631503]: ------ checkPlan_Node : Found Plan : size=165
+[ INFO] [1623915472.211269083]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915472.607979947]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915473.007582388]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915485.216161192]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915492.418169582]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915493.107642852]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915493.109034828]: 
+----------- MovNode Move Completed : OLP=48. NLP=4 -----------
+
+[ INFO] [1623915493.109052651]: 
+----------- MovNode clf : Floor=4. --------------
+
+l[ INFO] [1623915504.309250138]: ---- Lift Cmd : cmd=3. cf=11. df=0. beacon=0. -------
+Exited, lift closing door
+[ INFO] [1623915562.807593007]: -------------- MovNode 186 : mstate nstate. ------------------
+[ INFO] [1623915563.307817988]: ---------- MovNode 3066 : AGV outside of Lift. ----------
+[ INFO] [1623915564.908481708]: ------------ MovNode 3600 : No Job in queue. Wait 5 secs ----------
+[INFO] [1623915565.190310]: Inside if newTask..2.1623915270.11.5
+[ INFO] [1623915565.256983187]: ------------------ WebNode : Task cmd : 2. ------------------
+[ INFO] [1623915565.258470864]: ------------- WebNode : new Task : fromLP=11. toLP=5. trolley=1-----------
+[ INFO] [1623915568.507965225]: ------------ MovNode 3601 : Job in queue. ----------
+[ INFO] [1623915568.657832032]: --------- NTUC : Planning : otarget=4. target=11. ------------
+[ INFO] [1623915568.657854028]: 
+----------- MovNode clf : Floor=11. --------------
+
+Playing WAVE '/home/rac/sound/ssmc.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Stereo
+[ INFO] [1623915568.707574442]: ----------- MovNode : LIFTAREA_TO_LIFTAREA ---------------
+[ INFO] [1623915569.609176928]: 
+---------- MovNode : checkpath tx=5.291. ty=2.755 ---------------------
+
+[ INFO] [1623915569.609202278]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915569.610952281]: ------ checkPlan_Node : Found Plan : size=124
+[ INFO] [1623915569.611951993]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915570.008174496]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915570.507577551]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915582.517639600]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915587.850901982]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915588.307591660]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915588.309307090]: 
+----------- MovNode Move Completed : OLP=4. NLP=49 -----------
+
+[ INFO] [1623915588.309327620]: 
+----------- MovNode clf : Floor=4. --------------
+
+l[ INFO] [1623915596.907597475]: ---------- MovNode 152 : redirect mstate=3052. ---------
+[ INFO] [1623915597.107585114]: -------------MovNode 3052 : AGV Requesting for Lift  ----------------
+[ INFO] [1623915597.107616117]: ---- Lift Cmd : cmd=0. cf=4. df=0. beacon=0. -------
+Command to lift to COME to floor 4
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift arrived at floor 4. Able to enter lift.
+[ INFO] [1623915603.409642168]: ----------- from lift : cmd = 10 ----------------
+[ INFO] [1623915603.409664813]: ----------- from lift : Lift ready for AGV to enter. cmd = 10 ----------------
+[ INFO] [1623915603.607618746]: ------------- MovNode 3053 : AGV Move into lift ----------------
+[ INFO] [1623915605.807632536]: -------------MovNode 3055 : AGV Move into lift ----------------
+[ INFO] [1623915605.807663485]: ---------- MoveNode : dbRequestS. Point : LFIN. -------
+Playing WAVE '/home/rac/sound/MoveIntoLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915606.108714320]: 
+---------- MovNode : checkpath tx=3.521. ty=2.676 ---------------------
+
+[ INFO] [1623915606.108740430]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915606.110159207]: ------ checkPlan_Node : Found Plan : size=70
+[ INFO] [1623915606.110639541]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915606.508087382]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915606.907573963]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915613.407590054]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915613.408993959]: 
+----------- MovNode Move Completed : OLP=49. NLP=48 -----------
+
+[ INFO] [1623915613.409014762]: 
+----------- MovNode clf : Floor=4. --------------
+
+[ INFO] [1623915613.707715734]: ---------- MovNode 152 : redirect mstate=3061. ---------
+[ INFO] [1623915614.207588029]: ---- Lift Cmd : cmd=1. cf=4. df=0. beacon=0. -------
+Entered, lift closing door
+[ INFO] [1623915622.807589142]: ---- RestoreLP : tx=3.65. ty=5.22. pd=2.00. pa=190.00. pd1=2.00. pa1=190.00. lp=11. ---
+[ INFO] [1623915622.807625310]: 
+----------- MovNode clf : Floor=11. --------------
+
+[ INFO] [1623915622.807641841]: ---- Lift Cmd : cmd=2. cf=4. df=11. beacon=0. -------
+Command to lift to GOTO floor 11
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift reached floor 11. Able to exit Lift.
+[ INFO] [1623915629.009565316]: ----------- from lift : cmd = 11 ----------------
+[ INFO] [1623915629.009587945]: ----------- from lift : Lift ready for AGV to exit. cmd = 11 ----------------
+[ INFO] [1623915629.708357503]: ---------- MovNode 3065 : Move out of Lift to Ward . ----------
+Playing WAVE '/home/rac/sound/MoveOutOfLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915630.009005661]: 
+---------- MovNode : checkpath tx=3.650. ty=5.221 ---------------------
+
+[ INFO] [1623915630.009030016]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915630.010784754]: ------ checkPlan_Node : Found Plan : size=167
+[ INFO] [1623915630.011524254]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915630.408119381]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915630.807613170]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915643.236813126]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915650.102888295]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915650.707588545]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915650.708858466]: 
+----------- MovNode Move Completed : OLP=48. NLP=11 -----------
+
+[ INFO] [1623915650.708878526]: 
+----------- MovNode clf : Floor=11. --------------
+
+l[ INFO] [1623915660.009231617]: ---- Lift Cmd : cmd=3. cf=4. df=0. beacon=0. -------
+[ INFO] [1623915660.009269907]: ---- Lift Cmd : cmd=8. cf=4. df=0. beacon=1. -------
+Exited, lift closing door
+Activate/DeActivate Beacon, /to_lift [1]
+[ INFO] [1623915660.507575635]: ------------- MovNode 160 : Jack is down.------------
+[ INFO] [1623915660.807592258]: ------------- MovNode 161 : Rotate 90 Clockwise. -----------
+[ INFO] [1623915665.407576061]: -------- MovNode 162 : Move into Trolley. ----------
+[ INFO] [1623915665.456659181]: ---------- UsbEp : move into trolley. type=1.00. width=0.32. ------------
+[ INFO] [1623915665.509385859]: -------------- moveAGVintoTrolley -------------------------
+[ INFO] [1623915665.614646343]: ------- moveAGVintoTrolley : Start Front Laser Alignment -----------
+[ INFO] [1623915665.959113103]: ------- Detected Left Leg. id=422. ld=0.717 an=0.875 -------
+[ INFO] [1623915666.092827982]: ------- Detected Right Leg. id=123. ld=0.643 an=0.847 -------
+[ INFO] [1623915666.218859936]: --- TrolleyAlign : rlidx=123. rldist=0.643. rlAn=0.847. llidx=422. lldist=0.717. llAn=0.875. ---
+[ INFO] [1623915666.219365090]: ----- ant=1.722120. rra=0.724. hh=0.426. xx=0.482. dxx=0.053 -----------
+[ INFO] [1623915666.219452081]: ----- dra=0.846731. dan=-0.000. -----------
+[ INFO] [1623915666.219512972]: ----- Turn=89.996025. dxxx=0.053. dan=-0.000. agvx=0.000. agvy=0.384 -----------
+[ INFO] [1623915676.533130866]: ------- moveAGVintoTrolley : End  Front Laser Alignment -----------
+[ INFO] [1623915684.759586976]: ------- Detected Right Leg. id=99. ld=0.711 an=0.985 -------
+[ INFO] [1623915684.759618140]: ------- Detected Left Leg. id=415. ld=0.643 an=0.835 -------
+[ INFO] [1623915684.793506828]: ------- moveAGVintoTrolley : Start Trolley 2nd front leg Laser Alignment -----------
+[ INFO] [1623915684.796004981]: --- 2nd FrontTrolleyAlign : rlidx=99. rldist=0.711. rlAn=0.985. llidx=415. lldist=0.643. llAn=0.835. ---
+[ INFO] [1623915684.796473646]: -----2nd frontalign : ant=1.820034. rra=0.622. hh=0.414. xx=0.578. dxx=-0.043 -----------
+[ INFO] [1623915684.796489429]: -----2nd frontalign : dra=0.949160. dan=0.036. -----------
+[ INFO] [1623915684.796502261]: -----2nd frontalign : Turn=92.047275. dxxx=-0.029. dan=0.036. agvx=0.014 -----------
+[ INFO] [1623915685.200081715]: --------- 2nd frontalign : : Adjust. Turn=-2.047275. -----------
+[ INFO] [1623915685.200108989]: --------- 2nd frontalign  : Adjust. Move=0.477817. -----------
+[ INFO] [1623915694.958597130]: ------- Detected Right Leg. id=63. ld=0.352 an=1.192 -------
+[ INFO] [1623915694.958627492]: ------- Detected Left Leg. id=489. ld=0.377 an=1.261 -------
+[ INFO] [1623915695.038864484]: ------- moveAGVintoTrolley : Start Trolley left Side Laser Alignment -----------
+[ INFO] [1623915695.041023432]: --- LeftSide TrolleyAlign : rlidx=63. rldist=0.352. rlAn=1.192. llidx=489. lldist=0.377. llAn=1.261. ---
+[ INFO] [1623915695.041441845]: ----- ant=2.453590. rra=0.365. hh=0.126. xx=0.329. dxx=0.006 -----------
+[ INFO] [1623915695.041459711]: ----- dra=1.205417. dan=-0.013. -----------
+[ INFO] [1623915695.041478534]: ----- Turn=89.244852. dxxx=0.001. dan=-0.013. agvx=0.005 -----------
+[ INFO] [1623915695.303516503]: --------- LeftSide : Adjust. Turn=0.755148. -----------
+[ INFO] [1623915695.303546407]: --------- LeftSide : No Adjust. Move=-0.005262. -----------
+[ INFO] [1623915695.303556020]: ------------ UsbEpos : Finish moveAGVintoTrolley ------------------
+[ INFO] [1623915718.307581043]: ----------- MovNode 164 : Jack is Up. -----------
+[ INFO] [1623915718.607595813]: ------------- MovNode 1640 : Rotate 90 Clockwise. -----------
+[ INFO] [1623915723.607576648]: ---------- MovNode 3066 : AGV outside of Lift. ----------
+[ INFO] [1623915725.207922549]: ------------ MovNode 3600 : Job in queue. ----------
+[ INFO] [1623915725.358830556]: --------- NTUC : Planning : otarget=11. target=5. ------------
+[ INFO] [1623915725.358852623]: 
+----------- MovNode clf : Floor=5. --------------
+
+[ INFO] [1623915725.407576886]: ----------- MovNode : LIFTAREA_TO_LIFTAREA ---------------
+Playing WAVE '/home/rac/sound/ssmc.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Stereo
+[ INFO] [1623915726.409084262]: 
+---------- MovNode : checkpath tx=5.291. ty=2.755 ---------------------
+
+[ INFO] [1623915726.409108747]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915726.410860479]: ------ checkPlan_Node : Found Plan : size=169
+[ INFO] [1623915726.411218699]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915726.808056887]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915727.207580164]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915739.733470045]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915745.800668970]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915746.307589675]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915746.308847277]: 
+----------- MovNode Move Completed : OLP=11. NLP=49 -----------
+
+[ INFO] [1623915746.308872518]: 
+----------- MovNode clf : Floor=11. --------------
+
+l[ INFO] [1623915754.607582119]: ---------- MovNode 152 : redirect mstate=3052. ---------
+[ INFO] [1623915754.807620237]: -------------MovNode 3052 : AGV Requesting for Lift  ----------------
+[ INFO] [1623915754.807651354]: ---- Lift Cmd : cmd=0. cf=11. df=0. beacon=0. -------
+Command to lift to COME to floor 11
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift arrived at floor 11. Able to enter lift.
+[ INFO] [1623915760.009127079]: ----------- from lift : cmd = 10 ----------------
+[ INFO] [1623915760.009148369]: ----------- from lift : Lift ready for AGV to enter. cmd = 10 ----------------
+[ INFO] [1623915760.307577012]: ------------- MovNode 3053 : AGV Move into lift ----------------
+[ INFO] [1623915762.507591430]: -------------MovNode 3055 : AGV Move into lift ----------------
+[ INFO] [1623915762.507670250]: ---------- MoveNode : dbRequestS. Point : LFIN. -------
+Playing WAVE '/home/rac/sound/MoveIntoLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915762.808790926]: 
+---------- MovNode : checkpath tx=3.521. ty=2.676 ---------------------
+
+[ INFO] [1623915762.808814672]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915762.810565346]: ------ checkPlan_Node : Found Plan : size=73
+[ INFO] [1623915762.811330191]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915763.208106544]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915763.607585108]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915770.507605826]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915770.509328605]: 
+----------- MovNode Move Completed : OLP=49. NLP=48 -----------
+
+[ INFO] [1623915770.509350992]: 
+----------- MovNode clf : Floor=11. --------------
+
+[ INFO] [1623915770.807611972]: ---------- MovNode 152 : redirect mstate=3056. ---------
+[ INFO] [1623915771.307621606]: ---- Lift Cmd : cmd=1. cf=11. df=0. beacon=0. -------
+[ INFO] [1623915771.307658749]: ---------- MovNode 3056 : Lower Jack. ----------
+Entered, lift closing door
+[ INFO] [1623915792.907708925]: ---------- MovNode 3057 : Turn around inside lift. ----------
+[ INFO] [1623915801.107639659]: ---------- MovNode 3058 : Raise Jack. ----------
+2021-06-17 15:45:41+0800 [-] [INFO] [1623915941.874464]: Client connected.  2 clients total.
+2021-06-17 15:45:43+0800 [-] [INFO] [1623915943.368251]: Client disconnected. 1 clients total.
+2021-06-17 15:45:43+0800 [-] [INFO] [1623915943.555122]: Client connected.  2 clients total.
+2021-06-17 15:45:44+0800 [-] [INFO] [1623915944.684140]: Client disconnected. 1 clients total.
+2021-06-17 15:45:44+0800 [-] [INFO] [1623915944.751919]: Client connected.  2 clients total.
+2021-06-17 15:45:44+0800 [-] [INFO] [1623915944.778482]: [Client 3] Subscribed to /robotstatus
+2021-06-17 15:45:44+0800 [-] [INFO] [1623915944.786467]: [Client 3] Subscribed to /robot_pose
+2021-06-17 15:45:44+0800 [-] [INFO] [1623915944.792135]: [Client 3] Subscribed to /stat
+2021-06-17 15:45:44+0800 [-] [INFO] [1623915944.796635]: [Client 3] Subscribed to /speed
+2021-06-17 15:45:44+0800 [-] [INFO] [1623915944.800846]: [Client 3] Subscribed to /queue
+2021-06-17 15:45:44+0800 [-] [INFO] [1623915944.806423]: [Client 3] Subscribed to /feedback
+[ INFO] [1623915969.707581335]: ---------- MovNode 3059 : Ask for lift. ----------
+[ INFO] [1623915969.707612999]: ---- RestoreLP : tx=3.65. ty=5.22. pd=2.00. pa=190.00. pd1=2.00. pa1=190.00. lp=5. ---
+[ INFO] [1623915969.707634378]: 
+----------- MovNode clf : Floor=5. --------------
+
+[ INFO] [1623915969.707656760]: ---- Lift Cmd : cmd=2. cf=11. df=5. beacon=0. -------
+Command to lift to GOTO floor 5
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift reached floor 5. Able to exit Lift.
+[ INFO] [1623915975.908898429]: ----------- from lift : cmd = 11 ----------------
+[ INFO] [1623915975.908952821]: ----------- from lift : Lift ready for AGV to exit. cmd = 11 ----------------
+[ INFO] [1623915976.608326076]: ---------- MovNode 3065 : Move out of Lift to Ward . ----------
+Playing WAVE '/home/rac/sound/MoveOutOfLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623915976.909112317]: 
+---------- MovNode : checkpath tx=3.650. ty=5.221 ---------------------
+
+[ INFO] [1623915976.909139293]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623915976.911035450]: ------ checkPlan_Node : Found Plan : size=167
+[ INFO] [1623915976.911772898]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623915977.308098611]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623915977.707600637]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623915990.120214726]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623915997.252162642]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623915997.707617668]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623915997.709756181]: 
+----------- MovNode Move Completed : OLP=48. NLP=5 -----------
+
+[ INFO] [1623915997.709787472]: 
+----------- MovNode clf : Floor=5. --------------
+
+l[ INFO] [1623916009.609240442]: ---- Lift Cmd : cmd=3. cf=11. df=0. beacon=0. -------
+Exited, lift closing door
+[ INFO] [1623916089.007625980]: -------------- MovNode 186 : mstate nstate. ------------------
+[ INFO] [1623916089.607583275]: ---------- MovNode 3066 : AGV outside of Lift. ----------
+[INFO] [1623916089.755712]: Inside if newTask..0.0.0.0
+[ INFO] [1623916091.208188625]: ------------ MovNode 3600 : No Job in queue. Wait 5 secs ----------
+[ INFO] [1623916094.808288746]: ---------- MovNode 3601 : No Job in queue. Continue with nstate --------
+[ INFO] [1623916094.907583354]: ----------- MovNode 3067 : RETURN TO DOCK. LIFTAREA_TO_DOCK ---------------
+[ INFO] [1623916095.607586376]: ---------- MoveNode : dbRequestS. Point : LFLD. -------
+[ INFO] [1623916095.909997599]: 
+---------- MovNode : checkpath tx=5.291. ty=2.755 ---------------------
+
+[ INFO] [1623916095.910025248]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623916095.911382814]: ------ checkPlan_Node : Found Plan : size=127
+[ INFO] [1623916095.912076597]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623916096.308100097]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623916096.707578353]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623916108.830640395]: ---------------- USBEPOS : Reached ----------------------
+[ INFO] [1623916114.297699623]: ==============  BotNode : Rotated. Stop A   ===============
+[ INFO] [1623916114.807639504]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623916114.809087384]: 
+----------- MovNode Move Completed : OLP=5. NLP=49 -----------
+
+[ INFO] [1623916114.809106226]: 
+----------- MovNode clf : Floor=5. --------------
+
+l[ INFO] [1623916125.907587543]: ---------- MovNode 152 : redirect mstate=3069. ---------
+[ INFO] [1623916126.107547392]: -------------MovNode 3069 : AGV Requesting for Lift  ----------------
+[ INFO] [1623916126.107579689]: ---- Lift Cmd : cmd=0. cf=5. df=0. beacon=0. -------
+Command to lift to COME to floor 5
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift arrived at floor 5. Able to enter lift.
+[ INFO] [1623916131.309438775]: ----------- from lift : cmd = 10 ----------------
+[ INFO] [1623916131.309459804]: ----------- from lift : Lift ready for AGV to enter. cmd = 10 ----------------
+[ INFO] [1623916131.607631826]: ------------- MovNode 3070 : AGV Move into lift ----------------
+[ INFO] [1623916133.807637862]: -------------MovNode 3072 : AGV Move into lift ----------------
+[ INFO] [1623916133.807665270]: ---------- MoveNode : dbRequestS. Point : LFIN. -------
+Playing WAVE '/home/rac/sound/MoveIntoLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623916134.108971586]: 
+---------- MovNode : checkpath tx=3.521. ty=2.676 ---------------------
+
+[ INFO] [1623916134.108999937]:  ============== Move_Node 310 : Check path =========================
+[ INFO] [1623916134.110718321]: ------ checkPlan_Node : Found Plan : size=71
+[ INFO] [1623916134.111154293]: ----- CheckPlan : Save Plan FN = /home/rac/catkin_ws/src/htbot/data/racpath.dat. --------
+[ INFO] [1623916134.508200866]:  ============== Move_Node 311 : TurnToPath =========================
+[ INFO] [1623916134.907605967]:  ========== Move_Node 313 : Normal Move Again ==========
+[ INFO] [1623916141.407596527]: -------- MoveNode : Reached Destination. Performing Alignment ----------
+[ INFO] [1623916141.409018071]: 
+----------- MovNode Move Completed : OLP=49. NLP=48 -----------
+
+[ INFO] [1623916141.409047037]: 
+----------- MovNode clf : Floor=5. --------------
+
+[ INFO] [1623916141.707597759]: ---------- MovNode 152 : redirect mstate=3077. ---------
+[ INFO] [1623916142.207669539]: ---- Lift Cmd : cmd=1. cf=5. df=0. beacon=0. -------
+[ INFO] [1623916142.207698334]: ---------- MovNode 3077 : Lower Jack. ----------
+Entered, lift closing door
+[ INFO] [1623916142.807584994]: ---------- MovNode 3078 : Turn around inside lift. ----------
+[ INFO] [1623916150.807581185]: ---------- MovNode 3079 : Ask for lift. ----------
+[ INFO] [1623916150.807618907]: ---- Lift Cmd : cmd=2. cf=5. df=1. beacon=0. -------
+Command to lift to GOTO floor 1
+Playing WAVE '/home/rac/sound/AskLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+Lift reached floor 1. Able to exit Lift.
+[ INFO] [1623916157.009752664]: ----------- from lift : cmd = 11 ----------------
+[ INFO] [1623916157.009777546]: ----------- from lift : Lift ready for AGV to exit. cmd = 11 ----------------
+[ INFO] [1623916157.808120597]: ---------- MovNode 3081 : Move out of Lift to lobby Door . ----------
+[ INFO] [1623916157.808145628]: ---------- MoveNode : dbRequestS. Point : LFLBD. -------
+Playing WAVE '/home/rac/sound/MoveOutOfLift.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+[ INFO] [1623916193.760646129]: --------- JoyNode : Shutdown cnt=1. ------------
+2021-06-17 15:52:49+0800 [-] [INFO] [1623916369.676384]: Client disconnected. 1 clients total.
+2021-06-17 15:52:59+0800 [-] [WARN] [1623916379.677800]: Could not process inbound connection: [/rosbridge_websocket] is not a publisher of [/fbutton]. Topics are [['/client_count', 'std_msgs/Int32'], ['/rosout', 'rosgraph_msgs/Log'], ['/connected_clients', 'rosbridge_msgs/ConnectedClients']]{'message_definition': 'uint16 data\n', 'callerid': '/MegaNode', 'tcp_nodelay': '0', 'md5sum': '1df79edf208b629fe6b81923a544552d', 'topic': '/fbutton', 'type': 'std_msgs/UInt16'}
+2021-06-17 15:53:00+0800 [-] [WARN] [1623916380.679470]: Could not process inbound connection: [/rosbridge_websocket] is not a publisher of [/fbutton]. Topics are [['/client_count', 'std_msgs/Int32'], ['/rosout', 'rosgraph_msgs/Log'], ['/connected_clients', 'rosbridge_msgs/ConnectedClients']]{'message_definition': 'uint16 data\n', 'callerid': '/MegaNode', 'tcp_nodelay': '0', 'md5sum': '1df79edf208b629fe6b81923a544552d', 'topic': '/fbutton', 'type': 'std_msgs/UInt16'}
+2021-06-17 15:53:02+0800 [-] [WARN] [1623916382.681922]: Could not process inbound connection: [/rosbridge_websocket] is not a publisher of [/fbutton]. Topics are [['/client_count', 'std_msgs/Int32'], ['/rosout', 'rosgraph_msgs/Log'], ['/connected_clients', 'rosbridge_msgs/ConnectedClients']]{'message_definition': 'uint16 data\n', 'callerid': '/MegaNode', 'tcp_nodelay': '0', 'md5sum': '1df79edf208b629fe6b81923a544552d', 'topic': '/fbutton', 'type': 'std_msgs/UInt16'}
+2021-06-17 15:53:06+0800 [-] [WARN] [1623916386.685822]: Could not process inbound connection: [/rosbridge_websocket] is not a publisher of [/fbutton]. Topics are [['/client_count', 'std_msgs/Int32'], ['/rosout', 'rosgraph_msgs/Log'], ['/connected_clients', 'rosbridge_msgs/ConnectedClients']]{'message_definition': 'uint16 data\n', 'callerid': '/MegaNode', 'tcp_nodelay': '0', 'md5sum': '1df79edf208b629fe6b81923a544552d', 'topic': '/fbutton', 'type': 'std_msgs/UInt16'}
+[ INFO] [1623916387.457707842]: -------------- WebNode : Logoff Activated --------------------
+Playing WAVE '/home/rac/sound/Logoff.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Mono
+2021-06-17 15:53:14+0800 [-] [WARN] [1623916394.690685]: Could not process inbound connection: [/rosbridge_websocket] is not a publisher of [/fbutton]. Topics are [['/client_count', 'std_msgs/Int32'], ['/rosout', 'rosgraph_msgs/Log'], ['/connected_clients', 'rosbridge_msgs/ConnectedClients']]{'message_definition': 'uint16 data\n', 'callerid': '/MegaNode', 'tcp_nodelay': '0', 'md5sum': '1df79edf208b629fe6b81923a544552d', 'topic': '/fbutton', 'type': 'std_msgs/UInt16'}
+[obstacle_detect_opcua_client_node-49] killing on exit
+[fleet_proxy-48] killing on exit
+[OPCClientTransporterSide-47] killing on exit
+[trolley-46] killing on exit
+[dyna-45] killing on exit
+[dash-44] killing on exit
+
+

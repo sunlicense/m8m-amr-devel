@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title> 
+  <link rel="stylesheet" href="font/material-icons.css">
+  <link rel="stylesheet" href="css/common.css">
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body onload="mainmenustart()">
+	<div class="center">
+	<table style="padding: 20px;">
+  <caption><h1>RAC AGV</h1></caption>
+  <tr>
+  	<td><h2>Manual</h2></td>
+  	<td><h2>Auto</h2></td>
+  	<td><h2>Learn</h2></td>
+  	<td><h2>Sync-Int</h2></td>
+		<td><h2>Sync-Ext</h2></td>
+  	<td><h2>Exit</h2></td>
+  </tr>
+	<tr>
+    <td><button  onclick="location.replace('manual.html')" ><i class='material-icons-75'>build</i></button></td>
+    <td><button  onclick="location.replace('auto.html')"  ><i class='material-icons-75'>flash_auto</i></button></td>
+    <td><button  onclick="location.replace('learn_ready.html')"  ><i class='material-icons-75'>map</i></button></td>
+    <td><button  onclick="location.replace('syncIP.html')"  ><i class='material-icons-75'>sync</i></button></td>
+		<td><button  onclick="location.replace('syncExt.html')"  ><i class='material-icons-75'>sync</i></button></td>
+    <td><button  onclick="logout()"  ><i class='material-icons-75'>exit_to_app</i></button></td>
+  </tr>
+  <!--tr>
+    <td><button type="button" onclick="location.replace('manual.html')" class="button__key" ><i class='material-icons-75'>build</i></button></td>
+    <td><button type="button" onclick="location.replace('auto.html')" class="button__key" ><i class='material-icons-75'>flash_auto</i></button></td>
+    <td><button type="button" onclick="location.replace('map.html')" class="button__key" ><i class='material-icons-75'>map</i></button></td>
+    <td><button type="button" onclick="location.replace('sync.html')" class="button__key" ><i class='material-icons-75'>sync</i></button></td>
+    <td><button type="button" onclick="logout()" class="button__key" ><i class='material-icons-75'>exit_to_app</i></button></td>
+  </tr-->
+  
+	</table>	
+	<p id="status" class="center" style="text-align: center;"></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<include file="$(find htbot)/launch/rosbridge_websocket.launch" />
+  <node pkg="htbot" type="dbNode" name="dbNode" output="screen" required="true">
+		<param name="param_file" value="$(find htbot)/data/param.dat" />		
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />		
+		<param name="posemark_file" value="$(find htbot)/data/posemark.dat" />		
+		<param name="current_group" value="0" />				
+  </node>  
+	<include file="$(find htbot)/launch/hokuyo.launch" />
+	<include file="$(find htbot)/launch/htbot.launch" />
+	<include file="$(find htbot)/launch/joystick.launch" />
+	<node name="UnoNode" pkg="rosserial_python" type="serial_node.py" output="screen" >
+		<param name="port" value= "/dev/sensors/Uno"/>
+	</node>
+	<!--node name="bmNode" pkg="htbot" type="bmNode" output="screen" ></node-->  
+	<!--node name="sgoal" pkg="htbot" type="sgoal" output="screen" ></node-->
+	<include file="$(find htbot)/launch/move_base_htbot.launch" />
+	<include file="$(find htbot)/launch/gmapping_htbot.launch" />
+	<node name="match" pkg="htbot" type="match" output="screen" ></node>
+	<node name="podom" pkg="htbot" type="podom" output="screen" ></node>
+	<node name="laserNode" pkg="htbot" type="laserNode" output="screen" ></node>
+</launch>

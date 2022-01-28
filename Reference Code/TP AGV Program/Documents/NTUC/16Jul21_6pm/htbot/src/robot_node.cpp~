@@ -1,0 +1,188 @@
+/*
+ * Node that help to save map and start and shutdown nodes. 
+ *
+ */
+
+#include <ros/ros.h>
+
+// Standard includes
+#include <iostream>
+#include <cstdlib>
+#include <unistd.h>
+#include <cmath>
+#include <string.h>
+#include <inttypes.h>
+#include <fstream>
+
+// Latency Benchmarking
+#include <sys/time.h>
+#include <time.h>
+
+#include <stdexcept>
+#include <stdint.h>
+#include <math.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <sstream>
+#include <iostream>
+#include "htbot/Command.h"
+#include "htbot/srvcmd.h"
+
+bool cmdServiceCallback(htbot::srvcmd::Request &req,htbot::srvcmd::Response &res);
+
+class RobotNode
+{
+public:
+	RobotNode();
+		
+	FILE *pfp;
+	std::string paramfile;
+	void cmdCallback(const htbot::Command::ConstPtr& msg);
+	void loadROSBridge_WebSocket();
+	void readParamfromFile();
+	//bool cmdServiceCallback(htbot::srvcmd::Request &req,htbot::srvcmd::Response &res);
+	
+private:
+	ros::NodeHandle nh,ph;
+	bool gflag,aflag;
+	std::string LPName[100];
+	ros::Subscriber cmd_sub;	
+	ros::ServiceServer cmd_service;
+};
+
+RobotNode::RobotNode():
+	ph("~"),gflag(false),aflag(false)
+{			
+	ph.getParam("param_file",paramfile);
+	cmd_sub = nh.subscribe("robot_cmd", 100, &RobotNode::cmdCallback,this);
+	//cmd_service = nh.advertiseService("cmd_service",cmdServiceCallback);
+
+} // RobotNode constructor
+
+void RobotNode::loadROSBridge_WebSocket()
+{
+	char buf [100];
+	sprintf(buf,"roslaunch htbot rosbridge_websocket.launch &");
+	system(buf);	
+}
+
+void RobotNode::readParamfromFile()
+{
+	int mapflag,noLP;
+	std::string s1;
+	std::string s3;
+	char s2[100];
+	char s21[100];
+	int len;
+
+	ROS_INFO("Param File : %s",paramfile.c_str());
+	pfp = fopen(paramfile.c_str(), "r");
+  if (pfp == NULL) {
+  	ROS_INFO("I couldn't open paramdata.dat to read.\n");    
+  	return;
+  }
+	// read mapping flag. 1=mapping done. 0=mapping not done
+	fscanf(pfp, "%d\n", &mapflag);
+	nh.setParam("mapflag",mapflag);
+	if (mapflag >= 0) {
+		// mapping done. read landing points information. load amcl	
+		//system("gnome-terminal -x ~/htstartamcl.sh &");	
+		ROS_INFO("Read Landing Points Info and load amcl");
+		fscanf(pfp, "%d\n", &noLP);
+		ROS_INFO("noLP : %d",noLP);
+		nh.setParam("numLP",noLP);
+		if (noLP > 0) {		
+			s3 = "LandingPoint";	
+			for (int k=0;k<noLP;k++) {
+				//fscanf(pfp, "%s", &s2);
+				fgets(s2,30,pfp);		
+				len = strlen(s2);	
+				s1.assign(s2,len);
+				sprintf(s21,"Landing_Point_%d",k);
+				ROS_INFO("%s = %s len=%d",s21,s1.c_str(),len);
+				ROS_INFO("%s = %s",s21,s2);
+				nh.setParam(s21,s2);
+				//ROS_INFO("LP : %d = %s",k,s2);
+			}
+		}
+		
+	} else {
+		// load mapping
+		// system("gnome-terminal -x ~/htstartgm.sh &");	
+		ROS_INFO("Loading GMapping");
+	} 	
+	fclose(pfp);
+}
+
+bool cmdServiceCallback(htbot::srvcmd::Request &req,htbot::srvcmd::Response &res)
+{
+	ROS_INFO("Command Services"); 
+	
+	switch (req.cmd) {
+		case 1: // 
+			ROS_INFO("Command 1");
+			res.status = 1;
+			break;
+		case 2: // 
+			ROS_INFO("Command 2");
+			res.status = 2;
+			break;
+		
+	}  
+	return true;
+}
+
+void RobotNode::cmdCallback(const htbot::Command::ConstPtr& msg)
+{
+	char buf [100];
+	int pid;
+
+	ROS_INFO("inside htbot command");
+	
+	switch (msg->cmd)
+	{
+		case 3 :  
+			if (!aflag) {			
+				if (msg->param1 == 1) { // start amcl
+					system("gnome-terminal -x ~/htstartamcl.sh &");
+					ROS_INFO("Started AMCL..");
+					//sleep(5);
+					aflag = true;
+				}
+			}
+			break;		
+		case 4 :  // start slam_gmapping
+			if (!gflag) {
+				if (msg->param1 == 1) {	
+					ROS_INFO("Going to Start HTBOT Gmapping..");
+					system("gnome-terminal -x ~/htstartgm.sh &");	
+					ROS_INFO("GMAPPING Started...");
+					//sleep(5);
+					gflag = true;
+				}
+			}
+			break;
+		case 5 :  // shutdown
+			ROS_INFO("Shutting Now..");
+			system("sudo shutdown -h now");
+			break;
+	}
+}
+
+
+
+int main(int argc, char **argv)
+{
+	ros::init(argc, argv, "robot_base");
+	ros::NodeHandle n;
+	RobotNode rNode;
+	ROS_INFO("Loading Parameters from File");
+	rNode.readParamfromFile();
+	ROS_INFO("Running Robot Node...");
+	ros::MultiThreadedSpinner spinner(4);
+	
+	spinner.spin();
+
+	return 0;
+}

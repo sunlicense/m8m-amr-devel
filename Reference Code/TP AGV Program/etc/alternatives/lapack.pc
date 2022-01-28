@@ -1,0 +1,9 @@
+prefix=/usr
+libdir=/usr/lib
+
+Name: lapack
+Description: FORTRAN reference implementation of LAPACK Linear Algebra PACKage
+Version: 3.6.0
+URL: http://www.netlib.org/lapack/
+Libs: -L${libdir} -llapack
+Requires: blas

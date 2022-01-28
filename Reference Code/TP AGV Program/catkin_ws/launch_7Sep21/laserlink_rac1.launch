@@ -1,0 +1,27 @@
+<!-- -*- mode: XML -*- -->
+<launch>   
+	<node pkg="tf" type="static_transform_publisher" name="bottomPRSjt" args="0 0 0 0 0 0.0 /bottomDRS /bottomPRS 60"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="bottomRSjt" args="0.545 0.105 0.085 0.435 0 0 /base_link /bottomDRS 60"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="middlePRSjt" args="0 0 0 0 0 0.0 /middleDRS /middlePRS 60"></node>
+	<node pkg="tf" type="static_transform_publisher" name="middleRSjt" args="0.6 0 0.935 0 0 0 /base_link /middleDRS 60"></node>	
+		
+	<node pkg="tf" type="static_transform_publisher" name="bottomPRSRjt" args="0 0 0 0 0 0.0 /bottomDRSR /bottomPRSR 60"></node>
+	<node pkg="tf" type="static_transform_publisher" name="bottomRSRjt" args="0.545 -0.105 0.085 -0.52 0 0 /base_link /bottomDRSR 60"></node>
+	<!--node pkg="tf" type="static_transform_publisher" name="leftRSjt" args="-0.295 0.303 0.47 0.79 0 0 /base_link /leftDRS 60"></node-->	
+	<!--node pkg="tf" type="static_transform_publisher" name="leftDPRSjt" args="0 0 0 0 0 -1.57 /leftDRS /leftPRS 60"></node-->
+	<node pkg="tf" type="static_transform_publisher" name="leftRSjt" args="-0.295 0.303 0.47 0.785 0.0 -1.57 /base_link /leftDRS 60"></node>
+	<node pkg="tf" type="static_transform_publisher" name="leftDPRSjt" args="0.0 0.0 0.0 0.0 0.0 -1.57 /leftDRS /leftPRS 60"></node>
+
+	<node pkg="tf" type="static_transform_publisher" name="uRB" args="-0.212 -0.333 0.23 -1.571 0 0 /base_link /uRBFrame 60"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="uRF" args="0.212 -0.333 0.23 -1.571 0 0 /base_link /uRFFrame 60"></node>
+
+	<node pkg="tf" type="static_transform_publisher" name="uLB" args="-0.212 0.333 0.23 1.571 0 0 /base_link /uLBFrame 60"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="uLF" args="0.212 0.333 0.23 1.571 0 0 /base_link /uLFFrame 60"></node>
+
+	<node pkg="tf" type="static_transform_publisher" name="uFR" args="0.56 -0.282 0.23 0 0 0 /base_link /uFRFrame 60"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="uFL" args="0.56 0.282 0.23 0 0 0 /base_link /uFLFrame 60"></node>
+
+	<node pkg="tf" type="static_transform_publisher" name="rightDPRSjt" args="0 0 0 0 0 -1.57 /rightDRS /rightPRS 60"></node>
+	<node pkg="tf" type="static_transform_publisher" name="rightRSjt" args="-0.295 -0.303 0.47 -0.785 0.0 -1.57 /base_link /rightDRS 60"></node>	
+
+</launch>

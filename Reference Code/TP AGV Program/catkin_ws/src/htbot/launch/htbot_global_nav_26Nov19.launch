@@ -1,0 +1,46 @@
+<!-- -*- mode: XML -*- -->
+<launch>	
+	<include file="$(find htbot)/launch/rosbridge_websocket.launch" />
+  <node pkg="htbot" type="webNode" name="webNode" output="screen" required="true">		
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />				
+  </node>  
+	<node name="talkNode" pkg="htbot" type="talkNode" respawn="true" output="screen" ></node>	
+	<include file="$(find htbot)/launch/config.launch" />
+	<include file="$(find htbot)/launch/htbot_event.launch" />
+	<include file="$(find htbot)/launch/motor_params_htbot.launch" />
+	<include file="$(find htbot)/launch/sick_tim571.launch" />
+	<node name="laserNode" pkg="htbot" type="laserNode" respawn="true" output="screen" ></node>
+	<include file="$(find htbot)/launch/laserlink_sick.launch" />
+	<node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher" ></node>
+	<node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <param name="freq" value="15.0"/>
+		<remap from="imu_data" to="/imu_3dm_node/imu/data"/>
+    <param name="sensor_timeout" value="1.0"/>
+    <param name="publish_tf" value="true"/>
+    <param name="odom_used" value="true"/>
+    <param name="imu_used" value="true"/>
+    <param name="vo_used" value="false"/>
+    <param name="output_frame" value="odom"/>
+  </node>
+
+	<include file="$(find htbot)/launch/joystick_ms.launch" />
+	<include file="$(find htbot)/launch/move_base_htbot_sick.launch" />
+	<node name="podom" pkg="htbot" type="podom" output="screen" ></node>
+
+	<node name="dash" pkg="htbot" type="dash" respawn="true" output="screen" ></node>	
+	<node name="UnoNode" pkg="rosserial_python" type="serial_node.py" output="screen" >
+		<param name="port" value= "/dev/sensors/Uno"/>
+	</node>
+	<include file="$(find realsense2_camera)/launch/rs_camera_rac.launch" />
+	<include file="$(find laserscan_kinect)/launch/laserscan_rac.launch" />	
+	<include file="$(find microstrain_3dm_gx3_45)/launch/imu.launch" />	  				
+	<include file="$(find htbot)/launch/amcl_htbot_sick.launch" />		
+	<node name="movNode" pkg="htbot" type="movNode" output="screen" ></node>
+	<node name="clearNode" pkg="htbot" type="clearNode" output="screen" ></node>		
+	<node name="mapzone" pkg="htbot" type="mapzone" respawn="true" output="screen" ></node>
+	<node name="match" pkg="htbot" type="match" output="screen" ></node>	
+	<node name="amclpose" pkg="htbot" type="amclpose" respawn="true" output="screen" ></node>	
+	<node name="check" pkg="htbot" type="check" respawn="true" output="screen" ></node>	
+	<include file="$(find htbot)/launch/refscan.launch" />
+	<node name="sgoal" pkg="htbot" type="sgoal" respawn="true" output="screen" ></node>	
+</launch>

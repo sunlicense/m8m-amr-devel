@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title>
+  <!--link rel="stylesheet" type="text/css" href="css/styles.css"-->  
+  <link rel="stylesheet" type="text/css" href="font/material-icons.css">
+  <!--link rel="stylesheet" type="text/css" href="css/nysKB.css"-->  
+  <link rel="stylesheet" type="text/css" href="css/common.css">
+  <script type="text/javascript" src="js/nysKB.js"></script>  
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/sync.js"></script>
+	<script type="text/javascript" src="js/stat.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body onload="syncIPstart()">
+	<div id="topbar" class="center-topbar">
+	<table style="width:98%;padding:1px;border:0px solid black">
+		<tr style="height:20px;padding:1px;font-size:15px;vertical-align:middle">
+			<td id="name" style="width:11.1%;text-align:left;height:20px;padding:1px">Globotix</td>
+			<td id="laser3d" style="width:11.1%;height:20px;padding:1px">l3d</td>
+			<td id="laser2d" style="width:11.1%;height:20px;padding:1px">l2d</td>
+			<td id="cam3d" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="current" style="width:11.1%;height:20px;padding:1px">2.5A</td>
+			<td id="voltage" style="width:11.1%;vertical-align:middle;height:20px;padding:1px">23.6V</td>
+			<td id="batlevel" style="margin-top:5px;vertical-align:middle;width:11.1%;height:20px;padding:1px"></td>
+			<td id="speed" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="time" style="width:11.1%;text-align:right;height:20px;padding:1px">Time</td>
+		</tr>
+	</table>
+	</div>
+	<div id="login" class="center-login">
+	<table style="width:80%;padding:1px">
+  <caption><h1>Sync Target PC Login Info</h1></caption>
+  <!--tr>
+  </tr-->
+  <tr>
+		<td style="border: 0px solid black"><span style="text-align: left;font-size: 150%;">User Name</span></td>
+  	<td style="border: 0px solid black;text-align: left"><input type="text" id="user" class="use-keyboard-input" style="width:200px;height:50px;font-size:160%;"></td>    
+    <td style="border: 0px solid black;text-align: right"><button style="font-size:180%;width:100px;text-align:center;height:70px;" onclick="KeyclearInputUser()"><i style="font-size:50px;" class='material-icons'>backspace</i></button></td>    
+  </tr>
+  <tr>
+		<td style="border: 0px solid black"><span style="text-align: left;font-size: 150%;">IP Addr</span></td>
+  	<td style="border: 0px solid black;text-align: left"><input type="text" id="ipaddr" class="use-keyboard-input" style="width:200px;height:50px;;font-size:160%;"></td>    
+    <td style="border: 0px solid black;text-align: right"><button style="font-size:180%;width:100px;text-align:center;height:70px;" onclick="KeyclearInputIP()"><i style="font-size:50px;" class='material-icons'>backspace</i></button></td>    
+  </tr>
+	<tr>
+		<td style="border: 0px solid black"><span style="text-align: left;font-size: 150%;">Password</span></td>
+  	<td style="border: 0px solid black;text-align: left"><input type="text" id="passwd" class="use-keyboard-input" style="width:200px;height:50px;;font-size:160%;"></td>    
+    <td style="border: 0px solid black;text-align: right"><button style="font-size:180%;width:100px;text-align:center;height:70px;" onclick="KeyclearInputPW()"><i style="font-size:50px;" class='material-icons'>backspace</i></button></td>    
+  </tr>
+  <tr>
+		<td></td>
+    <td><button onclick="storeIPInfo()" style="font-size:180%;width:100px;text-align:center;height:70px;" ><i style="font-size:50px;" class='material-icons'>thumb_up</i></button></td>
+		<td style="border: 0px solid black;text-align: right"><button onclick="location.replace('mainmenu.html');" style="width:100px;align-items:center;height:70px;"><i style="font-size:50px;" class='material-icons'>home</i></button></td>
+		<!--td><buttonx onclick="openKB()"><i style="font-size: 50px;" class='material-icons'>keyboard</i></buttonx></td-->
+    <!--td><buttonx onclick="KeyclearInputID()" >Clear</buttonx></td-->
+  </tr>
+	</table>	
+	<!--p id="status" class="center" style="text-align: center;"></p-->
+	<!--p><buttonx onclick="getTextWidth('Location',130)" >Clear</buttonx></p-->
+</div>
+</body>
+</html>

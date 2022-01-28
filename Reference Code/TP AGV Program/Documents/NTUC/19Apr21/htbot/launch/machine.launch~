@@ -1,0 +1,8 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <machine name="pri" address="192.168.1.120" user="racnys" password="racnys">
+  	<env name= "ROS_MASTER_URI" value="http://192.168.1.120:11311"/>
+  	<env name= "ROS_IP" value="192.168.1.120"/>
+  	<env name= "ROS_PACKAGE_PATH" value="/home/catkin_ws:$(ROS_PACKAGE_PATH)"/>  	
+  </machine>  
+</launch>

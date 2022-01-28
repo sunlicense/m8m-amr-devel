@@ -1,0 +1,23 @@
+<!--   mode: XML     -->
+
+<launch>
+    <!-- Start opc server node --> 
+     <!--
+     <param name="OPC_SERVER_ADDRESS" value="10.0.5.105:4840" />
+     <param name="OPC_SERVER_ADDRESS" value="192.168.1.21:4840" />
+     -->
+    <param name="FLEET_OPC_SERVER" value="10.0.5.101:8081" />
+    <node name="fleet_proxy" pkg="ntuc_fleet" type="fleet_proxy.py" output="screen" respawn="true" launch-prefix="taskset -c 5" respawn_delay="7">
+    </node>     
+
+
+    <!-- Start Rosbridge Server --> 
+<!-- 
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" > 
+
+     <arg name="address" value="192.168.1.128"/> 
+
+     <arg name="port" value="8085"/>
+  </include>
+-->
+</launch>

@@ -1,0 +1,121 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	<param name="use_gui" value="False"/>
+	<param name="odom_pub_rate" value="20"/>
+	<param name="mstop_time" value="20.0"/>
+	<param name="RotateAngle" value="360.0"/>
+	<param name="MoveDistance" value="3.0"/>
+	<param name="targetDist" value="0.05"/>
+	<param name="slowDist" value="0.9"/>
+	<param name="slowRatio" value="0.75"/> <!-- 0.33 -->
+	<param name="Docking_Distance" value="0.3"/>
+	<param name="Docking_Speed" value="0.015"/>
+	<param name="Docking_SlowSpeed" value="0.04"/>
+	<param name="Front_Obs_Distance" value="0.25"/>
+	<param name="FrontObsslowRatio" value="1.0"/>
+	<param name="Docking_Retract_Distance" value="-0.35"/>
+	<param name="Docking_Retract_Angle" value="180.0"/>
+	<param name="Front_Obs_Distance" value="0.6"/>
+	<param name="FrontObsslowRatio" value="0.45"/> 
+	<param name="waitStationTime" value="1"/>
+	<param name="waitBuzzTime" value="45.0"/>
+	<param name="waitExtraTime" value="7200.0"/>
+	<param name="current_offset" value="0.0"/>
+	<param name="readynav" value="1" />
+	<param name="saveTopLaserData" value="77"/> <!-- 77=saved-->
+	<param name="domidPoint" value="False" /> 
+	<param name="checkLocalisation" value="false" />
+	<param name="AutoLogin" value="true" />
+	<param name="AutoReference" value="false" />
+
+	<param name="clear_time" value="3.0" /> <!-- 13 -->
+	<!--param name="work_voltage" value="23.25" /-->  <!-- 23.0 -->
+	<!--param name="lowpower_voltage" value="21.5" /--> 
+	<!--param name="charging_voltage" value="23.9" /-->
+	<param name="work_voltage" value="15.0" /><!-- 23.0 -->
+	<param name="lowpower_voltage" value="10.0" /> 
+	<param name="charging_voltage" value="90.0" />
+	<param name="Abort_Retry" value="12" /> <!-- 12 -->
+	<param name="ALIGN_METHOD" value="10.0" /> <!--10.0=dx,dy. 11.0=dd -->
+	<param name="charging_type" value="0" /> <!-- 0=docking. 1=swap or wire-->
+	<param name="alignment_type" value="1" /> <!-- 0=no alignment, only at reference point. >0 : yes-->
+	<param name="DEGPERIDX" value="0.235" /> <!-- degree per index -->
+	<param name="FIRSTMOVE" value="1.0" /> <!-- stage 1 move to charger -->
+	<param name="FINALMOVE" value="1.0" /> <!-- final move to charger -->
+	<param name="OFFSET" value="0.19" /> <!-- docking mechanism dist offset 15cm-->
+
+	<param name="param_file" value="$(find htbot)/data/param.dat" />		
+	<param name="pose_file" value="$(find htbot)/data/posedata.dat" />		
+	<param name="posemark_file" value="$(find htbot)/data/posemark.dat" />
+	<param name="volt_file" value="$(find htbot)/data/voltdata.dat" />
+	<param name="Resolution" value="0.05" />
+	<param name="Window" value="2.0" /> <!-- 3.0-->
+	<param name="MapObsRate" value="20.0" />
+	<param name="MapOffsetX" value="0.0" />
+	<param name="MapOffsetY" value="0.0" />
+	<param name="PathIndex" value="20" />WEBLASERGAP
+	<param name="home_dir" value="/home/rac/" />
+	<param name="pgmfile" value="catkin_ws/src/htbot/maps/docmap_obs.pgm" />
+	<param name="path_file" value="$(find htbot)/data/pathdata.dat" />	
+	<param name="NoGoZoneFile" value="$(find htbot)/maps/test.bmp" />	
+	<param name="WEBLASERGAP" value="3" />
+	<param name="WEBLASER_Rate" value="10.0" /> 
+	<param name="MultiLaser_Rate" value="15.0" />
+	<param name="clean_dir" value="/home/rac/catkin_ws/src/htbot/cleanplan" />	
+
+	<!-- Lasers Connection 0=not connected. 1= connected -->
+	<param name="CentralLaserConnected" value="0" />
+	<param name="LeftLaserConnected" value="0" />
+	<param name="RightLaserConnected" value="0" />
+	<param name="MainLaserConnected" value="1" />
+
+	<param name="tm_hour" value="16"/>
+	<param name="tm_min" value="0"/>
+	<param name="tm_year" value="118"/>
+	<param name="tm_mon" value="5"/>
+	<param name="tm_mday" value="8"/>
+	<param name="time_file" value="$(find htbot)/data/time.dat" />
+
+	<param name="costx" value="10"/>
+	<param name="costy" value="10"/>
+
+	<param name="pidAngle" value="3.0"/>
+	<param name="pidAngleS" value="0.85"/>
+	<param name="pidDist" value="1.0"/>
+	<param name="maxAngleVel" value="0.7"/>
+	<param name="maxDistVel" value="0.6"/>
+	<param name="dAngleLimit" value="0.02"/>
+	<param name="dDistLimit" value="0.03"/> 
+	<param name="switchDist" value="0.3"/>
+	<param name="stopDist" value="0.45"/>
+	<param name="rePlanTime" value="10.0"/>
+	<param name="constVel" value="0.6"/>
+	<param name="redVel" value="0.3"/>
+	<param name="termVel" value="0.15"/>
+
+	<!-- amclpose node parameters -->
+	<param name="localise_x" value="0.13" />	
+	<param name="localise_y" value="0.13" />	
+	<param name="localise_a" value="0.13" />
+
+	<param name="border_x" value="0.08" />	
+	<param name="border_y" value="0.08" />	
+	<param name="border_a" value="0.08" />
+
+	<param name="relocalise_x" value="0.3" />
+	<param name="relocalise_y" value="0.3" />
+	<param name="relocalise_a" value="0.3" />
+
+	<param name="lostlocalise_x" value="0.3" />
+	<param name="lostlocalise_y" value="0.3" />
+	<param name="lostlocalise_a" value="0.3" />
+	
+	<param name="num_request_nomotion_update" value="20" /> 
+	<param name="num_lost_localization" value="3" />
+	<param name="RobotPose_Step" value="1.8" />
+
+	<!-- Cleaning Plan -->
+	<param name="cleanplanDirectory" value="/home/rac/catkin_ws/src/htbot/cleanplanpath/" />
+	<param name="cleanplanfile" value="genericplan.txt" />
+
+</launch>

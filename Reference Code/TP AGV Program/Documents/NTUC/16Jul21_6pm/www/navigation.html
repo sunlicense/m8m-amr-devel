@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<!-- Date Updated : 29.4.21 : 3pm -->
+<style type="text/css" media="screen">
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+li {
+	float : left;
+}
+
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 10px 20px;
+  text-decoration: none;
+	font-size: 20px;
+}
+
+li a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+li a.active {
+  color: white;
+  background-color: #4CAF50;
+}
+.center {
+  margin: auto;
+	float: center
+  width: 60%;
+}
+
+
+.img-container {
+	text-align: center;
+}
+    
+
+button { 
+	color: #f00;
+	background:#ffffff; 
+	padding: 5px
+	font-size: 15px;
+	border: 0px
+}
+
+table {text-align: center;padding: 1px}
+
+</style>
+</head>
+<body onload="start()">
+
+<table border="0" style="width:100%">
+	<tr> 
+		<td style="padding:1px"><button id="marklp" style="height:40px;width:130px;padding:1px" onclick="location.href=`navSetup.html`;"><h3>Nav Setup</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:130px;padding:1px" onclick="ntucnav()"><h3>NTUCNav</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:130px;padding:1px" onclick="normalnav()"><h3>Navigate</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:130px;padding:1px" onclick="testnav()"><h3>NavigateTest</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:130px;padding:1px" onclick="zero()"><h3>Zero</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:130px;padding:1px" onclick="location.href=`robotdata.html`;"><h3>DashBoard</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:130px;padding:1px" onclick="location.href=`index.html`;"><h3>Main Menu</h3></button></td>
+	</tr>
+</table>
+
+<div class="img-container">
+	<img src="imgs/nav.jpeg" width=90% height=300px alt="rac">
+</div>
+
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2djs.js"></script>
+<script type="text/javascript" src="js/nav2djs.js"></script>
+<script type="text/javascript" type="text/javascript">
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    func : 0.0 
+});
+
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+var chkmodeTimer = function checkOpMode() {
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Operation Mode has Changed. The main webpage will be loaded");
+			location.replace("index.html");
+		}
+  });
+}
+
+//setInterval(chkmodeTimer,1500);
+
+function ntucnav() {
+	PM.name = 'NTUCNav';
+	PM.set(true);
+	location.replace("navigate.html");
+}
+
+function normalnav() {
+	PM.name = 'NTUCNav';
+	PM.set(false);
+	location.replace("navigate.html");
+}
+
+function testnav() {
+	PM.name = 'NTUCNav';
+	PM.set(true);
+	location.replace("navigate_TT.html");
+}
+
+function start() {
+	/*
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == -1) {
+			alert("Please Login First");
+			location.replace("index.html");
+		} else {
+			if ((result.status == 0) || (result.status == 55)) {
+				cmdreq.cmd = 81;	
+				cmdsrv.callService(cmdreq, function(result) {
+    			console.log('Result for service call on '
+      		+ cmdsrv.name
+      		+ ': '
+      		+ result.status);
+					if (result.status != 81) {
+						location.replace("index.html");
+					}
+ 			 });
+			}
+		}
+  });
+	*/
+}
+
+function login() {
+	var passwd = prompt('Enter Password to Shutdown');
+	cmdreq.cmd = 49;	
+	cmdreq.lps = passwd;
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == 1) {
+			alert("Login Successful");
+		} else {
+			alert("Login Password Wrong");
+		}
+  });	
+}
+
+function zero() {	
+	//alert("---- Start Localisation Check --------");
+	document.getElementById("stat").innerHTML = "Zero Refernce" ;
+	PM.name = 'ZeroReference';
+	PM.set(true);
+}
+
+function stableAMCL() {
+	alert("Stablise AMCL");
+	PM.name = 'StablisedAMCL';
+	PM.set(true);
+}
+
+function AMCLOK() {
+	alert("Turn Off Stablisation of AMCL");
+	PM.name = 'StablisedAMCL';
+	PM.set(false);
+}
+
+function logout() {
+	cmdreq.cmd = 43;	// 58
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });
+	//alert(" Logout Done ");
+}
+
+function shutdown_nopwd() {	
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Please Login First");
+			location.replace("index.html");
+			return;
+		} 
+  });
+	cmdreq.cmd = 2;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function mainmenu() {	
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Please Login First");
+			location.replace("index.html");
+			return;
+		} 
+  });
+	alert(" Return to Main Menu");
+	//document.getElementById("stat").innerHTML = "UnLoading Navigation Software Modules" ;
+	cmdreq.cmd = 82;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == 82) {
+			//document.getElementById("stat").innerHTML = "UnLoading Navigation Software Modules completed" ;
+		} else {
+			//document.getElementById("stat").innerHTML = "UnLoading Navigation Software Modules errors" ;
+			alert(" Errors in UnLoading Navigation Software Modules");
+			location.replace("index.html");
+		}
+  });	
+}
+
+</script>
+</body>
+</html>
+

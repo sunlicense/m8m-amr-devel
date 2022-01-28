@@ -1,0 +1,719 @@
+/*
+ * An EPOS interface to control both motors of a differential drive robot
+ *
+ */
+
+//#define DEBUG
+//#define DEBUG_ENC
+#include <ros/ros.h>
+#include "htbot/bot2wheel_driver.h"
+#include <math.h>
+
+#define MOTOR_ERROR(left_right, where, ...) \
+  { \
+    printf("\n\tIn moveVelocity (" where " %0x) " left_right " motor failed \n", ##__VA_ARGS__); \
+    return false; \
+  }
+
+Bot2Wheel::Bot2Wheel ()
+{
+	odom_pub = nn.advertise<htbot::odom>("podom",100);
+	play_pub = nn.advertise<htbot::sound>("sound", 1);
+} //Bot2Wheel constructor
+
+Bot2Wheel::~Bot2Wheel ()
+{
+	shutDown();
+} //Bot2Wheel destructor
+
+void Bot2Wheel::start()
+{
+	mm_per_count = M_PI*WHEEL_DIA*wheel_circum_correction/(STEPS_PER_REV*GEAR_RATIO);
+	ROS_INFO("pbaudL : %d.  ebaudL : %d",pbaudL,ebaudL);
+	ROS_INFO("pbaudR : %d.  ebaudR : %d",pbaudR,ebaudR);
+	leftmotor_fd=leftMotor.openPort(LEFT_MOTOR.c_str(),pbaudL);
+	//ROS_INFO("Opening Left Motor Port OK");
+	rightmotor_fd=rightMotor.openPort(RIGHT_MOTOR.c_str(),pbaudR);
+	//("Opening Right Motor Port OK");
+	usleep(500000);	
+	if (cbaudrateL > 0) {	
+		if (leftmotor_fd > 0) {
+			ROS_INFO("Left Port : Set Baud Rate");
+			if(!leftMotor.SetRS232BaudRate(ebaudL)) {
+				ROS_INFO("Error in setting left motor baudrate. Try one more time in 2 secs");
+				sleep(2);
+				ROS_INFO("Left Port : Set Baud Rate 2");
+				if(!leftMotor.SetRS232BaudRate(ebaudL)) {
+					ROS_INFO("Error in setting left motor baudrate. Exit");
+					return;
+				}
+			}
+			ROS_INFO("Left Port : Set Baud Rate Passed");
+			leftMotor.SetMotorType(1);
+			leftMotor.Store();
+		}
+	}
+	sleep(2);
+	if (cbaudrateR > 0) {	
+		ROS_INFO("Right Port : Set Baud Rate");
+		if (rightmotor_fd > 0) {
+			ROS_INFO("Right Port : Set Baud Rate");
+			if (!rightMotor.SetRS232BaudRate(ebaudR)) {
+				ROS_INFO("Error in setting Right motor baudrate. Try one more time in 2 secs");
+				sleep(2);
+				ROS_INFO("Right Port : Set Baud Rate");
+				if(!rightMotor.SetRS232BaudRate(ebaudR)) {
+					ROS_INFO("Error in setting Right motor baudrate. Exit");
+					return;
+				}
+			}
+			ROS_INFO("Right Port : Set Baud Rate Passed");
+			rightMotor.SetMotorType(1);
+			rightMotor.Store();
+		}
+	}
+	// set baudrate 
+	//leftMotor.SetRS232BaudRate(ebaud);
+	//leftMotor.SetRS232BaudRate(ebaud);
+}
+
+
+bool Bot2Wheel::reset()
+{
+	printf("Halting motors...\n");
+
+	//if(!rightMotor.SetControlWord(0x00FF)) {
+	//	ROS_INFO("RIGHT MOTOR : CANNOT SET CONTROL WORD");
+	//}
+	//sleep(2);
+	
+	ROS_INFO("Reset RIGHT MOTOR");
+	if(!rightMotor.FaultReset()) {
+		//ROS_INFO("RIGHT MOTOR : CANNOT SET CONTROL WORD");
+		return false;
+	}
+	//rightMotor.GetNodeID();
+	//ROS_INFO("RIGHT MOTOR NodeID: %x",rightMotor.NodeID);
+	//if(!rightMotor.sendNMTService(0x00,0x01,0x00,0x82)) {
+	//	ROS_INFO("RIGHT MOTOR : CANNOT Reset Comm");
+	//	return false;
+	//}
+	ROS_INFO("Reset LEFT MOTOR");
+	//leftMotor.SetMotorType(1);
+	if(!leftMotor.FaultReset()) {
+		//ROS_INFO("LEFT MOTOR : CANNOT SET CONTROL WORD");
+		return false;
+	}
+	//ROS_INFO("LEFT MOTOR NodeID: %x",leftMotor.NodeID);
+	//if(!leftMotor.sendNMTService(0x00,0x01,0x00,0x82)) {
+	//	ROS_INFO("LEFT MOTOR : CANNOT Reset Comm");
+	//	return false;
+	//}
+	
+	ROS_INFO("Enabling Left Motor");
+	if(!leftMotor.MoveToEnableOperation()) return false;
+	
+	if(!rightMotor.MoveToEnableOperation()) return false;
+	ROS_INFO("Enabling Right Motor");
+
+	usleep(200000);
+	printf("Setting Left Motor Params\n");
+	setParams(&leftMotor);
+	printf("Setting Right Motor Params\n");
+	setParams(&rightMotor);
+	printf("Motors ready to move\n");
+	return true;
+}
+
+bool Bot2Wheel::FaultReset()
+{
+
+	ROS_INFO("Reset RIGHT MOTOR");
+	if(!rightMotor.FaultReset()) {
+		return false;
+	}
+
+	ROS_INFO("Reset LEFT MOTOR");
+	if(!leftMotor.FaultReset()) {		
+		return false;
+	}
+
+	ROS_INFO("Enabling Left Motor");
+	if(!leftMotor.MoveToEnableOperation()) return false;
+	
+	if(!rightMotor.MoveToEnableOperation()) return false;
+	ROS_INFO("Enabling Right Motor");
+
+	return true;
+}
+
+void Bot2Wheel::shutDown()
+{
+	printf("\t-----Shutting down robot...-----\n");
+	moveVelocity(0,0);
+	if(leftMotor.closePort())
+	{
+		printf("Left motor %i has been shutdown properly\n",leftmotor_fd);
+	}
+	else printf("Left motor %i was not shutdown\n",leftmotor_fd);
+	if(rightMotor.closePort())
+	{
+		printf("Right motor %i has been shutdown properly\n",rightmotor_fd);
+	}
+	else printf("Right motor %i was not shutdown\n",rightmotor_fd);
+}
+
+void Bot2Wheel::setVelMode() {
+	//motorVelMode(&leftMotor);
+	//motorVelMode(&rightMotor);
+	leftMotor.SetOperationMode(EPOS::PROFILE_VELOCITY);
+	leftMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL);
+	leftMotor.SetProfileVelocity(ProfileVelocity);
+	rightMotor.SetOperationMode(EPOS::PROFILE_VELOCITY);
+	rightMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL);
+	rightMotor.SetProfileVelocity(ProfileVelocity);
+	//printf("set vel mode\n");
+}
+
+void Bot2Wheel::setPosMode() {
+	//motorVelMode(&leftMotor);
+	//motorVelMode(&rightMotor);
+	leftMotor.SetOperationMode(EPOS::PROFILE_POSITION);
+	leftMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL);
+	//leftMotor.SetProfileVelocity(ProfileVelocity);
+	rightMotor.SetOperationMode(EPOS::PROFILE_POSITION);
+	rightMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL);
+	//rightMotor.SetProfileVelocity(ProfileVelocity);
+	//printf("set vel mode\n");
+}
+
+void Bot2Wheel::motorVelMode(EPOS* motor) {
+	motor->SetOperationMode(EPOS::PROFILE_VELOCITY);
+	motor->SetMotionProfileType(EPOS::TRAPEZOIDAL);
+	motor->SetMaxProfileVelocity(MaxProfileVelocity);
+}
+
+void Bot2Wheel::setParams(EPOS* motor)
+{
+	motor->SetCurrentRegulatorPGain(CurrentRegulatorPGain);
+	motor->SetCurrentRegulatorIGain(CurrentRegulatorIGain);
+	motor->SetVelocityPGain(VelocityPGain);
+	motor->SetVelocityIGain(VelocityIGain);
+	motor->SetPositionPGain(PositionPGain);
+	motor->SetPositionIGain(PositionIGain);
+	motor->SetPositionDGain(PositionDGain);
+
+	motor->SetProfileAcceleration(ProfileAcceleration);
+	motor->SetProfileDeceleration(ProfileDeceleration);
+	motor->SetProfileVelocity(ProfileVelocity);
+	motor->SetMaxProfileVelocity(MaxProfileVelocity);
+	motor->SetMaxFollowError(MaxFollowError);
+	motor->SetPositionWindow(PositionWindow);
+	motor->SetPositionWindowTime(PositionWindowTime);
+
+	motor->SetMotorMaxContCurrent(MotorMaxContinuousCurrent);
+	motor->SetMotorMaxPeakCurrent((unsigned short)(MotorMaxContinuousCurrent * 2));
+	motor->SetThermalTimeConstantWinding(ThermalTimeConstantWinding);
+
+	motor->GetPosition();
+	motor->GetVelocity();
+	motor->SetOperationMode(EPOS::PROFILE_VELOCITY);
+	motor->SetMotionProfileType(EPOS::TRAPEZOIDAL);
+	//motor->GetStatusWord();
+}
+
+bool Bot2Wheel::moveVelocity(double linear, double angular)
+{
+	int v,w;
+	v=(int)( (linear*1000)/(M_PI*WHEEL_DIA*wheel_circum_correction) * 60 * GEAR_RATIO ) * REFLECT;
+	w=(int)( angular*0.5*AXLE_LEN*wheel_base_correction/(M_PI*WHEEL_DIA*wheel_circum_correction) * 60 * GEAR_RATIO ) * REFLECT;
+	//ROS_INFO("Move at vx=%f, w=%f -> n=%i, %i \n", linear,angular,v,w);
+#ifdef DEBUG
+	printf("Move at vx=%f, w=%f -> n=%i, %i \n", linear,angular,v,w);
+#endif
+	printf("Move at vx=%f, w=%f -> n=%i, %i \n", linear,angular,v,w);
+	// checking of EPOS status in case of fault (eg from over current)
+	leftMotor.GetStatusWord();
+	if ( (leftMotor.StatusWord & 0x417f)==0x0108 ) MOTOR_ERROR("Left", "status",leftMotor.StatusWord);
+	rightMotor.GetStatusWord();
+	if ( (rightMotor.StatusWord & 0x417f)==0x0108 ) MOTOR_ERROR("Right", "status",rightMotor.StatusWord);
+
+	//if ( !leftMotor.SetOperationMode(EPOS::PROFILE_VELOCITY) ) printf("Error setting left profile vel");
+	//if ( !rightMotor.SetOperationMode(EPOS::PROFILE_VELOCITY) ) printf("Error setting right profile vel");
+	//if ( !leftMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL) ) printf("Error setting left motion type");
+	//if ( !rightMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL) ) printf("Error setting right motion type");
+
+	// try to set velocity, will return false if target vel > max profile vel
+	if ( !leftMotor.SetTargetVelocity(v-w) ) printf("Error setting left target vel");
+	if ( !rightMotor.SetTargetVelocity(-v-w) ) printf("Error setting right target vel");
+	//if ( !leftMotor.SetTargetVelocity(2000) ) MOTOR_ERROR("Left", "set vel", v-w);
+	//if ( !rightMotor.SetTargetVelocity(-2000) ) MOTOR_ERROR("Right", "set vel", -v-w);
+	//printf("Move at lm=%d, rm=%d \n", v-w,-v-w);
+
+	// start motion by setting halt bit (bit 8 of controlword) to 0
+	/**/	//rightMotor.SetControlWord(0x000F);
+		leftMotor.SetControlWord(0x000F); // works for epos2. turn off=0x010f
+	//leftMotor.SetControlWord(leftMotor.ControlWord & 0xfeff);
+		rightMotor.SetControlWord(0x000F);
+	//rightMotor.SetControlWord(rightMotor.ControlWord & 0xfeff);
+	// ideally, the code below should be used instead, but read/write of controlword takes very long (>10ms) when going through edgeport/4 for unknown reasons, so using the direct setting of bits to speed up the whole thing
+	leftMotor.GetStatusWord();
+	rightMotor.GetStatusWord();
+/*	//set bit 8 of controlword to 0 to start motion
+	unsigned short cwd1,cwd2;
+	if ( !leftMotor.GetControlWord() ) return false;
+	cwd1 = (unsigned short)(leftMotor.ControlWord & 0xfeff);
+	if ( !rightMotor.GetControlWord() ) return false;
+	cwd2 = (unsigned short)(rightMotor.ControlWord & 0xfeff);
+	if ( !leftMotor.SetControlWord(cwd1) ) return false;
+	if ( !rightMotor.SetControlWord(cwd2) ) return false;
+/*
+	//set bit 8 of controlword to 1 to stop axle
+	rightMotor.SetControlWord(cwd2 | 0x0100);
+	leftMotor.SetControlWord(cwd1 | 0x0100);
+*/
+
+#ifdef DEBUG
+	leftMotor.GetCurrent();
+	leftMotor.GetAverageCurrent();
+	leftMotor.GetThermalTimeConstantWinding();
+	leftMotor.GetStatusWord();
+	printf("Status 1537 means stopped, 137 target vel not reached, 537 target vel reached\n");
+	printf("left motor status = %x \t thermaltime = %i \n", leftMotor.StatusWord, leftMotor.ThermalTimeConstantWinding);
+	printf("left motor average current = %i \t actual current = %i \n", leftMotor.AverageCurrent, leftMotor.ActualCurrent);
+	rightMotor.GetCurrent();
+	rightMotor.GetAverageCurrent();
+	rightMotor.GetThermalTimeConstantWinding();
+	rightMotor.GetStatusWord();
+	printf("right motor status = %x \t thermaltime = %i \n", rightMotor.StatusWord, rightMotor.ThermalTimeConstantWinding);
+	printf("right motor average current = %i \t actual current = %i \n", rightMotor.AverageCurrent, rightMotor.ActualCurrent);
+#endif
+
+	return true;
+} // moveVelocity(double linear, double angular)
+
+bool Bot2Wheel::checkMoveComplete(void)
+{
+	unsigned short stat1, stat2;
+	bool ret;
+
+	//leftMotor.GetStatusWord();
+	if ( !leftMotor.GetStatusWord() ) {
+		ROS_INFO("Err in LM SW");
+		ret = false;
+	}
+	//stat1 = (leftMotor.StatusWord & 0x0400)>>10;
+	stat1 = (leftMotor.StatusWord & 0x0400);
+	//rightMotor.GetStatusWord();
+	if ( !rightMotor.GetStatusWord() ) {
+		ROS_INFO("Err in RM SW");
+		ret = false;
+	}
+	//stat2 = (rightMotor.StatusWord & 0x0400)>>10;
+	stat2 = (rightMotor.StatusWord & 0x0400);
+	//ROS_INFO("Check Move S1 : %d. S2 : %d. SWL : %x. SWR : %x",stat1,stat2,leftMotor.StatusWord,rightMotor.StatusWord);
+	if (stat1==0 || stat2 == 0) {
+		ret = false;
+	} else {
+		ret = true;
+		if ( !leftMotor.SetControlWord(0x010f) ) return false;
+		if ( !rightMotor.SetControlWord(0x010f) ) return false;
+	}
+	return ret;
+}
+
+bool Bot2Wheel::stopRobot(void)
+{
+	unsigned short cwd1,cwd2;
+	bool ret;
+	
+	if ( !leftMotor.GetControlWord() ) return false;
+	cwd1 = (unsigned short) (leftMotor.ControlWord | 0x0100 );
+	if ( !rightMotor.GetControlWord() ) return false;
+	cwd2 = (unsigned short) (rightMotor.ControlWord | 0x0100 );
+	if ( !leftMotor.SetControlWord(cwd1) ) return false;
+	if ( !rightMotor.SetControlWord(cwd2) ) return false;
+	return ret;
+}
+
+void Bot2Wheel::setSlowMove(void)
+{
+	leftMotor.SetProfileVelocity(MaxProfileVelocityMD);
+	rightMotor.SetProfileVelocity(MaxProfileVelocityMD);
+	//leftMotor.MoveToEnableOperation();
+	//rightMotor.MoveToEnableOperation();
+}
+
+void Bot2Wheel::setFastMove(void)
+{
+	leftMotor.SetProfileVelocity(ProfileVelocity);
+	rightMotor.SetProfileVelocity(ProfileVelocity);
+	//leftMotor.MoveToEnableOperation();
+	//rightMotor.MoveToEnableOperation();
+}
+
+void Bot2Wheel::publish_odom()
+{
+	double distance,angle;
+	htbot::odom odom;
+
+	getDisplacement(&distance, &angle);	
+	odom.dist = distance;
+	odom.angle = angle;
+	odom_pub.publish(odom);
+	return;
+}
+
+void Bot2Wheel::publish_sound(int id)
+{
+	htbot::sound cmd;
+	cmd.id = id;
+	play_pub.publish(cmd);
+	return;
+}
+/*
+bool Bot2Wheel::moveDistance(double dist)
+{
+	ros::NodeHandle nn;
+	int d,cnt,cntlimit;
+	double obsdist;
+	bool stp;
+	int cur_Lpos=0, cur_Rpos=0;
+	int des_Lpos=0, des_Rpos=0;
+	int avcp, avdp;
+	unsigned short cwd1,cwd2;
+	unsigned short stat1, stat2;
+
+	nn.setParam("lookforObs",1);		
+	usleep(700000);
+	// check if path is clear to move
+	cnt = 0;
+	if (dist > 0.0) {
+		while(true) {				
+			publish_odom();
+			nn.getParam("ProfileMoveObsDist",obsdist);
+			if (obsdist > dist) {
+				break;
+			}
+			if (cnt == 0) {
+				publish_sound(14);  // robot need space				
+			}
+			usleep(100000);	
+			cnt++;
+			if (cnt > 30) {
+				cnt = 0;
+			}		
+		}
+	}
+	if (cnt > 0) {
+		usleep(100000*(30-cnt));	// complete the 3 sec delay to play sound
+	}
+
+	cntlimit = (int)(10.0 * (dist / 0.2));  // assume 0.15m/s
+	if (cntlimit < 0) {
+		cntlimit = -cntlimit;
+	}
+	
+	//convert dist in m to motor encoder steps
+	d=(int)( 1000.*dist/(M_PI*WHEEL_DIA*wheel_circum_correction) * STEPS_PER_REV * GEAR_RATIO ) * REFLECT;
+	//printf("Move dist=%f m -> n=%i \n", dist,d); 
+	printf("Move dist=%.3f. climit=%d \n", dist,cntlimit); 
+	
+	if ( !leftMotor.GetPosition() ) return true;  // false
+	if ( !rightMotor.GetPosition() ) return true; // false
+	cur_Lpos = leftMotor.ActualPosition;
+	cur_Rpos = rightMotor.ActualPosition;
+	des_Lpos = cur_Lpos + d;
+	des_Rpos = cur_Rpos - d;
+	avdp = (int)((des_Lpos - des_Rpos) / 2.0);
+
+	printf("CLpos=%d. DLpos=%d \n", cur_Lpos,des_Lpos);
+	printf("CRpos=%d. DRpos=%d \n", cur_Rpos,des_Rpos);  
+
+	quickstop = false;
+	// set mode
+	if ( !leftMotor.SetOperationMode(EPOS::PROFILE_POSITION) ) return false;
+	if ( !rightMotor.SetOperationMode(EPOS::PROFILE_POSITION) ) return false;
+	if ( !leftMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL) ) return false;
+	if ( !rightMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL) ) return false;
+
+	while(true) {
+		// set dist to move
+		if ( !leftMotor.SetTargetPosition(d) ) return false;
+		if ( !rightMotor.SetTargetPosition(-d) ) return false;
+
+		//move loop
+		cnt = 0;
+		while(true) { 
+			if ( !leftMotor.SetControlWord(0x007f) ) return false;  // start
+			if ( !rightMotor.SetControlWord(0x007f) ) return false;			
+			publish_odom();
+			// check status
+			leftMotor.GetStatusWord();
+			stat1 = (leftMotor.StatusWord & 0x0400)>>10;
+			rightMotor.GetStatusWord();
+			stat2 = (rightMotor.StatusWord & 0x0400)>>10;
+			if (stat1==1 && stat2 == 1) 	{
+				//completed
+				break;
+			}
+			usleep(100000);
+		}
+		// compute remain dist to move
+		if ( !leftMotor.GetPosition() ) return true;  // false
+		if ( !rightMotor.GetPosition() ) return true; // false
+		cur_Lpos = leftMotor.ActualPosition;
+		cur_Rpos = rightMotor.ActualPosition;
+		avcp = (int)((cur_Lpos - cur_Rpos) / 2.0);
+		d = avdp - avcp;
+		printf("\n d=%d. avdp=%d. avcp=%d",d,avdp,avcp);
+		if (d <= 0) {
+			break;	
+		}
+	}
+	
+	if ( !leftMotor.SetControlWord(0x010f) ) return false;
+	if ( !rightMotor.SetControlWord(0x010f) ) return false;
+	printf(" move dist complete");
+	nn.setParam("lookforObs",0);	
+	return true;
+} 
+*/
+
+bool Bot2Wheel::moveDistance(double dist)
+{
+	ros::NodeHandle nn;
+	int d,cnt,cntlimit;
+	double obsdist;
+	bool stp;
+	//convert dist in m to motor encoder steps
+	//nn.setParam("profile_move_flag",1);
+	cntlimit = (int)(10.0 * (dist / 0.10));  // assume 0.15m/s
+	if (cntlimit < 0) {
+		cntlimit = -cntlimit;
+	}
+	if (cntlimit < 20) {
+		cntlimit = 20;
+	}
+	//if ((dist > 1.0) || (dist < -1.0)) {
+	//	cntlimit = 60;
+	//}
+	nn.setParam("lookforObs",1);		
+	usleep(100000);
+	// check if path is clear to move
+	cnt = 0;
+	if (dist > 0.0) {
+		while(true) {				
+			publish_odom();
+			nn.getParam("ProfileMoveObsDist",obsdist);
+			printf("\n obsdist : %.3f. dist : %.3f",obsdist,dist);
+			if (dist > 2.0) {
+				break;
+			}
+			if (obsdist > dist) {
+				break;
+			}
+			if (cnt == 0) {
+				publish_sound(14);  // robot need space				
+			}
+			usleep(100000);	
+			cnt++;
+			if (cnt > 30) {
+				cnt = 0;
+			}		
+		}
+	}
+	if (cnt > 0) {
+		usleep(100000*(30-cnt));	// complete the 3 sec delay to play sound
+	}
+
+	d=(int)( 1000.*dist/(M_PI*WHEEL_DIA*wheel_circum_correction) * STEPS_PER_REV * GEAR_RATIO ) * REFLECT;
+	//printf("Move dist=%f m -> n=%i \n", dist,d); 
+	//printf("Move dist=%.3f. climit=%d \n", dist,cntlimit); 
+	//usleep(700000);
+	quickstop = false;
+	if ( !leftMotor.SetOperationMode(EPOS::PROFILE_POSITION) ) return false;
+	if ( !rightMotor.SetOperationMode(EPOS::PROFILE_POSITION) ) return false;
+	if ( !leftMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL) ) return false;
+	if ( !rightMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL) ) return false;
+
+	if ( !leftMotor.SetTargetPosition(d) ) return false;
+	if ( !rightMotor.SetTargetPosition(-d) ) return false;
+
+	//set bits 4,5,6 to '1' to assume target pos, set immediately, target pos is relative value
+	//set bit 8 of controlword to 0 to start motion
+	unsigned short cwd1,cwd2;
+	if ( !leftMotor.GetControlWord() ) return false;
+	//cwd1 = (unsigned short)( (leftMotor.ControlWord|0x0070) & 0xfeff );
+	cwd1 = 0x007f;
+	if ( !rightMotor.GetControlWord() ) return false;
+	//cwd2 = (unsigned short)( (rightMotor.ControlWord|0x0070) & 0xfeff );
+	cwd2 = 0x007f;
+	if ( !leftMotor.SetControlWord(cwd1) ) return false;
+	if ( !rightMotor.SetControlWord(cwd2) ) return false;
+	//printf("Here A");
+	unsigned short stat1, stat2;
+	cnt = 0;
+	nn.setParam("lookforObs",1);		
+	obsdist = 2.0;  // no obs in front
+	stp = false;
+	do // keep moving until target reached (bit 10 of status)
+	{
+		usleep(100000);
+		cnt++;
+		publish_odom();
+		if (cnt > cntlimit) {
+			printf("dist move hit limit. climit:%d. dist:%.3f",cntlimit,dist);
+			break;  // after 4 secs
+		}
+		if (quickstop) {
+			printf(" quick stop");
+			if ( !leftMotor.SetControlWord(0x000b) ) return false;  // quick stop
+			if ( !rightMotor.SetControlWord(0x000b) ) return false;
+			break;
+		}
+		//printf("Here B");
+		leftMotor.GetStatusWord();
+		stat1 = (leftMotor.StatusWord & 0x0400)>>10;
+		rightMotor.GetStatusWord();
+		stat2 = (rightMotor.StatusWord & 0x0400)>>10;
+		/*
+		// check for obs in front
+		nn.getParam("ProfileMoveObsDist",obsdist);
+		printf("\nObsDist=%.3f",obsdist);
+		if (dist > 0.0) {
+		if (obsdist < 0.5) {
+			// stop
+			if ( !leftMotor.SetControlWord(0x015f) ) return false;  // quick stop
+			if ( !rightMotor.SetControlWord(0x015f) ) return false;
+			stp = true;	
+			printf("\n stop. cnt = %d",cnt);
+		} else {
+			cnt++;
+			if (stp) {
+				stp = false;
+				if ( !leftMotor.SetControlWord(0x007f) ) return false;
+				if ( !rightMotor.SetControlWord(0x007f) ) return false;
+				printf("\n start again");
+			}
+		}
+		}
+		*/
+		//ROS_INFO("S1 : %x. s2 : %x. SWL:%x. SWR:%x",stat1,stat2,leftMotor.StatusWord,rightMotor.StatusWord);
+	} while (stat1==0 && stat2 == 0);// &&
+	
+	//sleep(10);
+	if ( !leftMotor.SetControlWord(0x010f) ) return false;
+	if ( !rightMotor.SetControlWord(0x010f) ) return false;
+	//printf(" move dist complete");
+	//nn.setParam("profile_move_flag",0);
+	nn.setParam("lookforObs",0);	
+	printf("\n done move dist");
+	return true;
+} // bool Bot2Wheel::moveDistance(double dist)
+
+bool Bot2Wheel::moveAngle(double angle)
+{
+	int th,cnt,cntlimit;
+	//cntlimit = 40;
+	//if ((angle > 150.0) || (angle < -150.0)) {
+	//	cntlimit = 100;
+	//}
+	cntlimit = (int)(0.7 * angle);
+	if (cntlimit < 0) {
+		cntlimit = -cntlimit;
+	}
+	if (cntlimit < 20) {
+		cntlimit = 20;
+	}
+	//convert angle in degrees to motor encoder steps
+	th=(int)( angle/180.0 * 0.5*AXLE_LEN*wheel_base_correction / (WHEEL_DIA*wheel_circum_correction) * STEPS_PER_REV * GEAR_RATIO ) * REFLECT;
+	//ROS_INFO("Move angle=%f degrees -> n=%i \n", angle,th);
+#ifdef DEBUG
+	printf("Move angle=%f degrees -> n=%i \n", angle,th);
+#endif
+	usleep(100000);
+	if ( !leftMotor.SetOperationMode(EPOS::PROFILE_POSITION) ) return false;
+	if ( !rightMotor.SetOperationMode(EPOS::PROFILE_POSITION) ) return false;
+	if ( !leftMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL) ) return false;
+	if ( !rightMotor.SetMotionProfileType(EPOS::TRAPEZOIDAL) ) return false;
+
+	 // wheels have to turn negative dir for robot to turn positive angle
+	if ( !leftMotor.SetTargetPosition(-th) ) return false;
+	if ( !rightMotor.SetTargetPosition(-th) ) return false;
+
+	//set bits 4,5,6 to '1' to assume target pos, set immediately, target pos is relative value
+	//set bit 8 of controlword to 0 to start motion
+	unsigned short cwd1,cwd2;
+	if ( !leftMotor.GetControlWord() ) return false;
+	//cwd1 = (unsigned short)( (leftMotor.ControlWord|0x0070) & 0xfeff );
+	cwd1 = 0x007f;
+	if ( !rightMotor.GetControlWord() ) return false;
+	//cwd2 = (unsigned short)( (rightMotor.ControlWord|0x0070) & 0xfeff );
+	cwd2 = 0x007f;
+	if ( !leftMotor.SetControlWord(cwd1) ) return false;
+	if ( !rightMotor.SetControlWord(cwd2) ) return false;
+
+	//if ( !leftMotor.GetControlWord() ) return false;
+	//if ( !rightMotor.GetControlWord() ) return false;
+	//ROS_INFO("CWL : %x. CWR : %x. size : %d",leftMotor.ControlWord,rightMotor.ControlWord,sizeof(rightMotor.ControlWord));
+	
+	unsigned short stat1, stat2;
+	cnt = 0;
+	do // keep moving until target reached (bit 10 of status)
+	{
+		usleep(100000);
+		cnt++;
+		publish_odom();
+		if (cnt > cntlimit) {
+			printf("\nangle move hit limit : cntlimit : %d. angle : %.3f",cntlimit,angle);
+			break;  // after 4 secs
+		}
+		leftMotor.GetStatusWord();
+		stat1 = (leftMotor.StatusWord & 0x0400)>>10;
+		rightMotor.GetStatusWord();
+		stat2 = (rightMotor.StatusWord & 0x0400)>>10;
+		//ROS_INFO("S1 : %x. s2 : %x",stat1,stat2);
+	} while (stat1==0 && stat2 == 0);  // &&
+	if ( !leftMotor.SetControlWord(0x010f) ) return false;
+	if ( !rightMotor.SetControlWord(0x010f) ) return false;
+	
+	//leftMotor.GetStatusWord();
+	//rightMotor.GetStatusWord();
+	//usleep(10000);
+	//ROS_INFO("Exit MA");
+	return true;
+} // bool Bot2Wheel::moveAngle(double angle)
+
+bool Bot2Wheel::getDisplacement(double* distance, double* angle)
+{
+	int cur_Lpos=0, cur_Rpos=0;
+	double left_mm=0, right_mm=0;
+
+	prev_Lpos = leftMotor.ActualPosition;
+	prev_Rpos = rightMotor.ActualPosition;
+
+	if ( !leftMotor.GetPosition() ) return true;  // false
+	if ( !rightMotor.GetPosition() ) return true; // false
+	cur_Lpos = leftMotor.ActualPosition;
+	cur_Rpos = rightMotor.ActualPosition;
+
+	// distance travelled by each wheel
+	// mm_per_count = M_PI*WHEEL_DIA*wheel_circum_correction / (STEPS_PER_REV*GEAR_RATIO);
+	left_mm = (double)(cur_Lpos-prev_Lpos) * mm_per_count * REFLECT;
+	right_mm = (double)(cur_Rpos-prev_Rpos) * mm_per_count * REFLECT;
+
+//note: the following calculations are approximations of the robot motion
+	// displacement of robot
+	*distance = (( left_mm - right_mm )/2.0) / 1000.0; //in m
+		//note: using left_encoder-right_encoder because they are opposite signs.
+	// rotation of robot
+	*angle = -( left_mm + right_mm )/AXLE_LEN * odom_angular_scale_correction; //in rad
+		//note: taking negative because defined left turn (rotate around z) as positive angle (right hand rule).
+
+#ifdef DEBUG
+	printf("left wheel travelled [%f]mm, right wheel travelled [%f]mm \n",left_mm,right_mm);
+	printf("distance travelled by robot: [%f]m, angle [%f]rad \n",*distance,*angle);
+#endif
+	return true;
+}

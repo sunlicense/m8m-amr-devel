@@ -1,0 +1,1182 @@
+***** Catkin *****
+
+*** Creating a workspace ***
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/src
+catkin_init_workspace
+cd ~/catkin_ws/
+catkin_make
+
+catkin_make [make_targets] [-DCMAKE_VARIABLES=...]
+catkin_make --source my_src  // different source files location
+catkin_make install --source my_src  # (optionally)
+
+
+
+*** Creating a catkin package ***
+catkin_create_pkg <package_name> [depend1] [depend2] [depend3]
+Example :
+cd ~/catkin_ws/src
+catkin_create_pkg beginner_tutorials std_msgs rospy roscpp
+cd ~/catkin_ws
+catkin_make
+
+
+
+*** Building ROS from source and installing to system ***
+cd ~/catkin_ws
+$ catkin_make install -DCMAKE_INSTALL_PREFIX=/opt/ros/indigo  # might need sudo
+
+
+
+***** Installing Indigo on U3 on 26 Jun 2015 *****
+sudo apt-get install ros-indigo-ros-base  // bare bone
+sudo apt-get install ros-indigo-navigation
+sudo apt-get install ros-indigo-vision-opencv
+sudo apt-get install ros-indigo-image-transport
+//sudo apt-get install ros-jade-robot-state-publisher
+sudo apt-get install ros-indigo-robot-state-publisher
+sudo apt-get install ros-indigo-xacro
+sudo apt-get install ros-indigo-hokuyo-node
+sudo apt-get install ros-indigo-urdf-tutorial
+sudo apt-get install ros-indigo-laser-filters
+sudo apt-get install lighttpd
+sudo apt-get install ros-indigo-rosbridge-suite
+sudo apt-get install ros-indigo-joy
+sudo apt-get install ros-indigo-robot-pose-publisher
+sudo apt-get install ros-indigo-rosserial-python
+
+
+
+***** Ubuntu Version *****
+lsb_release -a
+
+U3 : Ubuntu 14.04.2 LTS
+
+
+
+***** Removing ROS Installation *****
+sudo apt-get remove ros-*
+
+***** Installing ROS Package dependencies *****
+Exampkle Download and install the system dependencies for turtlesim: 
+
+rosdep install turtlesim
+
+
+
+***** Static Transform Publisher *****
+static_transform_publisher x y z yaw pitch roll frame_id child_frame_id period_in_ms
+
+Publish a static coordinate transform to tf using an x/y/z offset in meters and yaw/pitch/roll in radians. 
+(yaw is rotation about Z, pitch is rotation about Y, and roll is rotation about X). The period, in milliseconds, 
+specifies how often to send a transform. 100ms (10hz) is a good value. 
+
+static_transform_publisher x y z qx qy qz qw frame_id child_frame_id  period_in_ms
+
+Publish a static coordinate transform to tf using an x/y/z offset in meters and quaternion. The period, in milliseconds, 
+specifies how often to send a transform. 100ms (10hz) is a good value. 
+
+static_transform_publisher is designed both as a command-line tool for manual use, as well as for use within roslaunch files 
+for setting static transforms. 
+
+For example: 0.24m in x direction. 0.125 in z axis. 25ms
+
+<launch>
+<node pkg="tf" type="static_transform_publisher" name="laser_joint" args="0.24 0 0.125 0 0 0 /base_link /laser 100" />
+<node pkg="tf" type="static_transform_publisher" name="baselink_joint" args="0.0 0 0.050 0 0 0 /base_footprint /base_link 500" />
+</launch>
+
+
+***** Joint State Publisher *****
+The package reads the robot_description parameter, finds all of the non-fixed joints and publishes a JointState message with all 
+those joints defined.
+
+Can be used in conjunction with the robot_state_publisher node to also publish transforms for all joint states. 
+
+
+***** Robot_Pose_EKF *****
+
+robot_pose_ekf implements an extended Kalman filter for determining the robot pose. Subscribe to /odom, /imu_data, /vo and publish
+<name of node>/odom_combined
+
+***** Base_Footprint *****
+
+base_link is typically the center of mass or the center of turning for your robot, while base_footprint is located at ground level 
+directly below base_link. base_footprint is a projection of base_link onto the ground.
+
+Example : If your Center of Mass is 0.5m above the ground, you can publish a transform with parent=base_footprint and child=base_link 
+with a transform of 0.5z. If you want base_link to be the parent, you would publish -0.5z. 
+
+***** ARP U3 *****
+
+Created the file /etc/network/if-up.d/add-my-static-arp
+
+With the contents:
+
+#!/bin/sh
+
+arp -i eth0 -s 192.168.0.4 00:50:cc:44:55:55
+arp -i eth0 -s 192.168.0.5 00:50:cc:44:55:56
+arp -i eth0 -s 192.168.0.6 00:50:cc:44:55:57
+
+chmod +x /etc/network/if-up.d/add-my-static-arp
+
+And these arp entries will be manually added or re-added every time any network interface is brought up. ** Does not quite work **
+
+command : sudo arp -s 192.168.0.4 00:50:cc:44:55:55 works.
+
+
+
+***** Installing Lighttpd on U3 *****
+
+#service apache2 stop  
+#update-rc.d -f apache2 remove
+#apt-get remove apache2
+
+sudo apt-get install lighttpd  // install
+
+sudo /etc/init.d/lighttpd start
+sudo /etc/init.d/lighttpd stop
+sudo /etc/init.d/lighttpd restart
+
+*** re-configure lighttpd ***
+sudo medit /etc/lighttpd/lighttpd.conf
+sudo chown -R username:group directory
+sudo chown -R odroid:odroid /var/log/lighttpd/
+sudo service lighttpd force-reload
+
+***** Networking on U3 *****/home/nvidia/catkin_ws/src/hokuyo_node/cfg/Hokuyo.cfg
+
+To re-start Network manager > sudo service network-manager start/restart/stop
+
+# interfaces(5) file used by ifup(8) and ifdown(8)
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+/etc/network/interfaces
+
+#auto wlan0
+#iface wlan0 inet dhcp
+
+#auto wlan1
+#iface wlan1 inet dhcp
+
+auto wlan2
+iface wlan2 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+#pre-up /etc/init.d/wpa.sh start
+#post-down /etc/init.d/wpa.sh stop
+#wpa-ssid "TP-Secure"
+
+#auto eth0
+#iface eth0 inet static
+#address 192.168.1.120
+#netmask 255.255.255.0
+
+#wpa-ssid "TP-Secure"
+#wpa-psk "radacina"
+
+/etc/wpa_supplicant/wpa_supplicant.conf
+
+network={
+	ssid="TP-Secure"
+	scan_ssid=1
+	password="rachelng9937"
+	key_mgmt=WPA-EAP
+	auth_alg=OPEN
+	identity="ngys"
+	pairwise=CCMP TKIP
+	group=CCMP TKIP
+	eap=PEAP
+	phase1="peapver=0"
+	phase2="auth=MSCHAPV2"
+}
+
+network={
+	ssid="racwifi"
+	scan_ssid=1
+	password="racwifi777"
+	key_mgmt=WPA-EAP
+}
+
+***** UDEV RULES *****
+
+*** Joysticks in U3 ***
+udevadm info -a -n /dev/input/js0
+SUBSYSTEM=="input"
+
+** 90-input.rules **
+KERNEL=="event*", NAME="input/%k",MODE="0660",GROUP="plugdev" 
+
+** 90-joy.rules **
+ATTRS{name}=="Generic X-Box pad", MODE="0666", SYMLINK+="sensors/joy"
+
+
+***** Auto Start at Bootup for Odroid U3 *****
+in file /home/odroid/.config/lxsession/Lubuntu/autostart
+
+add /home/odroid/run.sh
+
+run.sh
+#!/bin/bash -e
+source /home/odroid/turtle.setup
+sleep 1
+roslaunch turtlebot turtlebot.launch &
+exit 0
+
+***** executing program in U3 using xterm *****
+xterm -e "/home/odroid/run.sh"
+xterm -e "rosrun map_server map_saver -f /home/odroid/catkin_ws/src/turtlebot/maps/docmap"
+
+
+***** Co-ordinate System in ROS *****
+Distances are in meters. Angles in radians.
+Counter-Clockwise is positive in yaw.
+X is forward. Y is left. Z is up
+
+
+***** How to duplicate emmc *****
+
+sudo fdisk -l => to list all the memory. 
+
+Example :
+
+Disk test: 5904 MB, 5904530944 bytes
+255 heads, 63 sectors/track, 717 cylinders, total 11532287 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x000c4046
+
+Device Boot      Start         End      Blocks   Id  System
+ test1            4096      266239      131072    b  W95 FAT32
+ test2          266240    11532287     5633024   83  Linux
+
+ook that I have two partitions, test1 and test2. Right ?
+
+My goal is everything up to the end, so the end of this disk is partition2.
+
+So I pick the place where partition 2 ends... 11532287 in my case...
+
+And I do the following math:
+11532287 * 512 / 1024 / 1024
+This will give me the size of the data in Mbytes.
+
+I have 5630 as result soo..
+
+sudo dd if=/dev/sdX of=./mycustom.img bs=1M count=5635
+
+5mbytes extra just for caution..
+
+After that insert a new emmc and DO NOT mount.
+
+sudo dd if=./mycustom.img of=/dev/mmcblk0 bs=1M
+
+Another Example :
+
+root@VirtualBox:/home/odroid# fdisk -l /dev/sdb
+Disk /dev/sdb: 15.8 GB, 15758000128 bytes
+64 heads, 32 sectors/track, 15028 cylinders, total 30777344 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x000c4046
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1            3072       68607       32768   83  Linux
+/dev/sdb2           68608    30777343    15354368   83  Linux
+root@VirtualBox:/home/odroid# 
+
+dd if=/dev/sdb of=odroid_20130215.img seek=0 count=15030 bs=1M
+[...]
+15758000128 bytes (16 GB) copied, 3618.08 s, 4.4 MB/s
+
+***** Setting up SSMC Robot *****
+
+** auto password **
+
+sudo visudo 
+add to end of file 
+type "o"   (o as in over) to insert new line
+type ":x" (:x) to save and exit
+
+ssmc ALL=NOPASSWD:ALL
+
+***** Networking : Hosts Table/File *****
+
+In modern systems, even though the host table has been superseded by DNS, it is still widely used for:
+
+bootstrapping
+              Most systems have a small host table  containing  the  name  and
+              address  information  for  important hosts on the local network.
+              This is useful when DNS  is  not  running,  for  example  during
+              system bootup.
+
+       NIS    Sites  that  use NIS use the host table as input to the NIS host
+              database.  Even though NIS can be used with DNS, most NIS  sites
+              still  use the host table with an entry for all local hosts as a
+              backup.
+
+       isolated nodes
+              Very small sites that are isolated from the network use the host
+              table  instead of DNS.  If the local information rarely changes,
+              and the network is not connected to  the  Internet,  DNS  offers
+              little advantage.
+
+This
+       file is a simple text file that associates IP addresses with hostnames,
+       one line per IP address.  For each host a single line should be present
+       with the following information:
+
+              IP_address canonical_hostname [aliases...]
+
+       Fields of the entry are separated by any number of  blanks  and/or  tab
+       characters.   Text  from a "#" character until the end of the line is a
+       comment, and is ignored.  Host  names  may  contain  only  alphanumeric
+       characters, minus signs ("-"), and periods (".").  They must begin with
+       an  alphabetic  character  and  end  with  an  alphanumeric  character.
+       Optional aliases provide for name changes, alternate spellings, shorter
+       hostnames, or generic hostnames (for example, localhost).
+
+Example of hosts file.  /etc/hosts
+
+127.0.0.1	localhost
+127.0.1.1	racnys-PORTEGE-Z930
+192.168.1.120	robot.rac.com
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+
+***** TurtleBot Python *****
+
+** kinect_breaker_enabler.py **
+
+only function is to call a service (turtlebot_node/set_operation_mode) to set full mode for turtlebot. Service is provided by 
+turtlebot_node.py
+
+** turtlebot_node.py **
+
+
+***** Network Signal Strength *****
+
+sudo iwlist wlan0 scanning | egrep 'Cell |Encryption|Quality|Last beacon|ESSID'
+
+or
+
+nm-tool | grep "Freq.*Strength" | sed -ne "s|\(.*Strength \([0-9]\+\).*\)|\2}\1|p" | sort -n -r
+
+or
+
+iwconfig wlan0 | grep -i --color quality
+
+iwconfig wlan0 | grep -i --color signal
+
+cat /proc/net/wireless
+
+iwlist [interface] scanning [essid NNN] [last]
+              [interface] frequency
+              [interface] channel
+              [interface] bitrate
+              [interface] rate
+              [interface] encryption
+              [interface] keys
+              [interface] power
+              [interface] txpower
+              [interface] retry
+              [interface] ap
+              [interface] accesspoints
+              [interface] peers
+              [interface] event
+              [interface] auth
+              [interface] wpakeys
+              [interface] genie
+              [interface] modulation
+
+
+watch -n 1 cat /proc/net/wireless
+
+
+
+***** How wifi roaming works *****
+
+An extremely important aspect of Wi-Fi networks is mobility. For example, a person can walk through a facility while carrying on a conversation over a Wi-Fi phone or when downloading a large file from a server. The Wi-Fi radio inside the user device automatically roams from one access point to another as needed to provide seamless connectivity. At least that’s what we hope will happen! 
+
+In the past, I’ve experienced issues with roaming, so I decided to perform some testing to get an inside view of what’s really happening. I was especially curious about how fast roaming actually works and whether or not it’s disruptive to wireless applications. 
+
+My test configuration included two access points, with one access point (AP-1) set to channel 1 and the other access point (AP-2) set to channel 6. Other settings were default values, such as beacon interval of 100 milliseconds, RTS/CTS disabled, etc. The access points were installed in a typical office facility in a manner that provided a minimum of 25dB signal-to-noise ratio throughout each access point’s radio cell, with about twenty percent overlap between cells. This is somewhat the industry standard for wireless voice applications. The roaming client in my case, though, was a laptop equipped with an internal Centrino Wi-Fi radio (Intel 2915ABG). 
+
+While standing with the wireless client within a few feet of AP-1, I used AirMagnet Laptop Analyzer (via another Wi-Fi card inserted into the laptop’s PCMCIA slot) to ensure that that I was associated with AP-1. I then kicked off an FTP transfer of a large file from the server to the laptop and started measuring the 802.11 packet trace using AirMagnet Laptop Analyzer. With the file downloading throughout the entire test, I walked toward AP-2 until I was directly next to it. With the packet trace, I was able to view the exchange of 802.11 frames, calculate the roaming delay, and see if there was any significant disruption to the FTP stream. 
+
+Once the client radio decided to re-associate, it issued several 802.11 disassociation frames to AP-1 to initiate the re-association process. The radio then broadcasted an 802.11 probe request to get responses from access points within range of the wireless client. This is likely done to ensure that the client radio has up-to-date information (beacon signal strength) of candidate access points prior to deciding which one to re-associate with. 
+
+AP-2 responded with an 802.11 probe response. Because the only response was from AP-2, the client radio card decided to associate with AP-2. As expected, the association process with AP-2 consisted of the exchange of 802.11 authentication and association frames (based on 802.11 open system authentication). 
+
+The re-association process took 68 milliseconds, which is the time between the client radio issuing the first dissociation frame to AP-1 and the client receiving the final association frame (response) from AP-2. This is quite good, and I’ve found similar values with other vendor access points. 
+
+The entire roaming process, however, will interrupt wireless applications for a much longer period of time. For example, based on my tests, the FTP process halts an average of five seconds prior to the radio card initiating the re-association process (i.e., issuing the first disassociation frame to AP-1). I measured 802.11 packet traces indicating that the client radio card re-retransmits data frames many times to AP-1 (due to weak signal levels) before giving up and initiating the re-association with AP-2. This substantial number of retransmissions disrupted the file download process, which makes the practical roaming delay in my tests an average of five seconds! The Centrino radio card I tested is notorious for this problem, but I’ve found this to be the case with most other radio cards as well. 
+
+Vendors are likely having the radio cards hold off re-associations to avoid premature and excessive re-associations (access point hopping). Unfortunately, this disrupts some wireless applications. If you plan to deploy mobile wireless applications, then be sure to test how the roaming impacts the applications. 
+
+Every model radio card will behave differently when roaming due to proprietary mechanisms, and some cards will do better than others. Just keep in mind that roaming may take much longer than expected, so take this into account when deploying wireless LAN applications, especially wireless voice, which is not tolerant to roaming delays exceeding 100 milliseconds. 
+
+
+***** Setting up 14.04 Meiban Gigabyte *****
+0. Create /home/Meiban_Backup_2Oct2015 in 160GB storage to save folders
+1. Use the 4GB Thumb driver with 14.04 as bootup. On Gigabyte, press F12/Del key at boot.
+2. Over-ride old OS.
+3. Install ROS Indigo full
+4. sudo apt-get install ros-indigo-ros-base  // bare bone
+5. sudo apt-get install ros-indigo-navigation
+6. sudo apt-get install ros-indigo-vision-opencv
+7. sudo apt-get install ros-indigo-image-transport
+8. sudo apt-get install ros-indigo-joint-state-publisher
+9. sudo apt-get install ros-indigo-xacro
+10. sudo apt-get install ros-indigo-hokuyo-node
+11. sudo apt-get install ros-indigo-urdf-tutorial
+12. sudo apt-get install ros-indigo-laser-filters
+13. sudo apt-get install lighttpd
+14. sudo apt-get install ros-indigo-rosbridge-suite
+15. sudo apt-get install ros-indigo-joy
+16. sudo apt-get install ros-indigo-robot-pose-publisher
+17. sudo apt-get install lighttpd
+*** re-configure lighttpd ***
+18. sudo gedit /etc/lighttpd/lighttpd.conf
+19. sudo chown -R username:group directory
+19. sudo chown -R meiban:meiban /var/log/lighttpd/
+20. sudo /etc/init.d/lighttpd start
+21. sudo /etc/init.d/lighttpd stop
+22. sudo /etc/init.d/lighttpd restart
+23. copy folders over to new meiban home.
+24. create /etc/ros/run.sh and sudo chmod 0777 /etc/ros/run.sh to make it executable
+25. setup the /etc/udev/rules
+26. copy folders over to new meiban gigabyte
+*** Creating a workspace ***
+27. mkdir -p ~/catkin_ws/src
+28. cd ~/catkin_ws/src
+29. catkin_init_workspace
+30. cd ~/catkin_ws/
+31. catkin_make
+32. re-build all the software modules
+
+*** rosbridge_server ***
+ERROR: cannot launch node of type [rosapi/rosapi]: can't locate node [rosapi] in package [rosapi]
+ To solve this problem, copy ros file to htbot and change the port to 8080
+
+***** Keyring *****
+To disable start "Passwords and Keys"
+right click login
+select change password
+enter old password and leave new password blank. Press ok
+
+***** Using USB Wifi Antenna *****
+edit network connection
+setup wifi
+set device mac address to the usb antenna
+set ssid
+
+***** racwifi setup *****
+used for meiban htbot demo and testing in RAC
+
+SSID : racwifi
+pwd : racwifi777
+dhcp : 10~60
+mode : mixed
+channel : 6 - 2.437ghz
+SSID Broadcast : enable
+security mode : WPA2 Pre-Shared key only AES
+shared key : racwifi777
+firewall : disable.
+
+***** UST-20LX *****
+Interface is Ethernet 100base-TX
+urg_node is the correct option. Should be as simple as installing it (apt-get or what have you), and then running it, specifying an IP address.
+
+rosrun urg_node urg_node _ip_address:=192.168.0.10 (the ip address is the factory default).
+
+You will have to change the IP settings of one of your UST. After that use a router to connect Lidars with your PC. Then change IPV4 settings to manual and IP address to 192.168.0.100 (as told by hokuyo). After all this you will be able to run both the lidars individually using the command rosrun urg_node urg_node _ip_address:="192.168.0.10" for the lidar with default settings and _ip_address:="192.168.0.x" for new settings.
+
+For launching both these together you can make a launch file. You can use:
+
+<launch>
+  <node ns="lidar1" pkg="urg_node" type="urg_node" name="lidar1" >
+    <param name="ip_address" value="192.168.0.10"/>
+  </node>
+  <node ns="lidar2" pkg="urg_node" type="urg_node" name="lidar2" >
+    <param name="ip_address" value="192.168.0.12"/>
+  </node>
+</launch>
+
+***** Package Broken ******
+sudo apt-get update
+sudo apt-get autoclean
+sudo apt-get clean
+sudo apt-get autoremove
+sudo apt-get install -f
+
+***** Setting Up U3 Cluster for Transporter - Meiban *****
+update  to 14.04.1/2 
+
+*** Installing Indigo on U3 on 26 Jun 2015 ***
+sudo apt-get install ros-indigo-ros-base  // bare bone
+sudo apt-get install ros-indigo-navigation
+sudo apt-get install ros-indigo-vision-opencv
+sudo apt-get install ros-indigo-image-transport
+//sudo apt-get install ros-jade-robot-state-publisher
+sudo apt-get install ros-indigo-joint-state-publisher
+sudo apt-get install ros-indigo-xacro
+//sudo apt-get install ros-indigo-hokuyo-node
+sudo apt-get install ros-kinetic-urg-node
+sudo apt-get install ros-indigo-urdf-tutorial
+sudo apt-get install ros-indigo-laser-filters
+sudo apt-get install lighttpd
+sudo apt-get install ros-indigo-rosbridge-suite
+sudo apt-get install ros-indigo-joy
+sudo apt-get install ros-indigo-robot-pose-publisher
+//sudo apt-get install ros-indigo-rosserial-python  //use source
+sudo apt-get install ros-indigo-slam-gmapping
+sudo apt-get install ros-indigo-csm
+
+sudo apt-get install python-rosdep
+sudo rosdep init
+rosdep update
+sudo apt-get install python-rosinstall
+sudo apt-get install python-twisted
+
+apt-cache search ros-jade // to search for other packages
+apt-get source ros-indigo-laser-pipeline // eg to get source of packages
+
+install packages : htbot, rplidar-ros-master
+
+
+auto wlan4
+iface wlan4 inet static
+address 192.168.1.120
+network 192.168.1.0
+netmask 255.255.255.0
+broadcast 192.168.1.255
+gateway 192.168.1.1
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+#wpa-ssid="racwifi"
+#wpa-psk="racwifi777"
+
+#pre-up /etc/init.d/wpa.sh start
+#post-down /etc/init.d/wpa.sh stop
+#wpa-ssid "TP-Secure"
+
+auto eth0
+iface eth0 inet static
+address 192.168.2.10
+network 192.168.2.0
+netmask 255.255.255.0
+broadcast 192.168.2.255
+
+***** Setup for Slave1 U3 *****
+
+*** /etc/hosts ***
+127.0.0.1	localhost	slave1.rac.com.sg
+192.168.2.10	master.rac.com.sg	master
+192.168.2.11	slave1.rac.com.sg	slave1
+
+*** /etc/hostname ***
+slave1
+
+*** /etc/network/interface ***
+# interfaces(5) file used by ifup(8) and ifdown(8)
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+auto eth0
+iface eth0 inet static
+address 192.168.2.11
+network 192.168.2.0
+netmask 255.255.255.0
+broadcast 192.168.2.255
+hwaddress	ether	c2:22:09:f2:5f:e9
+
+*** /home/odroid/nyssetup.sh ***
+export ROS_MASTER_URI=http://192.168.2.10:11311
+
+
+***** Setup for Master U3 *****
+
+*** /etc/hosts ***
+127.0.0.1	localhost	slave1.rac.com.sg
+192.168.2.10	master.rac.com.sg	master
+192.168.2.11	slave1.rac.com.sg	slave1
+
+*** /etc/hostname ***
+master
+
+*** /etc/network/interface ***
+# interfaces(5) file used by ifup(8) and ifdown(8)
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+auto eth0
+iface eth0 inet static
+address 192.168.2.10
+network 192.168.2.0
+netmask 255.255.255.0
+broadcast 192.168.2.255
+
+auto wlan4
+iface wlan4 inet static
+address 192.168.1.120
+network 192.168.1.0
+netmask 255.255.255.0
+broadcast 192.168.1.255
+gateway 192.168.1.1
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+*** /etc/wpa_supplicant/wpa_supplicant.conf ***
+network={
+	ssid="racwifi"
+	psk="racwifi777"
+	key_mgmt=WPA-PSK
+}
+
+*** /etc/lighttp/lighttp.conf ***
+server.modules = (
+	"mod_access",
+	"mod_alias",
+	"mod_compress",
+ 	"mod_redirect",
+#       "mod_rewrite",
+)
+
+#server.document-root        = "/var/www"
+server.document-root        = "/home/odroid/www"
+server.upload-dirs          = ( "/var/cache/lighttpd/uploads" )
+server.errorlog             = "/var/log/lighttpd/error.log"
+server.pid-file             = "/var/run/lighttpd.pid"
+#server.username             = "www-data"
+server.username             = "odroid"
+#server.groupname            = "www-data"
+server.groupname            = "odroid"
+server.port                 = 80
+server.bind		    = "192.168.1.120"
+
+
+index-file.names            = ( "index.php", "index.html", "index.lighttpd.html" )
+url.access-deny             = ( "~", ".inc" )
+static-file.exclude-extensions = ( ".php", ".pl", ".fcgi" )
+
+compress.cache-dir          = "/var/cache/lighttpd/compress/"
+compress.filetype           = ( "application/javascript", "text/css", "text/html", "text/plain" )
+
+# default listening port for IPv6 falls back to the IPv4 port
+## Use ipv6 if available
+#include_shell "/usr/share/lighttpd/use-ipv6.pl " + server.port
+include_shell "/usr/share/lighttpd/create-mime.assign.pl"
+include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
+
+*** /home/odroid/nyssetup.sh ***
+export ROS_MASTER_URI=http://192.168.2.10:11311
+
+*** rosbridge_websocket.launch ***
+<launch>
+  <arg name="port" default="8080" />
+  <arg name="address" default="192.168.1.120" />
+  <arg name="ssl" default="false" />
+  <arg name="certfile" default=""/>
+  <arg name="keyfile" default="" />
+  <arg name="authenticate" default="false" />
+  
+  <group if="$(arg ssl)">
+    <node name="rosbridge_websocket" pkg="rosbridge_server" type="rosbridge_websocket" output="screen">
+      <param name="certfile" value="$(arg certfile)" />
+      <param name="keyfile" value="$(arg keyfile)" />
+      <param name="authenticate" value="$(arg authenticate)" />
+      <param name="port" value="$(arg port)"/>
+      <param name="address" value="$(arg address)"/>
+    </node>
+  </group>
+  <group unless="$(arg ssl)">
+    <node name="rosbridge_websocket" pkg="rosbridge_server" type="rosbridge_websocket" output="screen">
+      <param name="authenticate" value="$(arg authenticate)" />
+      <param name="port" value="$(arg port)"/>
+      <param name="address" value="$(arg address)"/>
+    </node>
+  </group>
+  
+  <node name="rosapi" pkg="rosapi" type="rosapi_node" />
+</launch>
+
+
+***** hosts file of odroid *****
+127.0.0.1	odroid3
+127.0.0.1	localhost localhost.localdomain
+
+192.168.1.100	tp203
+192.168.1.101	odroid1
+192.168.1.102	odroid2
+192.168.0.103	odroid3
+
+***** U3 ROS Navigation Problem *****
+
+latest clear_costmaps will clear global costmap but do not reload the static map. The solution is to kill map_server node using : rosnode kill /map_server and restart map_server using : rosrun map_server map_server /home/odroid/catkin_ws/src/htbot/maps/docmap.yaml. Using script file remap.sh to do this.
+
+
+***** Calibrating Transporter *****
+
+*** move robot straight/backward 2m. first calibration ***
+adjust wheel_circum_correction(wcc). increasing wcc will reduce number of counts sent to epos to travel 2m. That means robot will reduce the distance
+
+*** Move robot 180 or 360 degrees left/right. 2nd calibration***
+adjust wheel_base_correction(wbc). increasing wbc will increase the number of counts sent to epos to turn. That means increasing the angle turned.
+
+***** moveit *****
+
+** To check if package installed (industrial_robot_simulator)
+rospack find industrial_robot_simulator
+
+** install industrial robot simulator **
+sudo apt-get install ros-indigo-industrial-robot-simulator
+sudo apt-get install ros-indigo-industrial-core
+
+** search for packages in indio **
+
+apt-cache search ros-indigo  
+
+
+***** openssh *****
+ssh -X odroid@192.168.1.120
+
+sudo apt-get clean
+cd /var/lib/apt
+cd ..
+cd 
+sudo mkdir -p lists/partial
+sudo apt-get clean
+sudo apt-get update
+
+***** How to SSH without password *****
+odroid@odroid0:~> ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/a/.ssh/id_rsa): 
+Created directory '/home/a/.ssh'.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/a/.ssh/id_rsa.
+Your public key has been saved in /home/a/.ssh/id_rsa.pub.
+The key fingerprint is:
+3e:4f:05:79:3a:9f:96:7c:3b:ad:e9:58:37:bc:37:e4 a@A
+
+*** Now use ssh to create a directory ~/.ssh as user odroid on odroid1. (The directory may already exist, which is fine): ***
+
+odroid@odroid1:~> ssh odroid@odroid1 mkdir -p .ssh
+odroid@odroid1's password: 
+
+*** Finally append a's new public key to odroid@odroid1:.ssh/authorized_keys and enter b's password one last time: ***
+
+odroid@odroid0:~> cat .ssh/id_rsa.pub | ssh odroid@odroid1 'cat >> .ssh/authorized_keys'
+odroid@odroid1's password: 
+
+*** From now on you can log into B as b from A as a without password: ***
+
+odroid@odroid0:~> ssh odroid@odroid1
+
+*** setup for odroid@odroid2 ***
+odroid@odroid0:~> ssh odroid@odroid2 mkdir -p .ssh
+odroid@odroid2's password: 
+
+*** Finally append a's new public key to odroid@odroid1:.ssh/authorized_keys and enter odroid@odroid2's password one last time: ***
+
+odroid@odroid0:~> cat .ssh/id_rsa.pub | ssh odroid@odroid2 'cat >> .ssh/authorized_keys'
+odroid@odroid2's password: 
+
+*** From now on you can log into B as b from A as a without password: ***
+
+odroid@odroid0:~> ssh odroid@odroid2
+
+
+***** Multi CPU ROS **********************
+
+*** setup /etc/hosts ***
+192.168.0.100	odroid0
+192.168.0.101	odroid1
+192.168.0.102	odroid2
+127.0.0.1	localhost localhost.localdomain
+
+*** setup /etc/hostname ***
+odroid0 (master : odroid0)
+odroid1 (slave 1 : odroid1)
+odroid2 (slave 2 : odroid2)
+
+*** setup environment in each machine ***
+add the following to instructions to end of /home/odroid/.bashrc
+
+source /home/odroid/catkin_ws/devel/setup.bash
+source /home/odroid/nyssetup.sh
+
+*** autostart ***
+add the following script to /home/odroid/.config/lxsession/Lubuntu/autorun
+tstartup.sh
+
+
+***** apport error *****
+
+** disable apport  ***
+sudo nano /etc/default/apport
+set enabled=0
+
+*** stop apport ***
+sudo service apport stop
+
+*** Remove apport  ***
+sudo apt-get purge apport
+
+***** OpenFace  *****
+https://github.com/TadasBaltrusaitis/OpenFace/wiki/Unix-Installation
+
+** Ubuntu installation **
+This code has been tested on Ubuntu 14.04.1 with GCC, and on 15.10 with Clang 3.7.1.
+This requires cmake, OpenCV 3.1.0 (or newer), tbb and boost.
+
+** Get newest GCC, done using **
+sudo apt-get update
+sudo apt-get install build-essential
+sudo apt-get install cmake
+sudo apt-get install libopenblas-dev liblapack-dev
+
+** Install OpenCV dependencies **
+sudo apt-get install git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+
+sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev checkinstall
+
+** Download OpenCV 3.1.0 from https://github.com/Itseez/opencv/archive/3.1.0.zip **
+wget https://github.com/Itseez/opencv/archive/3.1.0.zip
+sudo unzip 3.1.0.zip
+cd opencv-3.1.0
+mkdir build
+cd build
+
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D BUILD_SHARED_LIBS=OFF ..
+
+make -j2
+
+sudo make install
+
+** Get Boost **
+sudo apt-get install libboost1.55-all-dev
+OR
+sudo apt-get install libboost-all-dev
+
+** Get OpenFace **
+git clone https://github.com/TadasBaltrusaitis/OpenFace.git
+
+cd OpenFace
+mkdir build
+cd build
+
+cmake -D CMAKE_BUILD_TYPE=RELEASE ..
+
+make
+
+** Test it with **
+for videos:
+
+./bin/FaceLandmarkVid -f "../videos/changeLighting.wmv" -f "../videos/0188_03_021_al_pacino.avi" -f "../videos/0217_03_006_alanis_morissette.avi" -f "../videos/0244_03_004_anderson_cooper.avi"
+
+
+
+** for images: **
+
+./bin/FaceLandmarkImg -fdir "../videos/" -ofdir "./demo_img/" -oidir "./demo_img/" -wild
+
+
+
+** for multiple faces in videos: **
+
+./bin/FaceLandmarkVidMulti -f ../videos/multi_face.avi
+
+
+** for feature extraction (facial landmarks, head pose, AUs, gaze and HOG and similarity aligned faces): **
+
+./bin/FeatureExtraction -rigid -verbose -f "../videos/default.wmv" -of "output_features/default.txt" -simalign output_features/aligned
+
+** troubleshooting **
+If you experience a problem with "cannon connect to X server" when trying to execute the tracker, a solution can be found here 
+http://askubuntu.com/questions/64820/wkhtmltopdf-wkhtmltoimage-cannot-connect-to-x-server, to resolve run: apt-get install xvfb
+
+***** Install alfa wifi usb adaptor *****
+
+The ALFA AWUS036H adapter is based on the Realtek RTL8187 chipset. The drivers should be built into Ubuntu, but you may want to try installing the latest from Realtek:
+
+    Download the "Linux driver for Kernel 3.0.0/3.1.0/3.2.0" from the Realtek website here.
+    It will open in Archive Manager; extract the rtl8187L_linux_1041.0209.2012 folder to your Downloads folder.
+
+    Open a terminal with Ctrl+Alt+T, and type/paste the following, one line a time:
+
+    sudo apt-get install build-essential linux-headers-`uname -r`
+    cd Downloads/rtl8187L_linux_1041.0209.2012
+    make
+    sudo make install
+
+Then reboot, and your AWUS036H should be detected.
+
+lsusb to list all the usb devices used.
+
+***** urg_node *****
+<node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
+  <param name="angle_min" value="-1.5707963"/>
+</node>
+
+***** Setting up 16.04 Jtson TX1 *****
+1. sudo apt-get install ros-kinetic-ros-base  // bare bone
+2. sudo apt-get install ros-kinetic-navigation
+3. sudo apt-get install ros-kinetic-vision-opencv
+4. sudo apt-get install ros-kinetic-image-transport
+5. sudo apt-get install ros-kinetic-joint-state-publisher
+6. sudo apt-get install ros-kinetic-xacro
+7. sudo apt-get install ros-indigo-hokuyo-node
+9. sudo apt-get install ros-kinetic-laser-filters
+10. sudo apt-get install lighttpd
+11. sudo apt-get install ros-kinetic-rosbridge-suite
+12. sudo apt-get install ros-kinetic-joy
+13. sudo apt-get install ros-kinetic-robot-pose-publisher
+14. sudo apt-get install lighttpd
+15. sudo apt-get install gamin  //solve lighttpd problem
+*** re-configure lighttpd ***
+16. sudo gedit /etc/lighttpd/lighttpd.conf
+17. sudo chown -R username:group directory
+18. sudo chown -R ubuntu:ubuntu /var/log/lighttpd/
+19. sudo /etc/init.d/lighttpd start
+20. sudo /etc/init.d/lighttpd stop
+21. sudo /etc/init.d/lighttpd restart
+22. sudo ros-kinetic-self-test    // needed to compile hokuyo node
+23. copy directory driver_common and h0kuyo_node to catkin_ws/src
+23. copy folders over to new tx1 ubuntu home.
+24. create /etc/ros/run.sh and sudo chmod 0777 /etc/ros/run.sh to make it executable
+25. setup the /etc/udev/rules
+26. copy folders over to new jetson tx1
+*** Creating a workspace ***
+27. mkdir -p ~/catkin_ws/src
+28. cd ~/catkin_ws/src
+29. catkin_init_workspace
+30. cd ~/catkin_ws/
+31. catkin_make
+32. re-build all the software modules
+
+***** Install Openface *****
+https://iqbalnaved.wordpress.com/2016/09/19/installing-openface-an-open-source-facial-behavior-analysis-toolkit/
+
+1. Installing dependencies:
+
+sudo apt-get update
+sudo apt-get install build-essential
+sudo apt-get install llvm
+
+sudo gedit /etc/apt/sources.list
+change
+deb http://us.archive.ubuntu.com/ubuntu/ xenial main restricted
+to
+deb http://us.archive.ubuntu.com/ubuntu/ xenial main universe
+
+sudo apt-get update
+sudo apt-get install clang-3.7 libc++-dev libc++abi-dev
+sudo apt-get install cmake
+sudo apt-get install libopenblas-dev liblapack-dev
+sudo apt-get install git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev checkinstall
+
+wget https://github.com/Itseez/opencv/archive/3.1.0.zip
+sudo unzip 3.1.0.zip
+cd opencv-3.1.0
+mkdir build
+cd build/
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D BUILD_SHARED_LIBS=OFF ..
+make -j4
+sudo make install
+
+sudo apt-get install libboost-all-dev
+2. Installing OpenFace
+
+git clone https://github.com/TadasBaltrusaitis/OpenFace.git
+cd OpenFace/
+mkdir build
+ 
+cd build/
+cmake -D CMAKE_BUILD_TYPE=RELEASE ..
+make
+
+Ref: https://github.com/TadasBaltrusaitis/OpenFace/wiki/Unix-Installation
+
+***** Getting BBox-Label-Tool to Work python3 *****
+python -V  // to get version
+python3 -V 
+
+sudo apt-get update
+sudo apt-get install python3-pil.imagetk
+sudo apt-get install python3-tk
+
+***** Setting up 16.04 Jtson TX2 *****
+1. sudo apt-get install ros-kinetic-desktop-full
+2. sudo apt-get install ros-kinetic-navigation
+3. sudo apt-get install ros-kinetic-vision-opencv
+4. sudo apt-get install ros-kinetic-image-transport
+5. sudo apt-get install ros-kinetic-joint-state-publisher
+6. sudo apt-get install ros-kinetic-xacro
+7. sudo apt-get install ros-kinetic-laser-filters
+8. sudo apt-get install lighttpd
+9. sudo apt-get install ros-kinetic-rosbridge-suite
+10. sudo apt-get install ros-kinetic-joy
+11. sudo apt-get install ros-kinetic-robot-pose-publisher
+12. sudo apt-get install ros-indigo-rosserial-python
+13. sudo apt-get install ros-indigo-rosserial-server
+13. sudo apt-get install libgsl-dev  // gsl
+14. sudo apt-get install ros-kinetic-csm
+15. sudo apt-get install lighttpd
+16. sudo apt-get install gamin  //solve lighttpd problem
+*** re-configure lighttpd ***
+17. sudo gedit /etc/lighttpd/lighttpd.conf
+18. sudo chown -R username:group directory
+19. sudo chown -R nvidia:nvidia /var/log/lighttpd/
+20. sudo /etc/init.d/lighttpd start
+21. sudo /etc/init.d/lighttpd stop
+22. sudo /etc/init.d/lighttpd restart
+
+22. for tx2 :
+	sudo lighttpd-enable-mod /home/nvidia/www   (usedir)
+	sudo service lighttpd reload 
+
+22. sudo ros-kinetic-self-test    // needed to compile hokuyo node
+23. copy directory driver_common to catkin_ws/src and catkin_make
+24. copy directory hokuyo_node to catkin_ws/src and catkin_make
+25. copy directory htbot to catkin_ws/src and catkin_make (one at a time)
+23. copy folders over to new tx2 ubuntu home.
+24. create /etc/ros/run.sh and sudo chmod 0777 /etc/ros/run.sh to make it executable
+25. setup the /etc/udev/rules
+26. copy folders over to new jetson tx1
+*** Creating a workspace ***
+27. mkdir -p ~/catkin_ws/src
+28. cd ~/catkin_ws/src
+29. catkin_init_workspace
+30. cd ~/catkin_ws/
+31. catkin_make
+32. re-build all the software modules
+
+**** set date and time *****
+sudo date --set="2017-08-15 13:19:00.990"
+sudo hwclock --systohc
+
+***** find text in file *****
+grep -rnw ~/catkin_ws/ -e 'findBestPath'
+
+
+***** setup of Gigabyte B1 on oldSSMCrobot : ubuntu 16.04LTS  ******
+
+1. sudo apt-get install ros-kinetic-desktop-full
+2. sudo apt-get install ros-kinetic-navigation
+3. sudo apt-get install ros-kinetic-vision-opencv
+4. sudo apt-get install ros-kinetic-image-transport
+5. sudo apt-get install ros-kinetic-joint-state-publisher
+6. sudo apt-get install ros-kinetic-xacro
+7. sudo apt-get install ros-kinetic-laser-filters
+8. sudo apt-get install lighttpd
+9. sudo apt-get install ros-kinetic-rosbridge-suite
+10. sudo apt-get install ros-kinetic-joy
+11. sudo apt-get install ros-kinetic-robot-pose-publisher
+12. sudo apt-get install ros-indigo-rosserial-python
+13. sudo apt-get install ros-indigo-rosserial-server
+13. sudo apt-get install libgsl-dev  // gsl
+14. sudo apt-get install ros-kinetic-csm
+15. sudo apt-get install lighttpd
+16. sudo apt-get install gamin  //solve lighttpd problem
+*** re-configure lighttpd ***
+17. sudo gedit /etc/lighttpd/lighttpd.conf
+18. sudo chown -R username:group directory
+19. sudo chown -R nvidia:nvidia /var/log/lighttpd/
+20. sudo /etc/init.d/lighttpd start
+21. sudo /etc/init.d/lighttpd stop
+22. sudo /etc/init.d/lighttpd restart
+
+22. sudo ros-kinetic-self-test    // needed to compile hokuyo node
+23. copy directory driver_common to catkin_ws/src and catkin_make
+24. copy directory hokuyo_node to catkin_ws/src and catkin_make
+25. copy directory htbot to catkin_ws/src and catkin_make (one at a time)
+23. copy folders over to new tx2 ubuntu home.
+24. create /etc/ros/run.sh and sudo chmod 0777 /etc/ros/run.sh to make it executable
+25. setup the /etc/udev/rules
+26. copy folders over to new jetson tx1
+*** Creating a workspace ***
+27. mkdir -p ~/catkin_ws/src
+28. cd ~/catkin_ws/src
+29. catkin_init_workspace
+30. cd ~/catkin_ws/
+31. catkin_make
+32. re-build all the software modules
+
+*********** rtl8812 Modules ****************
+git clone https://github.com/diederikdehaas/rtl8812AU.git
+cd rt18812AU
+make CC=/usr/bin/gcc-5
+sudo make install
+sudo modprobe 8812au
+echo 8812au | sudo tee -a /etc/modules
+
+***************** Ubuntu 16.04 Monitor Blank intermitently ******************
+sudo gedit ~/.config/monitors.xml
+change refresh rate to 50
+
+*************** Changing Display Resolution for Ubuntu 16.04 for GiGa10710 *******************
+1. sudo nano /etc/default/grub
+2. set : GRUB_GFXMODE=1280x800 for JohnWill Monitor or Hanstar
+   set : GRUB_GFXMODE=1920x1080 for Home Philip Monitor
+   set : GRUB_GFXMODE=1024x600 for Odroid vu7+
+   set : GRUB_GFXMODE=1440x900 for HPL1908wm
+3. sudo update-grub
+4. reboot
+
+**************** copying directory using ssh ********************
+example : copying from rac1 to rac0 while login at rac0
+scp -r rac@rac1:/etc/udev/rules.d /home/rac/Downloads/22Jul20/
+
+**************** copying file using ssh ********************
+example : copying from rac1 to rac0 while login at rac0
+scp  rac@rac1:/etc/udev/rule.d/xx.rules /home/rac/Downloads/22Jul20/
+
+************************ Clone disk partition using dd over SSH ************************
+
+To clone entire Linux disk partition using dd over ssh from server-A to server-B. Let’s assume you use root user.
+
+Run this command in server A (source):
+
+# dd bs=16M if=/dev/sda | ssh root@serverB "dd bs=16M of=/dev/sda"
+
+If you want to clone some partition only, just choose the partition you want to clone like these command below, for example, we will clone /dev/sda3 partition
+
+Run this command in server A (source):
+
+# dd bs=16M if=/dev/sda3 | ssh root@serverB "dd bs=16M of=/dev/sda3"
+
+************* Clone disk partition using dd over telnet with bzip compression *******************
+
+Clone using telnet and bzip has advantages to reduce clone time, but make sure you use a secure network.
+
+Lets assume server-B has ip address 192.168.100.2. Run this command in server B (destination):
+
+# nc -l -p 19000 | bzip2 -d | dd bs=16M of=/dev/sda
+
+Run this command in server A (source):
+
+# dd bs=16M if=/dev/sda | bzip2 -c | nc 192.168.100.2 19000
+
+Based on these 2 commands above we will connect to server-B using port 19000.
+
+************************* Remote Backup ****************************************
+scp -r rac@rac1:/home/rac/catkin_ws/src  /home/rac/Downloads/rac1Backup/
+
+************************  Deleting Trash using Command Line *********************
+cd .local/share/Trash/files
+rm -rf *
+
+
+

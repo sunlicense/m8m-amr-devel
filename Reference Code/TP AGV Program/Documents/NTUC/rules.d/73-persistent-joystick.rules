@@ -1,0 +1,3 @@
+KERNEL=="js[0-9]", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c21f", SYMLINK+="sensors/joylogicordless"
+# KERNEL=="js[0-9]", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c219", SYMLINK+="sensors/joylogicordless"
+KERNEL=="js[0-9]", ENV{ID_VENDOR}=="Microsoft", ENV{ID_MODEL}=="SideWinder_Joystick", NAME="input/js0", SYMLINK+="sensors/joy"

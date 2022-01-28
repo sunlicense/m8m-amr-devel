@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title>
+  <link rel="stylesheet" href="font/material-icons.css">
+  <link rel="stylesheet" href="css/common.css">
+  <!--script type="text/javascript" src="js/nysKB.js"></script-->  
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/localisation.js"></script>
+	<script type="text/javascript" src="js/stat.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body onload="startlocalise()">
+	<div id="topbar" class="center-topbar">
+	<table style="width:98%;padding:1px;border:0px solid black">
+		<tr style="height:20px;padding:1px;font-size:15px;vertical-align:middle">
+			<td id="name" style="width:11.1%;text-align:left;height:20px;padding:1px">Globotix</td>
+			<td id="laser3d" style="width:11.1%;height:20px;padding:1px">l3d</td>
+			<td id="laser2d" style="width:11.1%;height:20px;padding:1px">l2d</td>
+			<td id="cam3d" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="current" style="width:11.1%;height:20px;padding:1px">2.5A</td>
+			<td id="voltage" style="width:11.1%;vertical-align:middle;height:20px;padding:1px">23.6V</td>
+			<td id="batlevel" style="margin-top:5px;vertical-align:middle;width:11.1%;height:20px;padding:1px"></td>
+			<td id="speed" style="width:11.1%;height:20px;padding:1px">cam3d</td>
+			<td id="time" style="width:11.1%;text-align:right;height:20px;padding:1px">Time</td>
+		</tr>
+	</table>
+	</div>
+	<div class="center" style="width: 90%;background-color: #CCDDE0;">
+		<div class="center">
+			<span ><button><i class='material-icons-150'>location_searching</i></button></span>
+		</div>
+		<div class="center">
+			<span  style="vertical-align: top;margin: auto;font-size: 200%;">Initializing Position</span>
+			<!--span style="margin: auto;margin-left: 20%;"><button><i class='material-icons-75'>cancel</i></button></span-->
+			</span>
+		</div>
+		<div class="center">
+			<span id="pause" style="vertical-align: top;margin: auto;font-size: 100%;"></span>			
+			</span>
+		</div>
+		
+		<table style="margin: auto;margin-top: 80px;background-color: #CCDDE0;">
+			<tr>
+				<td style="width: 16%;"></td>
+				<td style="width: 16%;"></td>
+				<td style="width: 16%;"><button onclick="goBack()";	"><i class='material-icons-75'>cancel</i></button></td>
+				<td style="width: 4%;"></td>
+				<td style="width: 16%;"><button id="control" onclick="pauseInit()"><i class='material-icons-75'>pan_tool</i></button></td>
+				<td style="width: 16%;"></td>
+				<td style="width: 16%;"></td>
+  		</tr> 
+		</table>	
+	</div>
+</body>
+
+</html>

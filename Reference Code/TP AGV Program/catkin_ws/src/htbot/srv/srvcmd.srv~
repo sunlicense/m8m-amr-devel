@@ -1,0 +1,11 @@
+int8 cmd
+string fromLP
+string toLP
+int8 cGP
+int8 cLP
+---
+int8 status
+string s1
+string s2
+float32 linear
+float32 angular

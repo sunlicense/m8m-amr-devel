@@ -1,0 +1,2 @@
+TrajectoryPlannerROS:
+  min_vel_x: 0.35

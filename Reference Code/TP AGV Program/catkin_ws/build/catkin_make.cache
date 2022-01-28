@@ -1,0 +1,2 @@
+driver_common/driver_base:driver_common/driver_common:driver_common/timestamp_tools:hokuyo_node:htbot:ntuc:ntuc_fleet:rac_planner:realsense-ros-2.2.17/realsense2_camera:realsense-ros-2.2.17/realsense2_description:ros_rslidar/rslidar:ros_rslidar/rslidar_driver:ros_rslidar/rslidar_msgs:ros_rslidar/rslidar_pointcloud:ros_rslidar/rslidar_sync
+-DCATKIN_DEVEL_PREFIX=/home/rac/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/rac/catkin_ws/install -G Unix Makefiles

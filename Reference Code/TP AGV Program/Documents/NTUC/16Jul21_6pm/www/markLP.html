@@ -1,0 +1,490 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<style type="text/css" media="screen">
+<style>
+/* History : 
+		date updated : 6.5.21 12.10pm
+*/
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+li {
+	float : left;
+}
+
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 10px 20px;
+  text-decoration: none;
+	font-size: 20px;
+}
+
+li a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+li a.active {
+  color: white;
+  background-color: #4CAF50;
+}
+.center {
+  margin: auto;
+	float: center
+  width: 60%;
+}
+
+
+.img-container {
+	text-align: center;
+}
+    
+
+button { 
+	color: #f00;
+	background:#ffffff; 
+	padding: 1px
+	font-size: 20px;
+	border: 0px
+}
+
+table {text-align: center;padding: 1px}
+
+</style>
+</head>
+<body onload="start()">
+
+<table border="0" style="width:100%">
+	<tr>				
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L3Ward3()"><h3>L3Ward3</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L5Ward5()"><h3>L5Ward5</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L11Kitchen()"><h3>L11Kitchen</h3></button></td>	
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LFIN()"><h3>LFIN</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LFLD()"><h3>LFLD</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LFLBD()"><h3>LFLBD</h3></button></td>		
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LBLD()"><h3>LBLD</h3></button></td>		
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LBLB()"><h3>LBLB</h3></button></td>
+	</tr>
+	<tr>		
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LULB()"><h3>LULB</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LUENT()"><h3>LUENT</h3></button></td>			
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LFOUT()"><h3>LFOUT</h3></button></td>			
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LURET()"><h3>LURET</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="L1LRm3()"><h3>L1LRm3</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="Docking()"><h3>Docking</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="refpoint()"><h3>Reference</h3></button></td>												
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="MSave()"><h3>Save Mark</h3></button></td>		
+	</tr>
+	<tr>				
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LFRA()"><h3>LFRA</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="LBRA()"><h3>LBRA</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="HALAL()"><h3>HALAL</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="MSTORE()"><h3>MSTORE</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="MSave()"><h3></h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="MSave()"><h3></h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="location.href=`index.html`;"><h3>Main Menu</h3></button></td>
+		<td style="padding:1px"><button style="height:35px;width:100px;padding:1px" onclick="shutdown_nopwd()"><h3>Shutdown</h3></button></td>
+	</tr>
+</table>
+
+<div class="img-container">
+	<img src="imgs/markLP.jpeg" width=90% height=200px alt="rac">
+</div>
+<div class="img-container">
+<table border="0" style="width:100%">
+	<tr>		
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:10pt"></td>
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:10pt">Status : </td>
+		<td id="stat" style="padding:2px;text-align:left;font-size: 10pt"></td>
+		<td style="height:15px;width:90px;padding:2px;text-align:left;color:#f0f;font-size:10pt"></td>
+		<td id="qno" style="padding:2px;text-align:left;font-size: 10pt;width:70px"></td>
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:10pt"></td>
+	</tr>
+</table> 
+</div>
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2djs.js"></script>
+<script type="text/javascript" src="js/nav2djs.js"></script>
+<script type="text/javascript" type="text/javascript">
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    func : 0.0 
+});
+
+
+var flistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/feedback',
+    messageType : 'htbot/status'
+});
+
+flistener.subscribe(function(message) {
+    console.log('Received message on ' + flistener.name + ': ' + message.msg);
+		document.getElementById("stat").innerHTML = message.msg ;
+		document.getElementById("stat").style.color = "blue";
+});
+
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+function start() {
+	/*
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Please Login First");
+			location.replace("index.html");
+		} 
+  });
+	*/
+}
+
+function refpoint() {	
+	alert("--- Mark Ref LP ----");
+	document.getElementById("stat").innerHTML = "Marking Reference Point" ;
+	cmdreq.cmd = 46;
+	cmdreq.LP = 0;	
+	cmdreq.lps = "REF";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function Docking() {	
+	alert("--- Mark Dock LP ----");
+	document.getElementById("stat").innerHTML = "Marking Docking Station" ;
+	cmdreq.cmd = 46;
+	cmdreq.LP = 1;	
+	cmdreq.lps = "DOCK";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LFOUT() {	
+	alert("Mark Lift Outside");
+	document.getElementById("stat").innerHTML = "Marking LFOUT" ;
+	cmdreq.cmd = 46;		
+	cmdreq.LP = 45;
+	cmdreq.lps = "LFOUT";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function LURET() {	
+	alert("Mark Laundry Entrance Return");
+	document.getElementById("stat").innerHTML = "Marking LURET" ;
+	cmdreq.cmd = 46;		
+	cmdreq.LP = 87;
+	cmdreq.lps = "LURET";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function LUENT() {	
+	alert("Mark Laundry Entrance");
+	document.getElementById("stat").innerHTML = "Marking LUENT" ;
+	cmdreq.cmd = 46;		
+	cmdreq.LP = 88;
+	cmdreq.lps = "LUENT";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function LFLBD() {	
+	alert("Mark LiftARea Lobby Door");
+	document.getElementById("stat").innerHTML = "Marking LFLBD" ;
+	cmdreq.cmd = 46;		
+	cmdreq.LP = 46;
+	cmdreq.lps = "LFLBD";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+
+function LFIN() {	
+	alert("--- Mark Lift Inside LP ----");
+	document.getElementById("stat").innerHTML = "Marking LFIN" ;
+	cmdreq.cmd = 46;		
+	cmdreq.LP = 48;
+	cmdreq.lps = "LFIN";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+
+function L11Kitchen() {	
+	alert("--- Mark Kitchen LP ----");
+	document.getElementById("stat").innerHTML = "Marking L11Kitchen" ;
+	cmdreq.cmd = 46;		
+	cmdreq.LP = 11;
+	cmdreq.lps = "L11Kitchen";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+
+function L5Ward5() {	
+	alert("--- Mark Ward 5 LP ----");
+	document.getElementById("stat").innerHTML = "Marking L5Ward5" ;
+	cmdreq.cmd = 46;		
+	cmdreq.LP = 5;
+	cmdreq.lps = "L5Ward5";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function L3Ward3() {	
+	alert("--- Mark Ward 3 LP ----");
+	document.getElementById("stat").innerHTML = "Marking L3Ward3" ;
+	cmdreq.cmd = 46;	//36	
+	cmdreq.LP = 3;	
+	cmdreq.lps = "L3Ward3";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function LFLD() {	
+	alert("--- Mark LiftArea Lift Door LP ----");
+	document.getElementById("stat").innerHTML = "Marking LFLD" ;
+	//alert("Move to Station 3");
+	cmdreq.cmd = 46;
+	cmdreq.LP = 49;	
+	cmdreq.lps = "LFLD";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LBRA() {	
+	alert("--- Mark Lobby Rest Area LP ----");
+	document.getElementById("stat").innerHTML = "Marking LBRA" ;
+	cmdreq.cmd = 46;
+	cmdreq.LP = 69;	
+	cmdreq.lps = "LBRA";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LBLD() {	
+	alert("--- Mark Lobby Area Facing LoadingBay LP ----");
+	document.getElementById("stat").innerHTML = "Marking LBLD" ;
+	cmdreq.cmd = 46;
+	cmdreq.LP = 60;	
+	cmdreq.lps = "LBLD";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function LBLB() {	
+	alert("--- Mark Lobby Area facing Lobby Door LP ----");
+	document.getElementById("stat").innerHTML = "Marking LBLB" ;
+	cmdreq.cmd = 46;
+	cmdreq.LP = 67;	
+	cmdreq.lps = "LBLB";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function L1LRm3() {	
+	alert("--- Mark L1 Rm 3 LP ----");
+	document.getElementById("stat").innerHTML = "Marking L1LRm3" ;
+	cmdreq.cmd = 46;		// 36
+	cmdreq.LP = 73;	
+	cmdreq.lps = "L1LRm3";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function LULB() {	
+	alert("--- Mark Laundry Area facing LoadingBay LP ----");
+	document.getElementById("stat").innerHTML = "Marking LULB" ;
+	cmdreq.cmd = 46;		// 36
+	cmdreq.LP = 89;	
+	cmdreq.lps = "LULB";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function HALAL() {	
+	alert("--- Mark HALAL LP ----");
+	document.getElementById("stat").innerHTML = "Marking HALAL" ;
+	cmdreq.cmd = 46;		// 36
+	cmdreq.LP = 66;
+	cmdreq.lps = "HALAL";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function MSTORE() {	
+	alert("--- Mark MSTORE LP ----");
+	document.getElementById("stat").innerHTML = "Marking MSTORE" ;
+	cmdreq.cmd = 46;		// 36
+	cmdreq.LP = 65;
+	cmdreq.lps = "MSTORE";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function LFRA() {	
+	alert("--- Mark Lift Rest Area LP ----");
+	document.getElementById("stat").innerHTML = "Marking LFRA" ;
+	cmdreq.cmd = 46;		// 36
+	cmdreq.LP = 47;
+	cmdreq.lps = "LFRA";
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function MSave() {	
+	alert("--- Save Marking ----");
+	document.getElementById("stat").innerHTML = "Save Marking of LP" ;
+	cmdreq.cmd = 38;		
+	cmdsrv.callService(cmdreq, function(result) {
+  	console.log('Result for service call on '
+     	+ cmdsrv.name
+     	+ ': '
+     	+ result.status);
+  });	
+}
+
+function shutdown_nopwd() {		
+	document.getElementById("stat").innerHTML = "Shutdown Activated" ;
+	cmdreq.cmd = 2;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+</script>
+</body>
+</html>
+

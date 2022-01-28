@@ -1,0 +1,18 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	<param name="navfn/allow_unknown" value="false"/>
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find htbot)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find htbot)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find htbot)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find htbot)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find htbot)/config/base_local_planner_params.yaml" command="load" />
+		<rosparam file="$(find htbot)/config/nys_params.yaml" command="load" />
+		<remap from="move_base/cancel" to="move_base_nys/cancel" />
+		<remap from="move_base/goal" to="move_base_nys/goal" />
+		<remap from="move_base/feedback" to="move_base_nys/feedback" />
+		<remap from="move_base/result" to="move_base_nys/result" />
+		<remap from="move_base/status" to="move_base_nys/status" />
+		<remap from="move_base_simple/goal" to="move_base_simple_nys/goal" />
+  </node>
+</launch>

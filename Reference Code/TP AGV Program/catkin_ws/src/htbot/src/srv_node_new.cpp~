@@ -1,0 +1,696 @@
+/*
+ * This node is to service command request from websocket 
+ */
+/* 	History
+*		Date Modified : 3.12.2014
+*		Changes :
+*/
+
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+#include <signal.h>
+#include <termios.h>
+#include <stdio.h>
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/thread.hpp"
+#include <tf/transform_listener.h>
+#include <tf/transform_datatypes.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <actionlib/client/simple_client_goal_state.h>
+#include <actionlib/client/simple_action_client.h>
+#include "htbot/Command.h"
+#include "htbot/status.h"
+#include "htbot/srvcmd.h"
+#include "htbot/sendgoal.h"
+#include "boost/algorithm/string.hpp"
+
+#define MAXLPQ 1000
+using namespace std;
+using namespace boost::algorithm;
+
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
+class CMDNode
+{
+public:
+	CMDNode(ros::NodeHandle rn);	
+	bool cmdServiceCallback(htbot::srvcmd::Request &req,htbot::srvcmd::Response &res);	
+	int findLPIndex(std::string lpstr);
+	bool sendGoal(double x,double y, double z, double rx, double ry, double rz, double rw);
+	void readPosefromFile();
+	bool sendPose(int);
+	void cmdCallback(const htbot::Command::ConstPtr& msg);	
+	void barCallback(const htbot::status::ConstPtr& msg);
+	double calposeDist(int id1, int id2);	
+	void readLandingPointsfromFile();
+	void pathplan(int nLP);
+	void moveToLP(int nLP);
+	void readParamfromFile();
+	void setMapFlagToMapMode();
+	void publish_vel(double angular, double linear);
+	bool getPose();
+	void savePose();
+	void storePose();
+	void saveLandPt();
+	void saveParamToFile();
+	void publish_status(string s);
+	void publish_queue(void);
+	void moveLPLoop();
+
+	ros::ServiceServer cmd_service;
+	ros::Publisher vel_pub;
+	ros::Publisher status_pub;
+	ros::Publisher queue_pub;
+	ros::Subscriber bar_sub,
+	ros::ServiceClient sgoal_client;
+	htbot::sendgoal sgoal_srv;
+	string LandingPointString[100];
+	int numLP;
+	FILE *pfp;  // pose data file
+	FILE *lfp;  // landing points data file
+	FILE *lpfp;
+
+	std::string posefile;
+	std::string landfile;
+	std::string paramfile;	
+	double tx,ty,tz;
+	double rx,ry,rz,rw;
+	double otx,oty,otz;
+	double orx,ory,orz,orw;
+	double poseInfo[500][7];
+	int landingPoint[100];  // store index of landing point's pose
+	int moveLPLoopQ[MAXLPQ];
+	int numPose,cPose;
+	int currentLP,nextLP;
+	bool nflag;
+	int mapflag;
+	double pathDist;	
+	double linear,angular;
+	double linear_scale, angular_scale;
+	double looprate;
+	bool firefox_enabled;
+	bool validpw;  // valid password scanned at barcode reader
+
+private:
+	ros::NodeHandle nh;
+	tf::TransformListener listener;
+	tf::StampedTransform transform;
+	geometry_msgs::TransformStamped robotpose;
+	move_base_msgs::MoveBaseGoal goal;
+	MoveBaseClient ac;
+	boost::mutex mut;
+};
+
+CMDNode::CMDNode(ros::NodeHandle rn):
+	rx(0.0),ry(0.0),rz(0.0),rw(0.0),
+	tx(0.0),ty(0.0),tz(0.0),validpw(false),	
+	linear(0.0),angular(0.0),numLP(0),numPose(0),currentLP(0),nextLP(0),
+	linear_scale(1.5), angular_scale(2.5),looprate(1.0),firefox_enabled(false),
+	ac("move_base_nys", true)
+{
+	ros::NodeHandle sn(rn);
+	cmd_service = sn.advertiseService("cmd_service",&CMDNode::cmdServiceCallback,this); 
+	vel_pub = sn.advertise<geometry_msgs::Twist>("joycmd_vel",100);
+	status_pub = sn.advertise<htbot::status>("feedback",100);
+	queue_pub = sn.advertise<htbot::status>("queue",100);
+	sgoal_client = nh.serviceClient<htbot::sendgoal>("move_to_goal");
+	bar_sub = nh.subscribe<htbot::status>("barcode", 1000, &CMDNode::barCallback,this);
+	nh.getParam("/srvNode/pose_file",posefile);	
+	nh.getParam("/srvNode/param_file",paramfile);	
+	nh.getParam("/srvNode/landing_points_file",landfile);		
+	nh.getParam("/srvNode/linear_scale",linear_scale);
+	nh.getParam("/srvNode/angular_scale",angular_scale);
+	nh.param("/srvNode/path_distance", pathDist, 3.5); 
+}
+
+void CMDNode::barCallback(const htbot::status::ConstPtr& msg)
+{
+	string pw;
+
+	pw = msg->msg;
+	
+	ROS_INFO("Password Received : %s", pw.c_str());
+}
+
+bool CMDNode::sendGoal(double x,double y, double z, double rx, double ry, double rz, double rw)
+{
+	char buf [100];
+	string s;
+	
+	goal.target_pose.header.frame_id = "map";
+  goal.target_pose.header.stamp = ros::Time::now();
+  goal.target_pose.pose.position.x = x;
+  goal.target_pose.pose.position.y = y;
+  goal.target_pose.pose.position.z = z;
+  goal.target_pose.pose.orientation.x = rx;
+  goal.target_pose.pose.orientation.y = ry;
+  goal.target_pose.pose.orientation.z = rz;
+  goal.target_pose.pose.orientation.w = rw;  
+
+	//sprintf(buf,"SendGoal : Move to %lf, %lf",x,y);
+	//s = string(buf);
+	//publish_status(s);
+	//sleep(10);
+	
+  ac.sendGoal(goal);
+	//publish_status("Sent Goal");
+	//sleep(2);
+  ac.waitForResult();
+	//publish_status("WaitForResult Back");
+	//sleep(2);
+	//ROS_INFO("Result is Back");
+
+  if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+    ROS_INFO("Reached Goal");
+		publish_status("Reached Goal");
+		return true;
+	}
+  else 
+  {
+    ROS_INFO("Error in Sending Goal");			
+		publish_status(ac.getState().toString());
+		return false;
+	}	
+	
+	//publish_status("Reached Goal");
+	//sleep(3);
+	return true;
+}
+
+bool CMDNode::getPose() 
+{
+	char buf [100];	
+	try
+	{
+		listener.lookupTransform("/map", "/base_link", ros::Time(0), transform);
+		tf::transformStampedTFToMsg(transform,robotpose);
+		tx = robotpose.transform.translation.x;
+		ty = robotpose.transform.translation.y;
+		tz = robotpose.transform.translation.z;
+		rx = robotpose.transform.rotation.x;
+		ry = robotpose.transform.rotation.y;
+		rz = robotpose.transform.rotation.z;
+		rw = robotpose.transform.rotation.w;
+		return true;
+	}
+	catch (tf::TransformException ex)
+	{
+		ROS_INFO("%s",ex.what());	
+		return false;	
+	}
+}
+
+int CMDNode::findLPIndex(std::string lpstr) 
+{
+	int ret;
+	string s1,s2;
+	ret = -99;
+	s2 = lpstr;
+
+	for (int k=0;k<numLP;k++) {
+		s1 = LandingPointString[k];
+		trim(s1);
+		trim(s2);
+		if (s1.compare(s2) == 0) {
+			ret = k;
+			break;
+		}
+	}
+	return ret;
+}
+
+void CMDNode::setMapFlagToMapMode() {
+	int mapflag = 33;
+
+	ROS_INFO("Param File : %s",paramfile.c_str());
+	lpfp = fopen(paramfile.c_str(), "w");
+  if (lpfp == NULL) {
+  	ROS_INFO("I couldn't open paramdata.dat to write.\n");    
+  	return;
+  }
+	fprintf(lpfp,"%d\n",mapflag);
+	fclose(lpfp);
+}
+
+void CMDNode::readParamfromFile()
+{
+	int mapflag,noLP;
+	std::string s1;
+	std::string s3;
+	char s2[100];
+	char s21[100];
+	int len;
+	
+
+	ROS_INFO("Param File : %s",paramfile.c_str());
+	lpfp = fopen(paramfile.c_str(), "r");
+  if (lpfp == NULL) {
+  	ROS_INFO("I couldn't open paramdata.dat to read.\n");    
+  	return;
+  }
+	// read mapping flag. 1=mapping done. 0=mapping not done
+	fscanf(lpfp, "%d\n", &mapflag);	
+	nh.setParam("mapflag",mapflag);
+	if (mapflag == 77) {
+		// mapping done. read landing points information. load amcl	
+		//sleep(1);
+		system("gnome-terminal -x ~/htstartamcl.sh &");	
+		ROS_INFO("Read Landing Points Info and AMCL");
+		fscanf(lpfp, "%d\n", &numLP);
+		ROS_INFO("number of LP : %d",numLP);	
+		nh.setParam("numLP",numLP);	
+		if (numLP > 0) {					
+			for (int k=0;k<numLP;k++) {				
+				fgets(s2,100,lpfp);		
+				len = strlen(s2);	
+				//s1.assign(s2,len);
+				LandingPointString[k].assign(s2,len);
+				ROS_INFO("LP Str %d = %s",k,LandingPointString[k].c_str());
+				sprintf(s21,"Landing_Point_%d",k);
+				ROS_INFO("%s = %s",s21,s2);
+				nh.setParam(s21,s2);			
+			}
+			readPosefromFile();
+			readLandingPointsfromFile();
+			//sprintf(s2,"firefox -new-window \"http://192.168.1.120/navstatus.html\"");
+			//system(s2);
+		}		
+	} else if (mapflag == 33) {
+		// load mapping
+		system("gnome-terminal -x ~/htstartgm.sh &");	
+		ROS_INFO("Loading GMapping");
+	} 
+	fclose(lpfp);	
+}
+
+void CMDNode::moveToLP(int nLP)
+{
+	int nidx,cnt;
+	char buf[100];
+	string s,s1;
+	
+	cnt = 0;
+	nidx = landingPoint[nLP];
+	s1 = LandingPointString[nLP];
+	//ROS_INFO("Inside moveToLP : Move to %s",s1.c_str());
+	//sprintf(buf,"Move to %d",nidx);
+	//s = string(buf);
+	
+	publish_status("Moving to : "+s1);
+	//sleep(1);
+	
+	while(true) {
+		if (sendPose(nidx)) {			
+			break;
+		}
+		sleep(2);
+		cnt++;
+		if (cnt >= 3) {
+			break;
+		}
+	}
+	// wait for barcode to move off
+	while(!validpw) {
+		sleep(1);		
+	}
+	validpw = false;
+}
+
+bool CMDNode::checkPassWord() {
+	
+	return true;
+}
+
+bool CMDNode::sendPose(int i) 
+{
+	bool ret;
+
+	tx = poseInfo[i][0];
+	ty = poseInfo[i][1];
+	tz = poseInfo[i][2];
+	rx = poseInfo[i][3];
+	ry = poseInfo[i][4];
+	rz = poseInfo[i][5];
+	rw = poseInfo[i][6];
+	ret = sendGoal(tx,ty,tz,rx,ry,rz,rw);
+	return ret;
+}
+
+void CMDNode::storePose() 
+{		
+	poseInfo[numPose][0] = tx;
+	poseInfo[numPose][1] = ty;
+	poseInfo[numPose][2] = tz;
+	poseInfo[numPose][3] = rx;
+	poseInfo[numPose][4] = ry;
+	poseInfo[numPose][5] = rz;
+	poseInfo[numPose][6] = rw;	
+	numPose++;		
+	otx = tx;
+	oty = ty;
+	otz = tz;
+	orx = rx;
+	ory = ry;
+	orz = rz;
+	orw = rw;
+}
+
+void CMDNode::savePose() 
+{		
+	pfp = fopen(posefile.c_str(), "w");
+  if (pfp == NULL) {
+  	ROS_INFO("I couldn't open posedata.dat for writing.\n");    
+  	return;
+  }
+	fprintf(pfp,"%d\n",numPose);
+	for (int i=0;i<numPose;i++) {
+		tx = poseInfo[i][0];
+		ty = poseInfo[i][1];
+		tz = poseInfo[i][2];
+		rx = poseInfo[i][3];
+		ry = poseInfo[i][4];
+		rz = poseInfo[i][5];
+		rw = poseInfo[i][6];
+		fprintf(pfp,"%.3f %.3f %.3f %.3f %.3f %.3f %.3f\n",tx,ty,tz,rx,ry,rz,rw);	
+	}
+  fclose(pfp);	
+}
+
+void CMDNode::readPosefromFile() 
+{		
+	pfp = fopen(posefile.c_str(), "r");
+  if (pfp == NULL) {
+  	ROS_INFO("I couldn't open posedata.dat for reading.\n");    
+  	return;
+  }
+	fscanf(pfp, "%d\n", &numPose);
+	for (int i=0;i<numPose;i++) {
+		fscanf(pfp,"%lf %lf %lf %lf %lf %lf %lf\n",&tx,&ty,&tz,&rx,&ry,&rz,&rw);	
+		poseInfo[i][0] = tx;
+		poseInfo[i][1] = ty;
+		poseInfo[i][2] = tz;
+		poseInfo[i][3] = rx;
+		poseInfo[i][4] = ry;
+		poseInfo[i][5] = rz;
+		poseInfo[i][6] = rw;		
+	}
+  fclose(pfp);	
+}
+
+void CMDNode::saveLandPt() 
+{		
+	int idx;
+	lfp = fopen(landfile.c_str(), "w");
+  if (lfp == NULL) {
+  	ROS_INFO("I couldn't open landdata.dat for writing.\n");    
+  	return;
+  }
+	fprintf(lfp,"%d\n",numLP);
+	for (int i=0;i<numLP;i++) {
+		idx = landingPoint[i];		
+		fprintf(lfp,"%d\n",idx);	
+	}
+  fclose(lfp);	
+}
+
+void CMDNode::readLandingPointsfromFile() 
+{		
+	int idx;
+	int nLP;
+	lfp = fopen(landfile.c_str(), "r");
+  if (lfp == NULL) {
+  	ROS_INFO("I couldn't open landdata.dat for reading.\n");    
+  	return;
+  }
+	
+	fscanf(lfp, "%d\n", &nLP);	
+	for (int i=0;i<nLP;i++) {
+		fscanf(lfp, "%d\n", &idx);	
+		landingPoint[i] = idx;				
+	}
+  fclose(lfp);	
+}
+
+void CMDNode::saveParamToFile()
+{
+	int mapflag;
+	std::string s1;
+	mapflag = 77;
+	
+	lpfp = fopen(paramfile.c_str(), "w");
+  if (lpfp == NULL) {
+  	ROS_INFO("I couldn't open paramdata.dat to write.\n");    
+  	return;
+  }
+	fprintf(lpfp, "%d\n", mapflag);
+	fprintf(lpfp, "%d\n", numLP);
+	for (int k=0;k<numLP;k++) {						
+		s1 = LandingPointString[k];
+		fprintf(lpfp,"%s\n",s1.c_str())	;		
+	}
+	fclose(lpfp);	
+}
+
+void CMDNode::publish_vel(double a, double l)
+{
+	geometry_msgs::Twist vel;
+	vel.angular.z = angular_scale * a;
+	vel.linear.x = linear_scale * l;
+	//ROS_INFO("publish : %f", vel.linear.x);
+	vel_pub.publish(vel);
+	return;
+}
+
+void CMDNode::publish_status(string s)
+{
+	htbot::status status;
+	status.msg = s;
+	status_pub.publish(status);
+	return;
+}
+
+void CMDNode::publish_queue(void)
+{
+	string s,s1;
+	int cLP,nLP,idx;
+
+	//ROS_INFO("Publish Queue");
+	s = "";
+	htbot::status qmsg;
+	cLP = currentLP;
+	nLP = nextLP;
+	//ROS_INFO("cLP : %d. nLP : %d",cLP,nLP);
+	if (cLP != nLP) {
+		while(cLP != nLP) {
+			idx = moveLPLoopQ[cLP++];
+			s = s + ">" + LandingPointString[idx];
+			//ROS_INFO("QUEUE Info : cLP : %d. idx : %d. s : %s",cLP,idx,s.c_str());			
+			if (cLP == MAXLPQ) {
+				cLP = 0;
+			}
+		}
+	} else {
+		s = " ";
+	}
+	//ROS_INFO("QUEUE : %s",s.c_str());
+	qmsg.msg = s;
+	queue_pub.publish(qmsg);
+	return;
+}
+
+bool CMDNode::cmdServiceCallback(htbot::srvcmd::Request &req,htbot::srvcmd::Response &res)
+{
+	//ROS_INFO("Command Services"); 
+	int fi,ti;
+	char buf [100];
+	int readyflag;
+
+	switch (req.cmd) {
+		case 1: // 
+			ROS_INFO("Nav Command 1 : From : %s. To : %s",req.fromLP.c_str(),req.toLP.c_str());
+			fi = findLPIndex(req.fromLP);
+			ti = findLPIndex(req.toLP);
+			ROS_INFO("From Indx = %d. To Indx = %d",fi,ti);			
+			//moveToLP(fi);
+			moveLPLoopQ[nextLP++] = fi;
+			if (nextLP == MAXLPQ) {
+				nextLP = 0;
+			}
+			ROS_INFO("SrvCmd : Sent FromLP to Queue");
+			moveLPLoopQ[nextLP++] = ti;
+			if (nextLP == MAXLPQ) {
+				nextLP = 0;
+			}
+			publish_queue();
+			//currentLP = fi;
+			//moveToLP(ti);
+			//currentLP = ti;
+			ROS_INFO("SrvCmd : Sent ToLP to Queue");
+			res.status = 1;			
+			break;
+		case 11: // 
+			ROS_INFO("Nav Command 11 : To : %s",req.toLP.c_str());
+			ti = findLPIndex(req.toLP);			
+			ROS_INFO("To Indx = %d",ti);
+			moveLPLoopQ[nextLP++] = ti;
+			//moveToLP(ti);
+			//currentLP = ti;						
+			res.status = 11;			
+			break;
+		case 12: // trigger to send goals if any
+			//ROS_INFO("Triggered");
+			publish_queue();
+			if (currentLP != nextLP) {			
+				ti = moveLPLoopQ[currentLP++];			
+				moveToLP(ti);	
+				if (currentLP == MAXLPQ) {
+					currentLP = 0;
+				}		
+			}
+			//publish_queue();
+			break;
+		case 2: // Set/Reset Map
+			// set mapflag t0 33 and shutdown system
+			setMapFlagToMapMode();
+			ROS_INFO("Shutting Now..");
+			sleep(2);
+			system("sudo shutdown -h now");
+			res.status = 2;
+			break;
+		case 20: // move robot up
+			linear = linear + 0.05;
+			publish_vel(angular,linear);
+			res.status = 20;
+			res.linear = linear_scale * linear;
+			res.angular = angular_scale * angular;
+			break;
+		case 21: // move robot down
+			linear = linear - 0.05;
+			publish_vel(angular,linear);
+			res.status = 21;
+			res.linear = linear_scale * linear;
+			res.angular = angular_scale * angular;
+			break;
+		case 22: // move robot left
+			angular = angular + 0.05;
+			publish_vel(angular,linear);
+			res.status = 22;
+			res.linear = linear_scale * linear;
+			res.angular = angular_scale * angular;
+			break;
+		case 23: // move robot right
+			angular = angular - 0.05;
+			publish_vel(angular,linear);
+			res.status = 23;
+			res.linear = linear_scale * linear;
+			res.angular = angular_scale * angular;
+			break;
+		case 24: // stop robot 
+			angular = 0.0;
+			linear = 0.0;
+			publish_vel(angular,linear);
+			res.status = 24;
+			res.linear = 0.0;
+			res.angular = 0.0;
+			break;
+		case 30: // mark starting point			
+			if (getPose()) {  // get robot pose.
+				landingPoint[numLP] = numPose;  // store starting point's pose index. always 0
+				storePose(); // store pose into array if pose ok
+				LandingPointString[numLP]=req.fromLP;
+				numLP++;					
+			}			
+			//ROS_INFO("Landing Point Str : %s",req.fromLP.c_str());
+			res.status = 30;
+			break;		
+		case 31: // save map and pose info. Shutdown System
+			ROS_INFO("Save Map and Pose Info");				
+			savePose();
+			saveLandPt();
+			saveParamToFile();
+			sprintf(buf,"rosrun map_server map_saver -f /home/transporter/catkin_ws/src/htbot/maps/docmap");
+			system(buf);	
+			sleep(2);
+			system("sudo shutdown -h now");
+			break;		
+		case 77: // start firefox		
+			ROS_INFO("Trigger Firefox");
+			if (!firefox_enabled) {	
+				sprintf(buf,"firefox -new-window \"http://192.168.1.120/navstatus.html\"");
+				system(buf);
+				readyflag = 88;
+				nh.setParam("RobotReady",readyflag);
+				firefox_enabled = true;
+				ROS_INFO("Started Firefox");
+			}
+			break;
+		case 99: // shutdown system
+			ROS_INFO("Shutting Now..");
+			system("killall firefox");
+			system("sudo shutdown -h now");
+			res.status = 99;
+			break;
+		
+	}  
+	return true;
+}
+
+void CMDNode::moveLPLoop()
+{
+	ros::Rate r(looprate);
+	int cLP,nLP,mLP;
+
+	//while(ros::ok())
+	while(true)
+	{		
+		//ROS_INFO("Move Loop");
+		{  // lock scope
+			boost::mutex::scoped_lock lock(mut);
+			cLP = currentLP;
+			nLP = nextLP;
+		} // unlock
+
+		if (cLP != nextLP) {
+			// some LP to move to
+			ROS_INFO("MoveLoop : Moving tp %d",mLP);
+			mLP = moveLPLoopQ[cLP++];
+			{  // lock scope
+				boost::mutex::scoped_lock lock(mut);
+				currentLP = cLP;		
+				if (currentLP == MAXLPQ) {
+					currentLP = 0;
+				}
+			} // unlock
+			moveToLP(mLP);
+			ROS_INFO("MoveLoop : Back from MoveToLP");
+		}
+		ros::spinOnce();
+		r.sleep();
+	}
+}
+ 
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "service node");  
+  ros::NodeHandle rn;  		
+	CMDNode cNode(rn);
+	sleep(3);
+	cNode.readParamfromFile();
+
+	ros::MultiThreadedSpinner spinner(4);
+  
+	ROS_INFO("Running Service Node...");
+	//boost::thread main_thread(boost::bind(&CMDNode::moveLPLoop, &cNode));
+	//main_thread.interrupt() ;
+	//main_thread.join() ;
+  //pid = getpid();
+  //ROS_INFO("Vision Service PID = %d\n",pid);
+  //rn.setParam("/vision_system/pid",pid);
+  spinner.spin();
+  
+  return 0;
+}
+
+

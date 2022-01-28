@@ -1,0 +1,23 @@
+<!-- -*- mode: XML -*- -->
+<launch>   	
+	<node pkg="tf" type="static_transform_publisher" name="base_jt" args="0.0 0.0 0.0 0 0 0 /base_footprint /base_link 66"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="sickFjt" args="0.4 -0.34 0.05 -0.79854 0 0 /base_link /sickF 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="sickRjt" args="-0.392 0.32314 0.05 2.356 0.0 0.0 /base_link /sickR 66"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="sickCjt" args="0.0 0.0 0.0 0.11 0.0 0.0 /base_link /sickC 66"></node>  
+	<node pkg="tf" type="static_transform_publisher" name="maplaser_jt" args="0.0 0.0 0.0 0 0 0 /base_link /maplaser 66"></node>	
+	<node pkg="tf" type="static_transform_publisher" name="refscan_jt" args="0.0 0.0 0.0 0 0 0 /base_link /refscan 66"></node>
+	<!--node pkg="tf" type="static_transform_publisher" name="refscan_jt" args="0.27 0.0 0.0 0 0 0 /base_link /refscan 66"></node-->
+	<!--node pkg="tf" type="static_transform_publisher" name="rs_jt" args="0.48 0.0 1.26 0.05 0.0 0.0 /base_link /RoboSense 66"></node-->
+	<node pkg="tf" type="static_transform_publisher" name="rs_jt" args="0.52 0.0 1.26 -0.0 0.0 0.0 /base_link /RoboSense 66"></node>
+
+	<!--
+	<node pkg="tf" type="static_transform_publisher" name="realScan" args="0 0 0.05 0 0 0 /base_link /realFrame 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="bottomScan" args="0.25 0 0 0 0 0 /base_link /bottomRSFrame 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="middleScan" args="0.25 0 0 0 0 0 /base_link /middleRSFrame 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="leftRSFrame" args="0 0.15 0.6 1.57 0 0 /base_link /leftRSFrame 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="rightRSFrame" args="0 -0.15 0.6 -1.57 0 0 /base_link /rightRSFrame 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="txlaser" args="0 0 0.05 0 0 0 /base_link /testFrame 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="RoboSense" args="0 0 0.05 0 0 0 /base_link /roboSenseFrame 66"></node>
+	<node pkg="tf" type="static_transform_publisher" name="sickCC" args="0.0 0.0 0.05 0.0 0.0 0.0 /base_link /sickCombineFrame 66"></node>
+	-->
+</launch>

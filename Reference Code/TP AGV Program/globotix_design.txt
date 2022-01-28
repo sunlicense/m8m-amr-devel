@@ -1,0 +1,9 @@
+***** Boot up ******
+	a. moveNode initialpose()
+	b. For cleaning, user initiate localization check
+
+************* Point to point movement **************
+	a. use Mpush and Mpop
+	b. Once movement instruction given, do premove 1 and 2
+  c. 
+

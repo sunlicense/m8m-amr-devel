@@ -1,0 +1,7 @@
+<launch>
+  <node name="obstacle_detect_opcua_client_node" pkg="htbot" type="ObstacleDetectionOPCUAClient.py" respawn="true" output="screen">
+     <param name="opcua_server_ip" value="10.0.5.108" />
+     <param name="opcua_server_port" value="4678" />
+     <param name="obstacle_detection_param" value="LoadingBayStatus" />
+  </node>
+</launch>

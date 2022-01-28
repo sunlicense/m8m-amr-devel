@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title>
+  <link rel="stylesheet" href="font/material-icons.css">
+  <link rel="stylesheet" href="css/common.css">
+  <!--script type="text/javascript" src="js/nysKB.js"></script-->  
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/manual.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body onload="start()">
+	<div class="center">
+		<table >
+  	<caption><span style="font-size: 200%;">Manual Controls</span></caption>
+			<tr>
+    		<td style="width: 12%;height: 15px"></td>
+  			<td style="width: 76%;"></span></td>
+  			<td style="width: 12%;"></td>	
+  		</tr> 
+  		<tr>
+  			<td style="width: 12%;"></td>
+  			<td style="width: 76%;"><!--table style="border: 1px;">
+					<tr>
+						<td></td>
+						<td><button onclick="rotate_left()"><i style="font-size: 60px;" class='material-icons'>keyboard_arrow_up</i></button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td style="text-align: right;"><button onclick="rotate_left()"><i style="font-size: 60px;" class='material-icons'>keyboard_arrow_left</i></button></td>
+						<td id="tdstop" style="width: 20%;"><button id="stop" onclick="stop()" ><i style="font-size: 60px;" class='material-icons'>pan_tool</i></button></td>
+						<td style="text-align: left;"><button onclick="rotate_right()" ><i style="font-size: 60px;" class='material-icons'>keyboard_arrow_right</i></button></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><button onclick="reverse()" ><i style="font-size: 60px;" class='material-icons'>keyboard_arrow_down</i></button></td>
+						<td></td>
+					</tr>
+				</table--></td>
+  			<td class="home" style="width: 12%;">
+          <button onclick="home()" style="width: 90px;"><i style="font-size: 60px;" style="margin: auto;" class='material-icons'>home</i></button>		
+        </td>
+  		</tr>
+  		<tr>
+    		<td style="width: 12%;"></td>
+  			<td style="width: 76%;"><span style="font-size: 110%">Max Manual Speed Control</span><!--span id="speed" style="font-size: 130%"></span--></td>
+  			<td style="width: 12%;"></td>	
+  		</tr> 
+			<tr>
+				<td style="text-align: left;"><span style="font-size: 110%">Linear</span></td>
+				<td style="width: 76%;text-align: left;"><input type="range" oninput="linearValue()" min="1" max="100" value="10" style="width: 95%;" class="myslider" id="linearRange"></td>
+				<td style="text-align: left;"><span id="linear" style="font-size: 100%;"></span></td>
+			</tr>
+			<tr>
+				<td style="text-align: left;"><span style="font-size: 110%">Angular</span></td>
+				<td style="width: 76%;text-align: left;"><input type="range" oninput="angularValue()" min="1" max="100" value="10" style="width: 95%;" class="myslider" id="angularRange"></td>
+				<td style="text-align: left;"><span id="angular" style="font-size: 100%;"></span></td>
+			</tr>
+		</table>	
+	</div>
+<td> </td>
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <node respawn="true" pkg="joy" type="joy_node" name="joy" launch-prefix="taskset -c 4" >
+    <!--param name="dev" type="string" value="/dev/input/js0" /-->
+		<param name="dev" type="string" value="/dev/sensors/joy" />
+		<!--param name="dev" type="string" value="/dev/input/js0" /-->
+    <param name="deadzone" value="0.12" />
+  </node>
+  <node pkg="htbot" type="jnode" name="joystick" output="screen" launch-prefix="taskset -c 4">
+		<remap from="cmd_vel" to="joycmd_vel" />
+		<param name="axis_linear" value="4" type="int"/> <!-- 3 usb --> <!--4 wire-->
+		<param name="linear_inc" value="3" type="int"/>
+		<param name="linear_dec" value="0" type="int"/>
+  	<param name="axis_angular" value="3" type="int"/> <!-- 2 usb --> <!-- 3 wire -->
+		<param name="angular_inc" value="2" type="int"/>  <!-- 0 usb --> <!-- 2 wire -->
+		<param name="angular_dec" value="1" type="int"/>  <!-- 1 wire -->
+		<param name="trigger" value="1" type="int"/>  <!-- trigger path LP saving -->
+  	<param name="scale_linear" value="0.1" type="double"/>
+  	<param name="scale_angular" value="0.1" type="double"/>
+		<param name="jack" value="true" />
+		<param name="shutbutton" value="5" type="int"/>
+		<param name="jackbutton" value="4" type="int"/>
+	</node>
+</launch>

@@ -1,0 +1,12 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	
+  <include file="$(find transporter)/launch/transporter.launch" />
+  <include file="$(find transporter)/launch/hokuyo.launch" />
+  <include file="$(find transporter)/launch/move_base_transporter.launch" />
+  <include file="$(find transporter)/launch/gmapping_transporter.launch" />
+  <!--include file="$(find transporter)/launch/amcl_transporter.launch" /-->    
+  <!--include file="$(find transporter)/launch/map.launch" /--> 
+  
+   
+</launch>

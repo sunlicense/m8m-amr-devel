@@ -1,0 +1,42 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<include file="$(find htbot)/launch/rosbridge_websocket.launch" />
+  <node pkg="htbot" type="webNode" name="webNode" output="screen" required="true">
+		<param name="param_file" value="$(find htbot)/data/param.dat" />		
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />		
+		<param name="posemark_file" value="$(find htbot)/data/posemark.dat" />		
+		<param name="current_group" value="0" />				
+  </node>  
+	<include file="$(find htbot)/launch/hokuyo.launch" />
+	<node name="laserNode" pkg="htbot" type="laserNode" output="screen" ></node>
+	<include file="$(find htbot)/launch/htbot.launch" />
+	<include file="$(find htbot)/launch/motor_params_htbot.launch" />	          
+	<include file="$(find htbot)/launch/config.launch" />	
+	<include file="$(find htbot)/launch/joystick.launch" />
+	<include file="$(find htbot)/launch/move_base_htbot.launch" />
+	<node name="match" pkg="htbot" type="match" output="screen" ></node>
+	<node name="podom" pkg="htbot" type="podom" output="screen" ></node>
+	<node name="qnode" pkg="htbot" type="qnode" output="screen" ></node>	
+	<node name="clearNode" pkg="htbot" type="clearNode" output="screen" ></node>	
+	<node name="sgoal" pkg="htbot" type="sgoal" output="screen" ></node>
+	<node name="talkNode" pkg="htbot" type="talkNode" output="screen" ></node>
+	<node name="movNode" pkg="htbot" type="movNode" output="screen" ></node>  
+	<node name="arNode" pkg="htbot" type="arNode" output="screen" ></node>
+	<node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher" output="screen"/>
+
+	<!-- Mapping -->
+	<!--include file="$(find htbot)/launch/gmapping_htbot.launch" /-->
+
+	<!-- Navigation -->			
+	<include file="$(find htbot)/launch/amcl_htbot.launch" />
+	<!--include file="$(find rosserial_server)/launch/socket.launch" /-->
+	<!--include file="$(find htbot)/launch/rfid.launch" /-->
+  <!--include file="$(find htbot)/launch/rfid_server.launch" /-->
+	<!--include file="$(find beginner)/launch/beginner.launch" /-->
+
+	<!-- Arduino Module -->
+	<!--node name="UnoNode" pkg="rosserial_python" type="serial_node.py" output="screen" >
+		<param name="port" value= "/dev/sensors/Uno"/>
+	</node-->
+
+</launch>

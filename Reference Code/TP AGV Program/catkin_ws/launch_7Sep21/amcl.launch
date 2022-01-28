@@ -1,0 +1,62 @@
+<!-- -*- mode: XML -*- -->
+<launch> 
+	<!-- Date : 25.6.21 11.42 am -->
+  <!-- Run the map server -->
+  <arg name="map_file" default="$(find htbot)/maps/docmap.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" respawn="false" launch-prefix="taskset -c 2" args="$(arg map_file)" />
+
+  <!--- Run AMCL -->
+  <!---include file="$(find amcl)/examples/amcl_diff.launch" /-->
+  <arg name="use_map_topic" default="false"/>
+  <arg name="scan_topic" default="scanFF" />
+
+  <node pkg="amcl" type="amcl" name="amcl" launch-prefix="taskset -c 2" >
+    <param name="use_map_topic" value="$(arg use_map_topic)"/>
+
+    <param name="min_particles" value="300"/> <!--450 300 250 200 --> <!-- 1000 --><!-- 500 -->
+    <param name="max_particles" value="65000"/><!-- 2000 2500 1500--><!-- 2000 --><!-- 5000 -->
+    <param name="kld_err" value="0.05"/> <!-- 0.05 --> <!-- 0.01 -->
+    <param name="kld_z" value="0.99"/>
+    <param name="update_min_d" value="0.13"/> <!--0.15 0.2 0.25 --><!-- 0.2 -->
+    <param name="update_min_a" value="0.09"/> <!--0.1 0.2 0.5 0.2 --> <!-- PI/6.0 -->
+    <param name="resample_interval" value="1"/> <!-- 1 --><!-- 2 -->
+ <!-- Increase tolerance because the computer can get quite busy -->
+    <param name="transform_tolerance" value="5.0"/> <!-- 1.0 --><!-- 0.1 -->
+    <param name="recovery_alpha_slow" value="0.0"/> <!-- disabled -->
+    <param name="recovery_alpha_fast" value="0.0"/>
+    <param name="initial_pose_x" value="0.0"/>
+    <param name="initial_pose_y" value="0.0"/>
+    <param name="initial_pose_a" value="0.0"/>
+
+    <param name="gui_publish_rate" value="-1.0"/> <!-- 10.0 --><!-- -1.0Hz -->
+
+<!-- Laser model parameters -->
+    <param name="laser_max_range" value="25.0"/>
+    <param name="laser_max_beams" value="450"/> <!--450 210 300 -->
+    <param name="laser_z_hit" value="0.9"/> <!-- 0.5 0.95 -->
+    <param name="laser_z_short" value="0.05"/> <!-- 0.1 -->
+    <param name="laser_z_max" value="0.05"/> <!-- 0.05 -->
+    <param name="laser_z_rand" value="0.5"/> <!-- 0.05 -->
+    <param name="laser_sigma_hit" value="0.2"/>
+    <param name="laser_lambda_short" value="0.1"/>
+    <param name="laser_likelihood_max_dist" value="2.0"/> <!-- 2.0 -->
+    <param name="laser_model_type" value="likelihood_field"/>
+    <!-- <param name="laser_model_type" value="beam"/> -->
+
+<!-- odometry model paramters -->
+    <param name="odom_model_type" value="diff"/>
+    <param name="odom_alpha1" value="0.8"/>
+    <param name="odom_alpha2" value="0.8"/>
+    <param name="odom_alpha3" value="0.8"/>
+    <param name="odom_alpha4" value="0.2"/>
+		<param name="odom_alpha5" value="0.1"/>
+		<!--"alpha1=0.2.alpha2=0.2.alpha3=0.8.alpha4=0.2.alpha5=0.1"-->
+    <param name="odom_frame_id" value="odom"/>
+    <param name="base_frame_id" value="base_link"/>
+    <param name="global_frame_id" value="map"/>
+
+    <remap from="scan" to="$(arg scan_topic)"/>  
+
+  </node>
+	<node name="amclpose" pkg="htbot" type="amclpose" respawn="true" output="screen" ></node>
+</launch>

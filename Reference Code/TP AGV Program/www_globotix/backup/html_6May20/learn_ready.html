@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title>
+  <link rel="stylesheet" href="font/material-icons.css">
+  <link rel="stylesheet" href="css/common.css">
+  <!--script type="text/javascript" src="js/nysKB.js"></script-->  
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/learn.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body onload="start()">
+	<div style="margin-top: 30px" class="center">
+		<table>
+  	<!--caption><span style="font-size: 150%;">Control Settings</span></caption-->			
+  		<tr>
+  			<td style="width: 12%;"></td>
+  			<td style="width: 76%;">
+          <img id="image" src="imgs/map1.png" width="180px" height="180px" style="margin: auto;margin-left: 2px;margin-top: 5px" />
+        </td>
+  			<td class="home" style="width: 12%;">					
+          <button onclick="goBack()" style="width: 90px;"><i style="font-size: 65px;" class='material-icons'>cancel</i></button>		
+        </td>
+  		</tr>
+  		<tr>
+    		<td style="width: 12%;"></td>
+  			<td style="width: 76%;"><span style="font-size: 170%">Ready to Learn.</span></td>
+  			<td style="width: 12%;"><button onclick="startLearn()" style="width: 90px;"><i style="font-size: 65px;" class='material-icons'>play_circle_filled</i></button></td>	
+  		</tr>
+			<tr>
+    		<td style="width: 12%;"></td>
+  			<td style="width: 76%;"><span style="font-size: 110%">Pick Start Position.</span></td>
+  			<td style="width: 12%;"></td>	
+  		</tr>  
+			<tr>    			
+  			<td style="width: 12%;"></td>
+				<td style="width: 76%;text-align: left;"><span style="font-size: 110%;">Max Auto Speed Control</span></td>
+  			<td style="width: 12%;"></td>	
+  		</tr> 
+			<tr>
+				<td style="text-align: left;"><span style="font-size: 110%">Linear</span></td>
+				<td style="width: 76%;text-align: left;"><input type="range" oninput="linearValue()" min="1" max="100" value="10" style="width: 95%;" class="myslider" id="linearRange"></td>
+				<td style="text-align: left;"><span id="linear" style="font-size: 100%;"></span></td>
+			</tr>
+			<tr>
+				<td style="text-align: left;"><span style="font-size: 110%">Angular</span></td>
+				<td style="width: 76%;text-align: left;"><input type="range" oninput="angularValue()" min="1" max="100" value="10" style="width: 95%;" class="myslider" id="angularRange"></td>
+				<td style="text-align: left;"><span id="angular" style="font-size: 100%;"></span></td>
+			</tr>
+		</table>	
+	</div>
+<td> </td>
+</body>
+
+</html>

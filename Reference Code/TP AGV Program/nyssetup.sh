@@ -1,0 +1,14 @@
+#export ROS_MASTER_URI=http://mrobot.meiban.com:11311
+#export ROS_MASTER_URI=http://172.20.3.101:11311
+#export ROS_MASTER_URI=http://192.168.1.120:11311
+#export ROS_HOSTNAME=192.168.1.120 
+export ROS_MASTER_URI=http://127.0.0.1:11311
+export ROS_HOSTNAME=127.0.0.1
+#export ROS_IP=172.20.3.101 
+#export ROS_MASTER_URI=http://172.20.3.32:11311  // working for meiban network
+#export ROS_HOSTNAME=mrobot.meiban.com
+#export ROS_HOSTNAME=172.20.3.32  // working for meiban network
+#export ROS_IP=mrobot.meiban.com
+#export ROS_IP=172.20.3.32  // working for meiban network
+export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:/home/rac
+export ROSLAUNCH_SSH_UNKNOWN=1

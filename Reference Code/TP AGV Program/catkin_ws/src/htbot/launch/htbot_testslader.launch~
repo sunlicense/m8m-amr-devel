@@ -1,0 +1,16 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	 
+	<node name="sideLaserNode" pkg="htbot" type="sideLaserNode" output="screen" ></node> 
+	<param name="rightLaserfile" value="$(find htbot)/data/rightLaserfile.dat" />
+	<param name="leftLaserfile" value="$(find htbot)/data/leftLaserfile.dat" />
+	<param name="Dist2Center"    type="double"   value="0.2425"/>
+	<param name="left_laser_min_angle"    type="double"   value="-2.35"/>
+	<param name="left_laser_max_angle"    type="double"   value="-0.55"/>
+	<param name="right_laser_min_angle"    type="double"   value="0.55"/>
+	<param name="right_laser_max_angle"    type="double"   value="2.35"/>
+</launch>
+
+left_laser_min_angle = -2.35;
+	left_laser_max_angle = -0.55;
+	right_laser_min_angle = 0.55;
+	right_laser_max_angle = 2.35;

@@ -1,0 +1,7 @@
+int8 object_type
+bool ocu
+---
+int8 error
+int8 numtarget
+int16[5] px
+int16[5] py

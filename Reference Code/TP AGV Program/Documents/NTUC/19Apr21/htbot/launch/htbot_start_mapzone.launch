@@ -1,0 +1,4 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<node name="mapzone" pkg="htbot" type="mapzone" respawn="true" output="screen" ></node>
+</launch>

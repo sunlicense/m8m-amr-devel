@@ -1,0 +1,2115 @@
+/*
+ * Node that listens to cmd_vel and cmd_pos msgs
+ * and publishes the robot odometry
+ *
+ */
+
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+#include <geometry_msgs/Pose2D.h>
+#include <nav_msgs/Odometry.h>
+#include <std_msgs/Bool.h>
+#include <std_srvs/Empty.h>
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/thread.hpp"
+#include "boost/algorithm/string.hpp"
+
+#include <tf/transform_datatypes.h>
+#include <tf/transform_listener.h>
+#include <tf/transform_broadcaster.h>
+
+#include "htbot/bot2wheel_driver.h"
+#include "htbot/sound.h"
+#include "htbot/status.h"
+#include "htbot/clear.h"
+#include "htbot/move_status.h"
+#include "htbot/debug.h"
+#include "std_msgs/UInt16.h"
+#include "std_msgs/String.h"
+#include "htbot/move.h"
+#include "htbot/odom.h"
+#include "htbot/angle.h"
+// #include "techx_mcu/mcu.h"
+//#include "transporter/LaptopChargeStatus.h"
+using namespace std;
+//using namespace boost::algorithm;
+
+#define ROBOTREADY_UNO 70
+//#define ODROID
+#define SSMC
+//#define RAC
+#define ZDIST 2.0
+#define ZANGLE 190.0
+
+class BotNode
+{
+public:
+	BotNode();
+	Bot2Wheel robot;
+	double cur_x,cur_y,cur_theta;
+	double linear_, angular_, joylinear_, joyangular_,cmdvel_offset;
+	double plinear,pangular,pspeed,mstop_time;
+	bool errorState, cmd_estopped, estopped, resetting, docking;
+	//void mcuCallback(const techx_mcu::mcu::ConstPtr& msg);
+	//void laptopBattCallback(const techx_bot::LaptopChargeStatus::ConstPtr& msg);
+	//void estopCallback(const std_msgs::Bool::ConstPtr& msg);
+	void velCallback(const geometry_msgs::Twist::ConstPtr& msg);
+	void posCallback(const geometry_msgs::Twist::ConstPtr& msg);
+	void joyCallback(const geometry_msgs::Twist::ConstPtr& msg);
+	bool resetOdom(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp);
+	void publish_odom();
+	void restartRobot();
+	void watchdog();
+	void mainLoop();
+	void test();
+	void publish_sound(int id);
+	void publish_debug(string s);
+	void publish_clear(void);
+	void publish_move_status(int stat);
+	void poseCallback(const geometry_msgs::Pose::ConstPtr& msg);
+	void moveCallback(const htbot::move::ConstPtr& msg);
+	void calAlignAngle();
+	void publish_podom(double dist, double angle);
+	void buttonCallback(const std_msgs::UInt16::ConstPtr& msg);
+	void publish_status(string s);
+	double calcAn(void);
+	
+	ros::Time last_cmd_time, last_joycmd_time;
+	ros::Time honk_time;
+	ros::Time clearMap_time,escapeTime,escapeBuzzTime;
+	double rate;
+	ros::Publisher play_pub;
+	ros::Publisher clear_pub;
+	ros::Publisher status_mov;
+	ros::Subscriber pose_sub;
+	ros::Subscriber move_cmd;
+	ros::Publisher status_pub;
+	void publish_toggleButton(unsigned short cmd);
+	int navstatus;
+	int hstate,pstate;
+	bool stop,estop_pressed,estop_pressed_flag;
+	int count,pcount,ocount;
+	bool startPMove,escape;
+	double fspeedtime;
+	double rotate_angle,move_distance;
+	double gx,gy,grz,grw,px,py,prz,prw,targetDist,slowDist,slowRatio,alignAngle,alignDist,frontObsslowRatio;
+	double alignX,alignY,alignDX,alignDY;
+	double alignAX,alignAY,alignT,alignTD;
+	double dockdist,dockspeed,docksspeed,dockrdist,frontobsdist,dockrangle;
+	bool alignment,checkDist;
+	double oddist, odangle;  // odom
+	//int profile_move_flag;
+	bool estop;
+
+private:
+	ros::NodeHandle nh,ph;
+	double cov_x, cov_y, cov_th;
+	double cov_vx, cov_vy, cov_vth;
+	int laptop_min_charge;
+
+	geometry_msgs::Pose2D prevPose;
+	nav_msgs::Odometry odom;
+	//ros::Subscriber mcu_sub, laptop_sub, estop_sub, vel_sub, pos_sub, joyvel_sub;
+	ros::Subscriber vel_sub, pos_sub, joyvel_sub;
+	ros::Publisher odom_pub;
+	ros::Publisher podom_pub;		
+	ros::Publisher queue_pub;
+	ros::Publisher debug_pub;
+	ros::Publisher toggleButton_pub;
+	ros::Subscriber button_sub;
+
+	ros::ServiceServer reset_odom_srv;
+	ros::Time current_time, last_time, delay_time;
+	boost::mutex publish_mutex_;
+};
+
+BotNode::BotNode():
+	cur_x(0.0),cur_y(0.0),cur_theta(0.0),cmdvel_offset(1.0),startPMove(false),docking(false),estop_pressed_flag(false),
+	linear_(0.0),angular_(0.0), joylinear_(0.0),joyangular_(0.0),navstatus(0),stop(false),estop_pressed(false),
+	errorState(false), cmd_estopped(false), estopped(false), resetting(false),hstate(0),pstate(0),
+	alignment(true),alignAngle(0.0),checkDist(false),escape(false),ocount(0), ph("~")
+{
+	//mcu_sub = nh.subscribe<techx_mcu::mcu>("mcu", 1, &BotNode::mcuCallback,this);
+	//laptop_sub = nh.subscribe<techx_bot::LaptopChargeStatus>("laptop_charge", 1, &BotNode::laptopBattCallback,this);
+	//estop_sub = nh.subscribe<std_msgs::Bool>("cmd_estop", 1, &BotNode::estopCallback,this);
+	vel_sub = nh.subscribe<geometry_msgs::Twist>("cmd_vel", 100, &BotNode::velCallback,this);
+	pos_sub = nh.subscribe<geometry_msgs::Twist>("cmd_pos", 100, &BotNode::posCallback,this);
+	joyvel_sub = nh.subscribe<geometry_msgs::Twist>("joycmd_vel", 100, &BotNode::joyCallback,this);
+	odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 100);
+	podom_pub = nh.advertise<htbot::odom>("podom",100);
+	reset_odom_srv = nh.advertiseService("reset_odom", &BotNode::resetOdom, this);
+	play_pub = nh.advertise<htbot::sound>("sound", 1);
+	debug_pub = nh.advertise<htbot::debug>("debug",100);
+	clear_pub = nh.advertise<htbot::clear>("clearMap", 100);
+	toggleButton_pub = nh.advertise<std_msgs::UInt16>("toggle_button",100);
+	status_mov = nh.advertise<htbot::move_status>("move_status",100);
+	pose_sub = nh.subscribe<geometry_msgs::Pose>("/robot_pose", 1, &BotNode::poseCallback,this);
+	move_cmd = nh.subscribe<htbot::move>("move", 1, &BotNode::moveCallback,this); 
+	button_sub = nh.subscribe<std_msgs::UInt16>("button", 100, &BotNode::buttonCallback,this);
+	status_pub = nh.advertise<htbot::status>("feedback",100);
+	
+	nh.param("laptop_min_charge",laptop_min_charge, 10);
+	nh.param("odom_pub_rate", rate, 10.0);
+	nh.param("estopped", estopped, false);
+	nh.param("mstop_time", mstop_time, 4.0);
+	nh.param("RotateAngle",rotate_angle,90.0);
+	nh.param("MoveDistance",move_distance,2.5);
+	nh.param("targetDist",targetDist,0.05);
+	nh.param("slowDist",slowDist,0.2);
+	nh.param("slowRatio",slowRatio,0.5);
+	nh.param("Docking_Distance",dockdist,0.3);
+	nh.param("Docking_Speed",dockspeed,0.05);
+	nh.param("Docking_SlowSpeed",docksspeed,0.03);
+	nh.param("Docking_Retract_Distance",dockrdist,0.5); 
+	nh.param("Docking_Retract_Angle",dockrangle,180.0);
+	nh.param("Front_Obs_Distance",frontobsdist,1.0);
+	nh.param("FrontObsslowRatio",frontObsslowRatio,0.75);
+
+	ph.param("cov_x",cov_x, 1e-3);
+	ph.param("cov_y",cov_y, 1e-3);
+	ph.param("cov_th",cov_th, 1e-3);
+	ph.param("cov_vx",cov_vx, 1e-3);
+	ph.param("cov_vy",cov_vy, 1e-3);
+	ph.param("cov_vth",cov_vth, 1e-3);
+
+	ph.param<std::string>("LEFT_MOTOR",robot.LEFT_MOTOR, "/dev/ttyUSB0");
+	ph.param<std::string>("RIGHT_MOTOR",robot.RIGHT_MOTOR, "/dev/ttyUSB1");
+
+	ph.param("PBAUDL",robot.pbaudL,4);
+	ph.param("EBAUDL",robot.ebaudL,4);
+	ph.param("CHANGEBAUDRATEL",robot.cbaudrateL,0);
+	ph.param("PBAUDR",robot.pbaudR,4);
+	ph.param("EBAUDR",robot.ebaudR,4);
+	ph.param("CHANGEBAUDRATER",robot.cbaudrateR,0);				
+
+	ph.param("REFLECT",robot.REFLECT,1);
+	ph.param("AXLE_LEN",robot.AXLE_LEN,0);
+	ph.param("WHEEL_DIA",robot.WHEEL_DIA,0);
+	ph.param("GEAR_RATIO",robot.GEAR_RATIO,0);
+	ph.param("STEPS_PER_REV",robot.STEPS_PER_REV,0);
+	ph.param("wheel_circum_correction",robot.wheel_circum_correction,1.);
+	ph.param("wheel_base_correction",robot.wheel_base_correction,1.);
+	ph.param("odom_angular_scale_correction",robot.odom_angular_scale_correction,1.);
+
+	ph.param("CurrentRegulatorPGain",robot.CurrentRegulatorPGain,0);
+	ph.param("CurrentRegulatorIGain",robot.CurrentRegulatorIGain,0);
+	ph.param("VelocityPGain",robot.VelocityPGain,0);
+	ph.param("VelocityIGain",robot.VelocityIGain,0);
+	ph.param("PositionPGain",robot.PositionPGain,0);
+	ph.param("PositionIGain",robot.PositionIGain,0);
+	ph.param("PositionDGain",robot.PositionDGain,0);
+
+	ph.param("PositionProfileAcceleration",robot.ProfileAcceleration,0);
+	ph.param("PositionProfileDeceleration",robot.ProfileDeceleration,0);
+	ph.param("PositionProfileVelocity",robot.ProfileVelocity,0);
+	ph.param("MaxProfileVelocity",robot.MaxProfileVelocity,0);
+	ph.param("MaxProfileVelocityMD",robot.MaxProfileVelocityMD,0);
+	ph.param("MaxFollowError",robot.MaxFollowError,0);
+	ph.param("PositionWindow",robot.PositionWindow,0);
+	ph.param("PositionWindowTime",robot.PositionWindowTime,0);
+
+	ph.param("MotorMaxContinuousCurrent",robot.MotorMaxContinuousCurrent,0);
+	ph.param("ThermalTimeConstantWinding",robot.ThermalTimeConstantWinding,0);
+
+	current_time = last_time = last_cmd_time = ros::Time::now();
+	ROS_INFO("cov_vth : %.4f",cov_vth);
+} // BotNode constructor
+
+void BotNode::publish_status(string s)
+{
+	htbot::status status;
+	status.msg = s;
+	status_pub.publish(status);
+	return;
+}
+
+double BotNode::calcAn(void)
+{
+	double yawg,yawp,yd;
+	double ang_diff;
+
+	tf::Quaternion qg(0.0,0.0,grz,grw);
+	tf::Quaternion qp(0.0,0.0,prz,prw);
+
+	yawg = tf::getYaw(qg);
+	yawp = tf::getYaw(qp);
+	ang_diff = angles::shortest_angular_distance(yawp, yawg);
+	//ROS_INFO("\n============ BTNode : ang_diff = %.2f. =============\n",ang_diff);
+	return ang_diff;
+}
+
+void BotNode::moveCallback(const htbot::move::ConstPtr& msg)
+{
+	ros::NodeHandle nm;
+	char buf[100];
+	string s1;
+	
+	//gx = msg->x;
+	//gy = msg->y;
+	//grz = msg->rz;
+	if (msg->opt == 0) {
+		gx = msg->x;
+		gy = msg->y;
+		grz = msg->rz;
+		grw = msg->rw;
+		sprintf(buf,"BN Goal: x=%.3f. y=%.3f. rz=%.3f. rw=%.3f",gx,gy,grz,grw);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+	}
+}
+
+void BotNode::buttonCallback(const std_msgs::UInt16::ConstPtr& msg)
+{
+	ros::NodeHandle rn; 
+	int nGP, nLP, butNo;
+	//bool ok;
+	geometry_msgs::Twist pos;
+	bool ok;
+	char buf [100];
+	string s;
+
+	butNo = msg->data; 
+	ROS_INFO("BT_Node : Button Code Received = %d",butNo);
+
+	switch (butNo) {
+
+		case 13: // robot charging now. Stop robot
+			// stop robot.
+			//startPMove = false;
+			//publish_debug("Stop Robot");
+			robot.quickstop = true;
+			sprintf(buf,"BotNode : Stop Robot"); 
+			s.assign(buf,strlen(buf));
+			publish_debug(s);
+			publish_status("Docking Activated");
+			break;
+		case 15:
+			// stop robot.
+			estop_pressed = true;
+			ROS_INFO("estop pressed");
+			if (navstatus == 7) {
+				publish_sound(15);
+			}
+			estop = true;
+			rn.setParam("estop",estop);
+			publish_status("Emergency Stop Activated");
+			publish_debug("Move Node : Emergency Stop Activated");			
+			break;
+		case 16:
+			if (estop) {
+				estop_pressed = false;
+				ROS_INFO("estop released");	
+				publish_status("Emergency Stop Released");
+				publish_debug("Move Node : Emergency Released");
+				estop = false;
+			}
+			break;
+
+	}
+	return;
+}
+
+void BotNode::poseCallback(const geometry_msgs::Pose::ConstPtr& msg)
+{
+	px = msg->position.x;
+	py = msg->position.y;
+	prz = msg->orientation.z;
+	prw = msg->orientation.w;
+	//poseAvailable = true;
+	//ROS_INFO("BNPose : x=%.3f. y=%.3f. rz=%.3f",px,py,prz);
+}
+
+void BotNode::publish_podom(double dist, double angle)
+{
+	htbot::odom odom;
+	odom.dist = dist;
+	odom.angle = angle;
+	podom_pub.publish(odom);
+	return;
+}
+
+void BotNode::publish_move_status(int stat)
+{
+	htbot::move_status status;
+	status.stat = stat;
+	status_mov.publish(status);
+	return;
+}
+
+void BotNode::publish_toggleButton(unsigned short cmd)
+{
+	std_msgs::UInt16 msg;
+	msg.data = cmd;
+	toggleButton_pub.publish(msg);
+	return;
+}
+
+void BotNode::publish_debug(string s)
+{
+	htbot::debug status;
+	status.msg = s;
+	debug_pub.publish(status);
+	return;
+}
+
+void BotNode::publish_sound(int id)
+{
+	htbot::sound cmd;
+	cmd.id = id;
+	play_pub.publish(cmd);
+	//ROS_INFO("Publish Sound AA");
+	return;
+}
+
+void BotNode::publish_clear(void)
+{
+	htbot::clear cmd;
+	cmd.cmd = 1;
+	//ROS_INFO("Move_Node : publise clear Map");
+	publish_debug("bot_Node : Publish Clear Map" );
+	clear_pub.publish(cmd);
+	return;
+}
+
+void BotNode::restartRobot()
+{
+	int tries = 0;
+
+	if (!resetting)
+		resetting = true;
+	else return;
+	
+	while(ros::ok() && !robot.reset())
+	{
+		ROS_ERROR("Failed to contact EPOS, going to try restarting EPOS, tries = %i...", tries+1);
+		sleep(1);
+		tries++;
+		if (tries>10)
+		{
+			tries = 0;
+			robot.shutDown();
+			robot.start();
+		}
+	}
+	resetting = errorState = false;
+}
+
+bool BotNode::resetOdom(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp)
+{
+	nh.param("starting_x", cur_x, 0.);
+	nh.param("starting_y", cur_y, 0.);
+	nh.param("starting_theta", cur_theta, 0.);
+	return true;
+}
+
+void BotNode::joyCallback(const geometry_msgs::Twist::ConstPtr& msg)
+{
+	joylinear_ = msg->linear.x;
+	joyangular_= msg->angular.z;
+	//if ((joylinear_ == 0.0) && (joyangular_ == 0.0) ) {
+	//	estopped = false;
+	//} else {
+	//	estopped = true;
+	//}
+	last_joycmd_time = ros::Time::now();
+	//ROS_INFO("Move joycallbk at vx [%f] & w [%f]", joylinear_, joyangular_);
+}
+
+void BotNode::velCallback(const geometry_msgs::Twist::ConstPtr& msg)
+{
+	//angular_= cmdvel_offset * msg->angular.z;
+	//linear_ = cmdvel_offset * msg->linear.x;
+	angular_=  msg->angular.z;
+	linear_ =  msg->linear.x;
+	//ROS_INFO("Vel : Move at vx [%f] & w [%f] & offset [%.6f]", linear_, angular_,cmdvel_offset);
+	last_cmd_time = ros::Time::now();
+	if (linear_ < 0.0) {
+		if (!escape) {
+			escapeTime = ros::Time::now();
+			escapeBuzzTime = ros::Time::now();
+			escape = true;
+		}
+	} else {
+		escape = false;
+	}
+}
+
+void BotNode::calAlignAngle() {
+	double yawg,yawp,yd,yda;
+	char buf[100];
+	string s1;
+
+	tf::Quaternion qg(0.0,0.0,grz,grw);
+	tf::Quaternion qp(0.0,0.0,prz,prw);
+	yawg = tf::getYaw(qg);
+	yawp = tf::getYaw(qp);
+	yd = yawg - yawp;
+	if (yd >= M_PI) {
+		yd -= 2.0 * M_PI;
+	} else {
+		if (yd < -M_PI) {
+			yd += 2.0 * M_PI;
+		}
+	}
+	yda = (180.0 * yd) / M_PI;
+	sprintf(buf,"Quat : AlignAngle(rad) : %0.3f. AlignAngle(deg) : %0.3f.",yd,yda);
+	s1.assign(buf,strlen(buf));
+	publish_debug(s1);
+}
+
+void BotNode::posCallback(const geometry_msgs::Twist::ConstPtr& msg)
+{
+	
+	//bool st;
+	double dd,trz,dx,dy,pa,ga,xa,ya;
+	double aa,aan,da,dan,dat,dant;
+	char buf[100];
+	string s1;
+	bool front;
+
+	plinear = msg->linear.x;
+	pangular = msg->angular.z;
+
+	pspeed = msg->linear.y;
+	if (msg->linear.z == 0.0) {
+		// normal state m/c move
+		startPMove = true;
+		docking = true;
+		sprintf(buf,"posCall-startPM = true : Linear : %0.6f. Angle : %0.6f. Speed : %0.6f.",plinear,pangular,pspeed);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+	}
+	if (msg->linear.z == 1.0) {
+		// move straight to docking station
+		//publish_debug("BTNode : Move forward to Dock");
+		startPMove = true;
+		pstate = 11;
+	}
+	if (msg->linear.z == 2.0) {
+		// move away from docking station
+		//publish_debug("BTNode : Move away from Dock");
+		startPMove = true;
+		pstate = 13;
+	}
+	if (msg->linear.z == 7.0) {
+		// stop robot halfway
+		startPMove = false;
+		//publish_debug("Stop Robot");
+		robot.quickstop = true;
+		//sprintf(buf,"BotNode : Stop Robot"); 
+		//s1.assign(buf,strlen(buf));
+		//publish_debug(s1);
+    //ROS_INFO("btnode : stop robot");
+	}
+	if (msg->linear.z == 7.5) {
+		// stop robot halfway
+		startPMove = false;
+		//publish_debug("Stop Robot");
+		robot.quickstop = true;
+		//sprintf(buf,"BotNode : Stop Robot"); 
+		//s1.assign(buf,strlen(buf));
+		//publish_debug(s1);
+		estopped = true;
+	}
+	if (msg->linear.z == 7.8) { // estop activated. reduce start velocity
+		// slow down re-start speed
+		estop_pressed = true;
+		//ROS_INFO("estop pressed");
+		if (navstatus == 7) {
+			publish_sound(15);
+		}
+	}
+	if (msg->linear.z == 7.9) { // estop release. 
+		estop_pressed = false;
+		//ROS_INFO("estop released");	
+	}
+	if (msg->linear.z == 8.0) {
+		startPMove = true;
+		docking = true;
+		//sprintf(buf,"BotNode : Stage 2 -> moving to dock"); 
+		//s1.assign(buf,strlen(buf));
+		//publish_debug(s1);
+	}
+	if (msg->linear.z == 9.0) {
+		boost::mutex::scoped_lock lock(publish_mutex_);
+		startPMove = true;
+		pstate = 7;
+		//publish_debug("Rotate Anti Clockwise");
+	}
+	if (msg->linear.z == 9.1) {
+		boost::mutex::scoped_lock lock(publish_mutex_);
+		startPMove = true;
+		pstate = 71;
+		//publish_debug("Rotate Clockwise");
+	}
+	if (msg->linear.z == 9.5) {
+		boost::mutex::scoped_lock lock(publish_mutex_);
+		startPMove = true;
+		pstate = 8;
+		//publish_debug("Move Straight Forward");
+	}
+	if (msg->linear.z == 9.6) {
+		boost::mutex::scoped_lock lock(publish_mutex_);
+		startPMove = true;
+		pstate = 81;
+		//publish_debug("Move Straight Back");
+	}
+	if (msg->linear.z == 10.0) {
+		//startPMove = true;
+		//pstate = 9;
+		// dd = 2[asin(grz) - asin(prz)]*180 / pi
+		//trz = sin(atan((gy - py)/(gx - px)) / 2.0);
+		// convert grz to angle 0~360
+		if ((grz < 0.0)) {
+			// 4th quadrant
+			ga = 360.0 - (asin(-grz) * 114.59);
+		} else {
+			if (grw < 0.0) {
+				// 3rd quad
+				ga = 360.0 - (asin(grz) * 114.59);
+			} else {
+				// 1st and 2nd quad
+				ga = (asin(grz) * 114.59);
+			}
+		}
+		// convert prz to angle 0~360
+		if ((prz < 0.0)) {
+			// 4th quadrant
+			pa = 360.0 - (asin(-prz) * 114.59);
+		} else {
+			if (prw < 0.0) {
+				// 3rd quad
+				pa = 360.0 - (asin(prz) * 114.59);
+			} else {
+				// 1st and 2nd quad
+				pa = (asin(prz) * 114.59);
+			}
+		}
+		//alignAngle = (114.59 * (asin(grz) - asin(prz)));
+		//alignAngle = ga - pa;				
+		
+		//alignAngle = (114.59 * (asin(trz) - asin(prz)));
+		dx = gx-px;
+		dy = gy-py;
+		if ((dx > 0.025) || (dx < -0.025)) {  // 0.01
+			if ((pa < 90.0) || (pa > 270.0)) {
+				xa = 0.0;
+				ya = 0.0;
+				alignDX = dx;
+			} else {
+				xa = 180.0;
+				ya = 180.0;
+				alignDX = -dx;
+			}
+			alignX = xa - pa;
+			if (alignX > 180.0) {
+				alignX = alignX - 360.0;
+			} else {
+				if (alignX < -180.0) {
+					alignX = 360.0 + alignX;
+				}
+			}
+		} else {
+			ya = pa;
+			alignDX = 0.0;
+		}
+		if ((dy > 0.025) || (dy < -0.025)) {  //0.01
+			if ((ya < 180.0) && (ya > 0.0)) {
+				xa = 90.0;				
+				alignDY = dy;
+			} else {
+				xa = 270.0;				
+				alignDY = -dy;
+			}
+			alignY = xa - ya;
+			if (alignY > 180.0) {
+				alignY = alignY - 360.0;
+			} else {
+				if (alignY < -180.0) {
+					alignY = 360.0 + alignY;
+				}
+			}
+		} else {
+			xa = ya;
+			alignDY = 0.0;
+		}
+		alignAngle = ga - xa;				
+		if (alignAngle > 180.0) {
+			alignAngle = alignAngle - 360.0;
+		} else {
+			if (alignAngle < -180.0) {
+				alignAngle = 360.0 + alignAngle;
+			}
+		}
+		//alignDY = dy;
+		//calAlignAngle();
+		alignDist = sqrt((dx * dx) + (dy * dy));
+		sprintf(buf,"Align10: trz=%.3f. prz=%.3f. ga=%.3f. pa=%.3f. align=%.3f. Dist=%.3f",trz,prz,ga,pa,alignAngle,alignDist);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		sprintf(buf,"AlignXY10: dx=%.3f. alignX=%.3f. dy=%.3f. alignY=%.3f",alignDX,alignX,alignDY,alignY);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		startPMove = true;
+		//pstate = 9;
+		if (dx < 0.0) {
+			dx = -dx;
+		}
+		if (dy < 0.0) {
+			dy = -dy;
+		}
+		if ((dx > 0.65) || (dy > 0.65)) {
+			pstate = 90;
+		} else {
+			pstate = 91;
+		}
+	}
+	if (msg->linear.z == 11.0) {
+		if ((grz < 0.0)) {
+			// 4th quadrant
+			ga = 360.0 - (asin(-grz) * 114.59);
+		} else {
+			if (grw < 0.0) {
+				// 3rd quad
+				ga = 360.0 - (asin(grz) * 114.59);
+			} else {
+				// 1st and 2nd quad
+				ga = (asin(grz) * 114.59);
+			}
+		}
+		// convert prz to angle 0~360
+		if ((prz < 0.0)) {
+			// 4th quadrant
+			pa = 360.0 - (asin(-prz) * 114.59);
+		} else {
+			if (prw < 0.0) {
+				// 3rd quad
+				pa = 360.0 - (asin(prz) * 114.59);
+			} else {
+				// 1st and 2nd quad
+				pa = (asin(prz) * 114.59);
+			}
+		}
+		dx = gx-px;
+		dy = gy-py;
+		dd = sqrt((dx * dx) + (dy * dy));
+		if ( ((dx > -0.035) && (dx < 0.035 )) && ((dy > -0.035) && (dy < 0.035 )) ) {
+			alignAngle = ga - pa;				
+			if (alignAngle > 180.0) {
+				alignAngle = alignAngle - 360.0;
+			} else {
+				if (alignAngle < -180.0) {
+					alignAngle = 360.0 + alignAngle;
+				}
+			}
+			pstate = 9;
+			startPMove = true;
+			sprintf(buf,"Align11O: dx=%.3f. dy=%.3f. dd=%.3f. prz=%.3f. ga=%.3f. pa=%.3f. alignAngle=%.3f",dx,dy,dd,prz,ga,pa,alignAngle);
+			s1.assign(buf,strlen(buf));
+			publish_debug(s1);
+			return;
+		}
+		// calc aa and aan
+		if ((dx > 0.0) && (dy > 0.0)) {
+			// 1st Q
+			aa = 57.296 * atan(dy/dx);
+		} else {
+			if ((dx < 0.0) && (dy > 0.0)) {
+				//2nd Q
+				aa = 90.0 + (57.296 * atan(-dx/dy));
+			} else {
+				if ((dx < 0.0) && (dy < 0.0)) {
+					//Q3
+					aa = 270.0 - (57.296 * atan(-dx/-dy));
+				} else {
+					//Q4
+					aa = 270.0 + (57.296 * atan(dx/-dy));
+				}
+			}
+		}
+		if (aa >= 180.0) {
+			aan = aa - 180.0;
+		} else {
+			aan = aa + 180.0;
+		}
+		// cal alignT
+		da = aa - pa;
+		if (da >= 180.0) {
+			da = da - 360.0;
+		} else {
+				if (da < -180) {
+					da = 360.0 + da;
+				}
+		}
+		dan = aan - pa;
+		if (dan >= 180.0) {
+			//dan = 360.0 - dan;
+			dan = dan - 360.0;
+		} else {
+				if (dan < -180) {
+					dan = 360.0 + dan;
+				}
+		}
+		dat = da;
+		if (dat < 0.0) {
+			dat = -dat;
+		} 
+		dant = dan;
+		if (dant < 0.0) {
+			dant = -dant;
+		}
+		if (dat >= dant) {
+			alignT = dan;
+			alignTD = -dd;
+			xa = aan;
+		} else {
+			alignT = da;
+			alignTD = dd;
+			xa = aa;
+		}		
+		alignAngle = ga - xa;				
+		if (alignAngle > 180.0) {
+			alignAngle = alignAngle - 360.0;
+		} else {
+			if (alignAngle < -180.0) {
+				alignAngle = 360.0 + alignAngle;
+			}
+		}		
+		sprintf(buf,"Align11: dx=%.2f. dy=%.2f. dd=%.2f. aa=%.2f. aan=%.2f.",dx,dy,dd,aa,aan);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		sprintf(buf,"Align11a: aT=%.2f. aTD=%.2f. ga=%.2f. pa=%.2f. alignAngle=%.2f",alignT,alignTD,ga,pa,alignAngle);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		startPMove = true;
+		pstate = 95;
+	}
+	if (msg->linear.z == 20.0) {
+		// pre/post move		
+		//publish_debug("Start Pre or Post Move");		
+		pstate = 83;
+	}
+
+	// *************** scan matching alignment : dx and dy *************
+	if (msg->linear.z == 30.0) {
+		dx = msg->linear.x;
+		dy = msg->linear.y;
+		da = msg->angular.z;
+		pa = -(da * 180.0) / 3.14159;
+		alignDX = -dx;
+		alignX = pa;
+		alignDY = dy;
+		alignY = -90.0;
+		alignAngle = 90.0;
+		sprintf(buf,"Align30: outx=%.3f. outy=%.3f. outa=%.3f.",msg->linear.x,msg->linear.y,msg->angular.z);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		sprintf(buf,"Align30: dx=%.3f. alignX=%.3f. dy=%.3f. alignY=%.3f. alignAngle=%.3f",alignDX,alignX,alignDY,alignY,alignAngle);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		startPMove = true;
+		//pstate = 9;
+		pstate = 100;
+	}
+
+	// *************** scan matching alignment : polar *************
+	if (msg->linear.z == 35.0) {
+		dx = msg->linear.x;
+		dy = msg->linear.y * 0.85;
+		da = msg->angular.z;
+		pa = (da * 180.0) / 3.14159;
+		dd = sqrt((dx * dx) + (dy * dy));
+		// calculate axis of goal and robot position
+		if ((dx >= 0.0) && (dy >= 0.0)) {
+			// 1st Q : anticlockwise
+			ya = ((atan(dy/dx) * 180.0) / 3.14159);  // from x axis
+			alignX = ya - pa; // reverse dx
+			alignDX = -dd;
+			alignAngle = -ya;
+		} else {
+			if ((dx < 0.0) && (dy >= 0.0)) {
+				// 2nd Q : anticlockwise
+				ya = ((atan(dy/-dx) * 180.0) / 3.14159);   // from x axis
+				alignX = -(ya + pa);  // forward dx
+				alignDX = dd;
+				alignAngle = ya;
+			} else {
+				if ((dx < 0.0) && (dy < 0.0)) {
+					// 3rd Q : clockwise
+					ya = ((atan(-dy/-dx) * 180.0) / 3.14159);
+					alignX = ya - pa; // forward dx
+					alignDX = dd;
+					alignAngle = -ya;
+				} else {
+					// 4th Q : clockwise
+					ya = ((atan(-dy/dx) * 180.0) / 3.14159);
+					alignX = -(ya + pa);  // reverse dx
+					alignDX = -dd;
+					alignAngle = ya;
+				}
+			}
+		}
+		sprintf(buf,"Align35: outx=%.3f. outy=%.3f. outa=%.3f.",msg->linear.x,msg->linear.y,msg->angular.z);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		sprintf(buf,"Align35: alignX=%.3f. alignDX=%.3f. alignAngle=%.3f",alignX,alignDX,alignAngle);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		startPMove = true;
+		//pstate = 9;
+		pstate = 110;
+	}
+
+	if (msg->linear.z == 35.5) {
+		pstate = 90;
+	}
+
+	if (msg->linear.z == 40.0) {  // scan matching alignment		
+		if ((grz < 0.0)) {
+			// 4th quadrant
+			ga = 360.0 - (asin(-grz) * 114.59);
+		} else {
+			if (grw < 0.0) {
+				// 3rd quad
+				ga = 360.0 - (asin(grz) * 114.59);
+			} else {
+				// 1st and 2nd quad
+				ga = (asin(grz) * 114.59);
+			}
+		}
+		// convert prz to angle 0~360
+		if ((prz < 0.0)) {
+			// 4th quadrant
+			pa = 360.0 - (asin(-prz) * 114.59);
+		} else {
+			if (prw < 0.0) {
+				// 3rd quad
+				pa = 360.0 - (asin(prz) * 114.59);
+			} else {
+				// 1st and 2nd quad
+				pa = (asin(prz) * 114.59);
+			}
+		}
+		//dx = gx-px;
+		//dy = gy-py;
+		dx = msg->linear.x;
+		dy = msg->linear.y;
+		if ((pa < 90.0) || (pa > 270.0)) {
+			front = true;
+		} else {
+			front = false;
+		}
+		if ((dx > 0.015) || (dx < -0.015)) {  // 0.01
+			if ((pa < 90.0) || (pa > 270.0)) {
+				xa = 0.0;
+				ya = 0.0;
+				alignDX = -dx;
+			} else {
+				xa = 180.0;
+				ya = 180.0;
+				alignDX = -dx;
+			}
+			alignX = xa - pa;
+			if (alignX > 180.0) {
+				alignX = alignX - 360.0;
+			} else {
+				if (alignX < -180.0) {
+					alignX = 360.0 + alignX;
+				}
+			}
+		} else {
+			ya = pa;
+			alignDX = 0.0;
+		}
+		if ((dy > 0.015) || (dy < -0.015)) {  //0.01
+			if ((ya < 180.0) && (ya > 0.0)) {
+				xa = 90.0;				
+				if (front) {
+					alignDY = -dy;
+				} else {
+					alignDY = dy;
+				}
+			} else {
+				xa = 270.0;			
+				if (front) {	
+					alignDY = dy;
+				} else {
+					alignDY = -dy;
+				}
+			}
+			alignY = xa - ya;
+			if (alignY > 180.0) {
+				alignY = alignY - 360.0;
+			} else {
+				if (alignY < -180.0) {
+					alignY = 360.0 + alignY;
+				}
+			}
+		} else {
+			xa = ya;
+			alignDY = 0.0;
+		}
+		alignAngle = ga - xa;				
+		if (alignAngle > 180.0) {
+			alignAngle = alignAngle - 360.0;
+		} else {
+			if (alignAngle < -180.0) {
+				alignAngle = 360.0 + alignAngle;
+			}
+		}
+		sprintf(buf,"Align30: outx=%.3f. outy=%.3f. outa=%.3f.",msg->linear.x,msg->linear.y,msg->angular.z);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		sprintf(buf,"Align30A: dx=%.3f. alignX=%.3f. dy=%.3f. alignY=%.3f. alignAngle=%.3f",alignDX,alignX,alignDY,alignY,alignAngle);
+		s1.assign(buf,strlen(buf));
+		publish_debug(s1);
+		startPMove = true;
+		//pstate = 9;
+		pstate = 91;
+		//pstate = 100;
+	}
+}
+
+void BotNode::publish_odom()
+{
+	if(errorState) return;
+	ros::NodeHandle nn;
+	//int navstatus;
+	//ROS_INFO("publish odom");
+	// store the current pose
+	nn.getParam("navstatus",navstatus);
+	prevPose.x = cur_x;
+	prevPose.y = cur_y;
+	prevPose.theta = cur_theta;
+
+	// calculate the new pose
+	double distance, angle;
+	
+	errorState = !robot.getDisplacement(&distance, &angle);
+	if(errorState)
+	{
+		ROS_ERROR("getDisplacement failed in errorState.");
+		return;
+	}
+	publish_podom(distance,angle);
+} //void BotNode::publish_odom()
+
+/*
+void BotNode::publish_odom()
+{
+	if(errorState) return;
+	ros::NodeHandle nn;
+	//int navstatus;
+	//ROS_INFO("publish odom");
+	// store the current pose
+	nn.getParam("navstatus",navstatus);
+	prevPose.x = cur_x;
+	prevPose.y = cur_y;
+	prevPose.theta = cur_theta;
+
+	// calculate the new pose
+	double distance, angle;
+	
+	errorState = !robot.getDisplacement(&distance, &angle);
+	if(errorState)
+	{
+		ROS_ERROR("getDisplacement failed in errorState.");
+		return;
+	}
+		
+	cur_theta += angle;
+	cur_x += distance * cos(cur_theta);
+	cur_y += distance * sin(cur_theta); 
+	//ROS_DEBUG("PREVIOUS x = [%f], y = [%f], theta = [%f]\n", prevPose.x, prevPose.y, prevPose.theta);
+	//ROS_DEBUG("CURRENT x = [%f], y = [%f], theta = [%f]\n", cur_x, cur_y, cur_theta);
+
+	current_time = ros::Time::now();
+	double dt = (current_time - last_time).toSec();
+
+	// convert rotation about z into quaternion
+	geometry_msgs::Quaternion odom_quat;
+	odom_quat.z = sin(cur_theta/2.0);
+	odom_quat.w = cos(cur_theta/2.0);
+
+	//next, we'll publish the odometry message over ROS
+	odom.header.stamp = current_time;
+	odom.header.frame_id = "odom";
+	odom.child_frame_id = "base_link";
+
+	//set the position (with respect to header.frame)
+	odom.pose.pose.position.x = cur_x;
+	odom.pose.pose.position.y = cur_y;
+	odom.pose.pose.position.z = 0.0;
+	odom.pose.pose.orientation = odom_quat;
+	odom.pose.covariance[0] = cov_x;
+	odom.pose.covariance[7] = cov_y;
+	odom.pose.covariance[14] = odom.pose.covariance[21] = odom.pose.covariance[28] = 1e9;
+	odom.pose.covariance[35] = cov_th;
+
+	//set the velocity (with respect to child_frame)
+	odom.twist.twist.linear.x = distance/dt;
+	odom.twist.twist.angular.z = angle/dt;
+	odom.twist.covariance[0] = cov_vx;
+	odom.twist.covariance[7] = cov_vy;
+	odom.twist.covariance[14] = odom.twist.covariance[21] = odom.twist.covariance[28] = 1e9;
+	odom.twist.covariance[35] = cov_vth;
+
+	boost::mutex::scoped_lock lock(publish_mutex_);
+	//publish the message
+	odom_pub.publish(odom);	
+	last_time = current_time;
+} //void BotNode::publish_odom()
+*/
+
+void BotNode::watchdog()
+{
+	boost::mutex::scoped_lock lock(publish_mutex_);
+	if( ros::Time::now() > odom.header.stamp + ros::Duration(1.0/rate) )
+	{
+		odom.header.stamp = ros::Time::now();
+		odom_pub.publish(odom);
+	}
+}
+
+
+void BotNode::test()
+{
+	bool res;
+	double yaw;
+	tf::Quaternion qa(0.0,0.0,0.0115,0.999);
+	yaw = tf::getYaw(qa);
+	ROS_INFO("A yaw = %.3f",yaw);
+	tf::Quaternion qb(0.0,0.0,0.2486,0.9686);
+	yaw = tf::getYaw(qb);
+	ROS_INFO("B yaw = %.3f",yaw);
+	tf::Quaternion qc(0.0,0.0,0.9967,-0.0815);
+	yaw = tf::getYaw(qc);
+	ROS_INFO("C yaw = %.3f",yaw);
+	//ROS_INFO("C : rz = %.3f. rw = %.3f",qc.rz,qc,rw);
+
+	char buf [100];
+	string s,file;
+	int targetLP;
+	
+	targetLP = 0;
+	sprintf(buf,"/home/racnys/catkin_ws/src/htbot/laser/RefScan%d.json",targetLP);
+	s.assign(buf,strlen(buf));
+	file = s;
+	ROS_INFO("Test : file = %s", file.c_str());
+}
+
+
+void BotNode::mainLoop()
+{
+	ros::Rate r(rate);
+	//ros::Rate r(0.2);
+	ros::NodeHandle nn;
+	double tdist,dx,dy;
+	double distance,angle,obsdist,obsddist;
+	pcount = 0;	 
+	count = 0;
+	char buf[100];
+	string s1;
+
+	//stop = false;
+	while(ros::ok())
+	{
+		//ROS_INFO("loop..");
+		//test();
+		
+		publish_odom();
+		if(errorState)
+		{
+			//ROS_INFO("restart..");
+			if (navstatus != 7) {
+				restartRobot();
+				continue;
+			}
+		}
+		if (estop_pressed_flag && !estop_pressed) {
+			if (navstatus != 7) {
+				if (!robot.FaultReset()) {
+					//ROS_INFO("Error FaultReseting Motors after eStop");
+				} else {
+					//ROS_INFO("Faultreset after estop released");
+				}
+			} else {
+				restartRobot();
+				//ROS_INFO("restart after estop released");
+			}
+			estop_pressed_flag = false;
+		}
+		//if (estop_pressed  && !estop_pressed_flag) {
+		//	estop_pressed_flag = true;
+		//}
+		
+		// Stop moving if high level control loses link to driver node for more than 1 sec
+		if (navstatus == 7) {
+			if(ros::Time::now()-last_cmd_time > ros::Duration(1)) {
+				//ROS_INFO("Error vel");
+				linear_ = angular_ = 0;
+				cmd_estopped = true;
+			} else {
+				cmd_estopped = false;
+			}  
+		}
+		//if(ros::Time::now()-last_joycmd_time > ros::Duration(1)) {
+		//	joylinear_ = joyangular_ = 0;
+		//	estopped = true;
+		//} else {
+		//	estopped = false;
+		//}
+		
+		switch (pstate) {
+			case 0:	
+				if (startPMove) {
+					if (!docking) {						
+						errorState = !robot.moveAngle(pangular);//pangular
+						if (errorState) {
+							//publish_debug("MoveAngle Error");
+							//ROS_INFO("MA Err");
+						} else {
+							//publish_debug("MoveAngle OK");
+							//ROS_INFO("MA OK");
+						}
+						delay_time = ros::Time::now();
+						//publish_debug("angle move complete");
+																
+						startPMove = false;
+						pstate = 2;// 1
+					} else {
+						pstate = 2;// 
+					}
+				}
+				break;
+			case 1:
+				if (robot.checkMoveComplete()) {
+					pstate = 2;// 2
+					pcount = 0;
+					delay_time = ros::Time::now();
+					//ROS_INFO("MA Done");
+					//publish_debug("angle move complete");
+				}
+				break;
+			case 11:				
+				estopped = true;			
+				pstate = 15;	
+				//publish_debug("BNode : Moving to Docking Station");
+				//publish_status("BNode : Moving to Docking Station");
+				errorState = !robot.moveDistance(dockdist);
+				delay_time = ros::Time::now();
+				break;			
+			case 12:
+        //if (robot.quickstop) {
+				if( (robot.quickstop) || (ros::Time::now() > (delay_time + ros::Duration(6.0))) ) {
+					pstate = 0;
+					robot.setVelMode();
+					errorState = !robot.moveVelocity(0.0,0.0);
+					startPMove = false;
+					//publish_debug("Docking completed");
+					//publish_status("Docking completed");
+          //ROS_INFO("Docking done");
+          //if (robot.quickstop) {
+          //  publish_debug("quickstop");
+					//  publish_status("quickstop");
+          //}
+					//publish_status("robot stop");
+					publish_move_status(1);
+					estopped = false;	
+				}  
+				break;
+			case 13:  // move away from docking station
+				pstate = 14;
+				//publish_debug("Move Away from Docking Station");
+				//publish_status("BtNode : Move Away from Docking Station");
+				errorState = !robot.moveDistance(-dockrdist);
+				delay_time = ros::Time::now();
+				break;
+			case 14:
+				if(ros::Time::now()-delay_time > ros::Duration(0.2)) {
+					errorState = !robot.moveAngle(dockrangle);
+					pstate = 0;
+					//publish_status("BtNode : Turning Away from Docking Station");
+					publish_move_status(1);
+				}
+				break;
+			case 15:		
+				if(ros::Time::now()-delay_time > ros::Duration(0.5)) {			
+					pstate = 12;	
+					//publish_debug("BNode : Moving to Docking Station");
+					//publish_status("BNode : Moving to Docking Station");
+					robot.setVelMode();
+					errorState = !robot.moveVelocity(dockspeed,0.0);
+					delay_time = ros::Time::now();
+				}
+				break;
+			case 2:				
+				if(ros::Time::now()-delay_time > ros::Duration(1.0)) {					
+					if (pspeed > 0.0) {
+						//pstate = 5;
+						pstate = 21;
+						startPMove = true;
+						estopped = true;
+						fspeedtime = (plinear * 5.3);
+						robot.setVelMode();
+						errorState = !robot.moveVelocity(0.15,0.0);
+						delay_time = ros::Time::now();
+						//publish_debug("set low speed");
+					} else {
+						pstate = 4;
+						//publish_debug("MoveDist");
+						errorState = !robot.moveDistance(plinear);
+						//publish_debug("dist move complete");
+						delay_time = ros::Time::now();
+					}
+				} 
+				break;
+			case 21:
+				if(ros::Time::now()-delay_time > ros::Duration(fspeedtime)) {
+					errorState = !robot.moveVelocity(0.03,0.0);
+					delay_time = ros::Time::now();
+					pstate = 5;
+				}
+				break;
+			case 22:				
+				if(ros::Time::now()-delay_time > ros::Duration(1.0)) {
+					pstate = 4;
+					if (pspeed > 0.0) {
+						robot.setSlowMove();
+						//publish_debug("set low speed");
+					}
+					publish_debug("MoveDist");
+					errorState = !robot.moveDistance(plinear);
+					//publish_debug("dist move complete");
+					delay_time = ros::Time::now();
+					//ROS_INFO("MD Done");
+				} 
+				break;
+			case 3:
+				if (robot.checkMoveComplete()) {
+					pstate = 4;
+					delay_time = ros::Time::now();		
+					//publish_debug("dist move complete");		
+				}
+				if (!startPMove) {  // stop
+					robot.stopRobot();
+					//publish_debug("stop robot");
+					pstate = 4;
+					delay_time = ros::Time::now();					
+				}
+				break;
+			case 4:
+				if(ros::Time::now()-delay_time > ros::Duration(1.0)) {
+					pstate = 0;
+					robot.setVelMode();
+					//robot.setFastMove();
+					//last_cmd_time = ros::Time::now();
+					nn.setParam("ReachPosition",1);
+					startPMove = false;
+					//publish_debug("complete all move");
+					//ROS_INFO("ALl Done");
+					publish_move_status(1);
+				} 
+				break;
+			case 5:
+				if ((!startPMove) || (ros::Time::now()-delay_time > ros::Duration(mstop_time))) {  // stop
+					robot.stopRobot();
+					//publish_debug("stop robot");
+					pstate = 6;
+					estopped = false;
+					delay_time = ros::Time::now();					
+				} 
+				break;
+			case 6:
+				if(ros::Time::now()-delay_time > ros::Duration(1.0)) {
+					pstate = 0;
+					//robot.setVelMode();
+					//robot.setFastMove();
+					//last_cmd_time = ros::Time::now();
+					nn.setParam("ReachPosition",1);
+					startPMove = false;					
+					//publish_debug("complete all move");
+					//ROS_INFO("ALl Done");
+					publish_move_status(1);
+				} 
+				break;
+			case 7:  // Rotate 
+				startPMove = false;
+				pstate = 70;
+				errorState = !robot.moveAngle(rotate_angle);
+				break;
+			case 70:
+				if(ros::Time::now()-delay_time > ros::Duration(1.0)) {
+					errorState = !robot.getDisplacement(&distance, &angle);
+					//sprintf(buf,"Cal RLeft: px=%.3f.py=%.3f. prz=%.3f.prw=%.3f",px,py,prz,prw);
+					//s1.assign(buf,strlen(buf));
+					//publish_debug(s1);
+					pstate = 0;
+				}
+				break;
+			case 71:  // Rotate 
+				startPMove = false;
+				pstate = 72;
+				errorState = !robot.moveAngle(-rotate_angle);
+				break;
+			case 72:
+				if(ros::Time::now()-delay_time > ros::Duration(1.0)) {
+					//errorState = !robot.getDisplacement(&distance, &angle);
+					//sprintf(buf,"Cal RRight: px=%.3f.py=%.3f. prz=%.3f.prw=%.3f",px,py,prz,prw);
+					//s1.assign(buf,strlen(buf));
+					//publish_debug(s1);
+					pstate = 0;
+				}
+				break;
+			case 8:  // Move Straight
+				ROS_INFO("BT Move St : %.3f",move_distance);
+				startPMove = false;
+				pstate = 80;
+				errorState = !robot.moveDistance(move_distance);
+				if (errorState) {
+					ROS_INFO("Error in St Move");
+				}
+				//ROS_INFO("Move St done");
+				break;
+			case 80:
+				if(ros::Time::now()-delay_time > ros::Duration(1.0)) {
+					errorState = !robot.getDisplacement(&distance, &angle);
+					//sprintf(buf,"Cal Forward: dist=%.3f. angle=%.3f",distance,angle);
+					//sprintf(buf,"Cal Forward: px=%.3f.py=%.3f. prz=%.3f.prw=%.3f",px,py,prz,prw);
+					//s1.assign(buf,strlen(buf));
+					//publish_debug(s1);
+					pstate = 0;
+				}
+				break;
+			case 81:  // Move Straight
+				startPMove = false;
+				pstate = 82;
+				errorState = !robot.moveDistance(-move_distance);
+				break;
+			case 82:
+				if(ros::Time::now()-delay_time > ros::Duration(1.0)) {
+					errorState = !robot.getDisplacement(&distance, &angle);
+					//sprintf(buf,"Cal Back: px=%.3f.py=%.3f. prz=%.3f.prw=%.3f",px,py,prz,prw);					
+					//s1.assign(buf,strlen(buf));
+					//publish_debug(s1);
+					pstate = 0;
+				}
+				break;
+			case 83:  // Pre/Post Move Dist				
+				if (plinear < ZDIST) {
+					//publish_debug("botnode : Pre/Post Move Dist");
+					errorState = !robot.moveDistance(plinear);									
+				} 
+				delay_time = ros::Time::now();	
+				pstate = 84;
+				break;
+			case 84:  // Pre/Post Move Angle	
+				if(ros::Time::now()-delay_time > ros::Duration(0.2)) {			
+					pstate = 85;
+					if (pangular < ZANGLE) {
+						//publish_debug("botnode : Pre/Post Move Angle");
+						errorState = !robot.moveAngle(pangular);						
+					}
+					delay_time = ros::Time::now();
+					//publish_move_status(1);
+					//publish_debug("Complete Pre/Post Move");
+				}
+				break;
+			case 85:  // Pre/Post Move Angle
+				if(ros::Time::now()-delay_time > ros::Duration(0.2)) {
+					publish_move_status(1);
+					//publish_debug("botnode : Complete Pre/Post Move");
+					pstate = 0;
+					robot.setVelMode();
+				}
+				break;
+			case 86:
+				publish_debug("align final");
+				startPMove = false;
+				pstate = 0;
+				//pstate = 91;				
+				publish_move_status(1);
+				break;
+			case 9:
+				//publish_debug("align final angle");
+				startPMove = false;
+				pstate = 0;
+				//pstate = 91;
+				errorState = !robot.moveAngle(alignAngle);
+				if (errorState) {
+					publish_debug("align error");
+				} else {
+					publish_debug("align done");
+				}
+				robot.setVelMode();
+				publish_move_status(1);
+				break;
+			case 90:
+				publish_move_status(1);
+				pstate = 0;
+				break;
+			case 91:
+				//publish_debug("align X angle");
+				//startPMove = false;
+				if (alignDX != 0.0) {
+					pstate = 92;		
+					delay_time = ros::Time::now(); 		
+					errorState = !robot.moveAngle(alignX);
+					if (errorState) {
+						publish_debug("alignX error");
+					} else {
+						publish_debug("alignX angle done");
+					}
+				} else {
+					pstate = 93;
+				}
+				//robot.setVelMode();
+				break;
+			case 100:
+				pstate = 101;								
+				errorState = !robot.moveAngle(alignX);
+				if (errorState) {
+					publish_debug("alignX error");
+				} else {
+					publish_debug("alignX angle done");
+				}
+				delay_time = ros::Time::now(); 
+				//ROS_INFO("Move angle X");
+				break;
+			case 101:
+				if(ros::Time::now()-delay_time > ros::Duration(0.2)) {				
+					//publish_debug("align dx");
+					//startPMove = false;
+					pstate = 102;
+					errorState = !robot.moveDistance(alignDX);
+					if (errorState) {
+						publish_debug("align dx error");
+					} else {
+						publish_debug("align dx done");
+					}
+					delay_time = ros::Time::now(); 		
+					//ROS_INFO("Move DX");
+				}
+				break;
+			case 102:
+				pstate = 103;								
+				errorState = !robot.moveAngle(alignY);
+				if (errorState) {
+					publish_debug("alignY error");
+				} else {
+					publish_debug("alignY angle done");
+				}
+				delay_time = ros::Time::now(); 
+				//ROS_INFO("Move angle Y");
+				break;
+			case 103:
+				if(ros::Time::now()-delay_time > ros::Duration(0.2)) {				
+					//publish_debug("align dy");
+					//startPMove = false;
+					pstate = 9;
+					errorState = !robot.moveDistance(alignDY);
+					if (errorState) {
+						publish_debug("align dy error");
+					} else {
+						publish_debug("align dy done");
+					}
+					//ROS_INFO("Move DY");
+					//delay_time = ros::Time::now(); 		
+				}
+				break;
+			case 110:
+				pstate = 111;		
+				//if ((alignX > 0.035) || (alignX < -0.035)) {			
+				errorState = !robot.moveAngle(alignX);
+				if (errorState) {
+					publish_debug("alignX error");
+				} else {
+					publish_debug("alignX angle done");
+				}
+				//}
+				delay_time = ros::Time::now(); 
+				//ROS_INFO("Move angle X");
+				break;
+			case 111:
+				if(ros::Time::now()-delay_time > ros::Duration(0.1)) {				
+					//publish_debug("align dd");
+					//startPMove = false;
+					pstate = 9;
+					//if ((alignDX > 0.03) || (alignDX < -0.03)) {						
+					errorState = !robot.moveDistance(alignDX);
+					if (errorState) {
+						publish_debug("align dd error");
+					} else {
+						publish_debug("align dd done");
+					}
+					//}
+					delay_time = ros::Time::now(); 		
+					//ROS_INFO("Move DX");
+				}
+				break;
+			case 92:
+				//publish_debug("align dx");
+				//startPMove = false;
+				pstate = 93;
+				errorState = !robot.moveDistance(alignDX);
+				if (errorState) {
+					publish_debug("align dx error");
+				} else {
+					publish_debug("align dx done");
+				}
+				//robot.setVelMode();
+				break;
+			case 93:
+				//publish_debug("align Y angle");
+				//startPMove = false;
+				if (alignDY != 0.0) {
+					pstate = 94;
+					errorState = !robot.moveAngle(alignY);
+					if (errorState) {
+						publish_debug("align Y error");
+					} else {
+						publish_debug("align Y angle done");
+					}					
+				} else {
+					pstate = 9;
+				}
+				break;
+			case 94:
+				//publish_debug("align dy");
+				//startPMove = false;
+				pstate = 9;
+				errorState = !robot.moveDistance(alignDY);
+				if (errorState) {
+					publish_debug("align dy error");
+				} else {
+					publish_debug("align dy done");
+				}
+				//robot.setVelMode();
+				break;
+
+			case 95:
+				//publish_debug("align T");
+				pstate = 96;
+				errorState = !robot.moveAngle(alignT);
+				if (errorState) {
+					publish_debug("align T error");
+				} else {
+					publish_debug("align T done");
+				}				
+				break;
+			case 96:
+				//publish_debug("align TD");
+				pstate = 9;
+				errorState = !robot.moveDistance(alignTD);
+				if (errorState) {
+					publish_debug("align TD error");
+				} else {
+					publish_debug("align TD done");
+				}				
+				break;
+			case 97:
+				delay_time = ros::Time::now();			
+				pstate = 98;
+				break;
+			case 98:
+				if(ros::Time::now()-delay_time > ros::Duration(15.0)) {
+					pstate = 95;
+				}
+				break;
+		}
+		
+		switch (hstate) {
+			case 0:
+				if (navstatus == 7) {
+					nn.setParam("lookforObs",1);	
+					hstate = 1;  // 1
+					honk_time = ros::Time::now();
+					last_cmd_time = ros::Time::now();
+					//publish_debug("hstate 5");
+					//clearMap_time = ros::Time::now();
+				}
+				checkDist = false;
+				alignment = false;
+				break;
+			case 1:
+				if (ros::Time::now()-honk_time > ros::Duration(1.5)) {
+					hstate = 5;
+					honk_time = ros::Time::now();
+					checkDist = true;
+					//alignment = true;
+					//publish_debug("hstate 2");
+					//last_cmd_time = ros::Time::now();
+				}
+				break;
+			case 2:
+				if (ros::Time::now()-last_cmd_time > ros::Duration(8)) {				
+					//publish_debug("Stuck..cmdveloffset=0.2");
+					//publish_sound(3);
+					//publish_sound(3);
+					//publish_clear();
+					cmdvel_offset = 0.2; // to slow down robot giving time for clearcostmap
+					honk_time = ros::Time::now();
+					hstate = 6;
+				}
+				if (ros::Time::now()-honk_time > ros::Duration(6)) {
+					hstate = 5;				
+					count = 0;
+					honk_time = ros::Time::now();	
+					last_cmd_time = ros::Time::now();
+					//publish_debug("hstate 5");
+				}
+				if (navstatus == 0) {
+					//publish_debug("hstate 0");
+					hstate = 0;
+					checkDist = false;
+					alignment = false;
+				}
+				break;
+			case 5:
+				if (ros::Time::now()-last_cmd_time > ros::Duration(3.5)) {
+					
+					//publish_sound(3);
+					
+					//count = count + 1;
+					
+					if (count > 3) {
+						//last_cmd_time = ros::Time::now();
+						hstate = 5;
+						//count = 0;
+					} else {
+						honk_time  = ros::Time::now();
+						//publish_debug("honking..hstate=3");
+						//publish_sound(3);
+						hstate = 3;
+					}
+				} else {
+					count = 0;
+				}
+				if (navstatus == 0) {
+					//publish_debug("hstate 0");
+					hstate = 0;
+				}
+				break;
+			case 3:
+				if (ros::Time::now()-honk_time > ros::Duration(3.5)) {
+					hstate = 5;					
+					//last_cmd_time = ros::Time::now();
+					//publish_debug("hstate 5");
+				}
+				if (navstatus == 0) {
+					//publish_debug("hstate 0");
+					hstate = 0;
+				}
+				break;
+			case 4:
+				if (ros::Time::now()-last_cmd_time > ros::Duration(4)) {
+					hstate = 5;
+				}
+				if (navstatus == 0) {
+					hstate = 0;
+				}
+				break;
+			case 6:
+				if (ros::Time::now()-honk_time > ros::Duration(10)) {
+					//publish_debug("hstate 3. cmdvel_offset=1.0");
+					cmdvel_offset = 1.0;
+					honk_time = ros::Time::now();
+					last_cmd_time = ros::Time::now();
+					hstate = 5;
+					count = 0;
+				}
+				break;
+		}		
+
+		// Take command from joystick if estopped
+		if (!cmd_estopped) {
+			//ROS_INFO("Move at vx [%f] & w [%f]", linear_, angular_);
+			if (!estopped) {	
+				if (checkDist) {	
+					dx = gx - px;
+					dy = gy - py;
+					tdist = sqrt((dx * dx) + (dy * dy));
+					nn.getParam("ProfileMoveObsDist",obsdist);
+					nn.getParam("ProfileMoveObsDDist",obsddist);
+					if ((tdist < slowDist)) {
+						linear_ = linear_ * slowRatio ;
+						angular_ = angular_ * slowRatio ;
+						if ((linear_ == 0.0) ) {
+						//if ((linear_ < 0.05) && (linear_ > -0.05) ) {
+							double an = fabs(calcAn());
+							if ((angular_ > 0.0)) {
+								if (an > 1.8) {
+									angular_ = 0.75;  // 0.45
+								} else {
+									if (an > 1.2) {
+										angular_ = 0.65; 
+									} else {
+										if (an > 0.6) {
+											angular_ = 0.4; 
+										} else {
+											angular_ = 0.2; 
+										}
+									}
+								}
+								//angular_ = angular_ * 1.35;
+							} else {
+								if ((angular_ < 0.0)) {
+									if (an > 1.8) {
+										angular_ = -0.8;  // 0.45
+									} else {
+										if (an > 1.2) {
+											angular_ = -0.65; 
+										} else {
+											if (an > 0.6) {
+												angular_ = -0.4; 
+											} else {
+												angular_ = -0.2; 
+											}
+										}
+									}
+								} 							
+							}
+						}
+						
+					} else {
+						// check if obs in front of robot and slow down to 75%
+						//nn.getParam("ProfileMoveObsDist",obsdist);
+						//if ((obsdist < 1.3) && (obsdist > 1.0)) {  // frontobsdist
+						//	// slow down
+						//	//ROS_INFO("Front Obs SlowDown : %.3f",obsdist);
+						//	linear_ = linear_ * frontObsslowRatio * 0.9;
+						//	angular_ = angular_ * frontObsslowRatio ;
+						// } 
+						if ((obsdist < 0.25) && (obsdist > 0.1)) {  // frontobsdist
+							// slow down
+							//ROS_INFO("Front Obs Near : %.3f",obsdist);
+							//linear_ = linear_ * 0.3;
+							//angular_ = angular_ * frontObsslowRatio ;
+						}
+						if (estop_pressed) {							
+							if (!estop_pressed_flag) { 								
+								errorState = !robot.moveVelocity(0.0,0.0);	
+								//ROS_INFO("estop : lin:%.3f. ang:%.3f",linear_,angular_);
+								estop_pressed_flag = true;
+							}
+						}
+					}
+					if (escape) {
+						if (ros::Time::now()-escapeBuzzTime > ros::Duration(3.0)) {
+							publish_sound(15);
+							escapeBuzzTime = ros::Time::now();
+						}
+						if (ros::Time::now()-escapeTime > ros::Duration(7.0)) {
+							//linear_ = 0.0;
+							//ROS_INFO("Escape Stopped 4 secs. dd : %.2f",obsddist);
+							if (obsddist > 0.05) {
+								//angular_ = 0.1;
+								//ROS_INFO("turn left");
+							} else {
+								if (obsddist < -0.05) {
+									//angular_ = -0.1;
+									//ROS_INFO("turn right");
+								}
+							}
+							if (obsdist > 0.8) {
+								//linear_ = 0.1;
+								//angular_ = angular_ * 0.0 ;
+							}
+							//escapeTime = ros::Time::now();
+							//escape = false;
+							if (ros::Time::now()-escapeTime > ros::Duration(9.0)) {
+								escapeTime = ros::Time::now();
+								//linear_ = 0.0;
+							}
+						//}
+						}
+					}
+				}	
+				if (!estop_pressed) { 
+					errorState = !robot.moveVelocity(linear_,angular_);		
+				}
+				//z = sqrt(((x1-x) * (x1-x)) + ((y1-y) * (y1-y)) );
+				//errorState = !robot.moveVelocity(linear_,angular_);		
+			}			
+		} else { 
+			if (!estopped) {
+				errorState = !robot.moveVelocity(joylinear_,joyangular_);
+			}
+			//ROS_INFO("Move joy at vx [%f] & w [%f]", joylinear_, joyangular_);
+		}
+		if(errorState)
+		{
+			ROS_INFO("moveVelocity failed in errorState.");
+			linear_ = angular_ = 0;
+			joylinear_ = joyangular_ = 0;
+			continue;
+		}
+		if (navstatus == 0) {
+			hstate = 0;
+		}
+		ros::spinOnce();
+		r.sleep();
+	}
+}
+
+int main(int argc, char **argv)
+{
+	ros::init(argc, argv, "robot_base");
+	ros::NodeHandle n;
+	BotNode botNode;
+	int readyflag;
+	bool res;
+	char buf [100];
+	double x,y,x1,y1,z;
+	int cnt;
+	
+	readyflag = 0;
+	n.setParam("RobotReady",readyflag);	
+	
+	//readyflag = 77;
+	//n.setParam("RobotReady",readyflag);	// to let user know robot is ready
+	//ROS_INFO("Publish sound");
+	//sleep(5);
+	//botNode.publish_sound(1);
+	//sleep(3);
+	//botNode.publish_debug("Publiahing Debug Statement");
+	//sleep(10);
+	
+	
+	botNode.robot.start();
+	
+	//botNode.robot.changebaudrate(); // change if changebaudrate > 0
+	while(ros::ok() && !botNode.robot.reset())
+	{
+		ROS_WARN("EPOS not ready. Trying again in 1 second....");
+		sleep(1);
+	}
+	//readyflag = 77;
+	//n.setParam("RobotReady",readyflag);	// to let user know robot is ready
+	//mstop_time
+	//ROS_INFO("Motor Stop Time : %0.6f.",botNode.mstop_time);
+	//botNode.robot.changebaudrate(); // change if changebaudrate > 0
+	//system("gnome-terminal -x aplay ~/sound/well.wav &");
+	//botNode.publish_sound(1);
+	//sleep(3);
+	//system("gnome-terminal -x aplay ~/sound/good_bad_ugly.wav &");	
+	//botNode.publish_sound(2);
+	//sleep(9);
+	
+	// testing	
+	//botNode.test();
+	//sleep(1);
+	/*
+	ROS_INFO("Testing Dist move : 0.469");
+	res = botNode.robot.moveDistance(0.469);
+	sleep(1);
+	res = botNode.robot.moveDistance(-0.469);
+	sleep(1);
+	res = botNode.robot.moveDistance(0.469);
+	sleep(1);
+	res = botNode.robot.moveDistance(-0.469);
+	sleep(1);
+	res = botNode.robot.moveDistance(0.469);
+	sleep(1);
+	res = botNode.robot.moveDistance(-0.469);
+	sleep(1);
+	res = botNode.robot.moveDistance(0.469);
+	sleep(1);
+	res = botNode.robot.moveDistance(-0.469);
+	sleep(10);
+
+	ROS_INFO("Motor moving at +/-0.5m/s");
+	ROS_INFO("Set Vel Mode");
+	botNode.robot.setVelMode();
+	res = botNode.robot.moveVelocity(0.5,0.0);
+	sleep(3);
+	res = botNode.robot.moveVelocity(-0.5,0.0);
+	sleep(3);
+	res = botNode.robot.moveVelocity(0.0,0.0);	
+	//sleep(1);
+	//ROS_INFO("Set Vel to zero. Set Position Mode");
+	//botNode.robot.setPosMode();
+	//sleep(1);
+	ROS_INFO("Testing MoveAngle : -180.0");
+	res = botNode.robot.moveAngle(-180.0);
+	sleep(10);
+	ROS_INFO("Set Vel Mode");
+	botNode.robot.setVelMode();
+	*/
+	/*
+	while (true) {
+		ROS_INFO("Testing MoveAngle : -180.0");
+		res = botNode.robot.moveAngle(-180.0);
+		ROS_INFO("Testing MoveAngle : -180.0 Done");
+		sleep(2);
+		ROS_INFO("Testing MoveAngle : 180.0");
+		res = botNode.robot.moveAngle(180.0);
+		ROS_INFO("Testing MoveAngle : 180.0 Done");
+		sleep(2);
+		ROS_INFO("Testing MoveDist : -1.0");
+		res = botNode.robot.moveDistance(-1.0);
+		sleep(2);
+		ROS_INFO("Testing MoveDist : 1.0");
+		res = botNode.robot.moveDistance(1.0);
+		sleep(2);
+	}
+	*/
+	/*
+	ROS_INFO("Motor moving at 0.5m/s");
+	botNode.robot.setVelMode();
+	res = botNode.robot.moveVelocity(0.5,0.0);
+	sleep(10);
+	res = botNode.robot.moveVelocity(0.7,0.0);
+	sleep(10);
+	res = botNode.robot.moveVelocity(-0.7,0.0);
+	sleep(10);
+	ROS_INFO("Motor moving at 0.3m/s ends");
+	res = botNode.robot.moveVelocity(0.0,0.0);
+	ROS_INFO("Testing MoveAngle : anti-clockwise");
+	sleep(1);
+	res = botNode.robot.moveAngle(360.0);
+	sleep(1);
+	ROS_INFO("Testing MoveAngle : clockwise");
+	res = botNode.robot.moveAngle(-180.0);
+	sleep(1);
+	ROS_INFO("Testing MoveDist : 2.0");
+	res = botNode.robot.moveDistance(2.0);
+	sleep(1);
+	ROS_INFO("Testing MoveDist : -2.0");
+	res = botNode.robot.moveDistance(-2.0);
+	sleep(1);
+	ROS_INFO("End Testing");
+	sleep(10);
+	*/
+	/*
+	double secs;
+	secs = ros::Time::now().toSec();
+	ros::Time dock_time;
+	sleep(5);
+	dock_time = ros::Time::now();
+	secs = dock_time.toSec() - secs;
+	secs = secs + 1.0;
+	ROS_INFO("\n seconds : %.2f. \n",secs);
+	sleep(2);
+	*/
+	/*
+	ROS_INFO("Testing MoveAngle");
+	sleep(1);
+	res = botNode.robot.moveAngle(90.0);
+	if (res) {
+		ROS_INFO("MoveAngle OK");
+	} else {
+		ROS_INFO("MoveAngle Failed");
+	}
+	ROS_INFO("MoveAngle End");
+	sleep(3);
+	*/
+	/*
+	while(ros::ok() && !botNode.robot.reset())
+	{
+		ROS_WARN("EPOS not ready. Trying again in 1 second....");
+		sleep(1);
+	}
+	*/
+	/*
+	while(true) {
+		if (botNode.robot.checkMoveComplete()) {
+			break;
+		}
+		ROS_INFO("Checking Angle Move Completion");
+	}
+	
+	ROS_INFO("MoveAngle End");
+	sleep(5);
+	res = botNode.robot.moveDistance(1.0);
+	if (res) {
+		ROS_INFO("Move Dist OK");
+	} else {
+		ROS_INFO("Move Dist Failed");
+	}
+	while(true) {
+		if (botNode.robot.checkMoveComplete()) {
+			break;
+		}
+		ROS_INFO("Checking Dist Move Completion");
+	}
+	ROS_INFO("Move Dist End");
+	sleep(5);
+	while(ros::ok() && !botNode.robot.reset())
+	{
+		ROS_WARN("EPOS not ready. Trying again in 1 second....");
+		sleep(1);
+	}
+	readyflag = 77;
+	n.setParam("RobotReady",readyflag);
+	*/
+	/*
+	ROS_INFO("Move 0.5m fast");
+	botNode.robot.moveDistance(0.5);
+	sleep(5);
+	botNode.robot.setSlowMove();
+	ROS_INFO("Set Slow");
+	sleep(2);
+	botNode.robot.moveDistance(0.5);
+	ROS_INFO("Move 0.5m slow");
+	sleep(10);
+	botNode.robot.setFastMove();
+	ROS_INFO("Set Fast");
+	sleep(2);
+	botNode.robot.moveDistance(0.5);
+	ROS_INFO("Move 0.5m fast");
+	sleep(7);
+	ROS_INFO("Move 0.5m fast and stop");
+	sleep(7);
+	botNode.robot.moveDistance(0.5);
+	ROS_INFO("Move 0.5m fast for 2 secs then stop");
+	sleep(1);
+	botNode.robot.stopRobot();
+	ROS_INFO("Stop Robot. Test Done");
+	
+	x = 3.0;
+	y = 4.0;
+	x1 = 6.0;
+	y1 = 8.0;
+	z = sqrt(((x1-x) * (x1-x)) + ((y1-y) * (y1-y)) );
+	ROS_INFO(" Z = %.3f",z);
+	*/
+	/*
+	res = botNode.robot.moveVelocity(0.5,0.0);
+	sleep(10);
+	res = botNode.robot.moveVelocity(-0.5,0.0);
+	sleep(10);
+	res = botNode.robot.moveVelocity(0.0,0.5);
+	sleep(10);
+	res = botNode.robot.moveVelocity(0.0,-0.5);
+	sleep(10);
+	res = botNode.robot.moveVelocity(0.0,0.0);
+	sleep(1);
+	*/
+	//ROS_INFO("Move 0.5");
+	//botNode.robot.moveDistance(0.5);
+	//sleep(20);
+	//botNode.publish_sound(1);
+	//sleep(3);
+	//ROS_INFO("HTRobot waiting for command...");
+	ROS_INFO("Publishing odom at %f Hz",botNode.rate);
+	ROS_INFO("Rotate Angle : %.2f",botNode.rotate_angle);
+	ROS_INFO("Move Distance : %.2f",botNode.move_distance);
+	ROS_INFO("Target Distance : %.3f",botNode.targetDist);
+	ROS_INFO("Slow Down Distance : %.3f",botNode.slowDist);
+	//system("/home/ssmc/fire.sh");	
+	sleep(1);
+	readyflag = 77;
+	n.setParam("RobotReady",readyflag);	// to let user know robot is ready
+	//botNode.publish_sound(1);
+	//botNode.publish_toggleButton(ROBOTREADY_UNO);
+	//ros::Timer timer = n.createTimer(ros::Duration(1.0/botNode.rate), boost::bind(&BotNode::watchdog, &botNode));
+	//ros::Timer timer = n.createTimer(ros::Duration(0.2), boost::bind(&BotNode::watchdog, &botNode));
+	boost::thread main_thread(boost::bind(&BotNode::mainLoop, &botNode));
+	main_thread.interrupt() ;
+	main_thread.join() ;
+	//botNode.publish_sound(1);
+	//sprintf(buf,"firefox -new-window \"http://192.1.32.32/robot.html\"");
+	//system(buf);	
+	return 0;
+}

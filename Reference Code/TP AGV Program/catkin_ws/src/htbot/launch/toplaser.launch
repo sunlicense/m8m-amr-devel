@@ -1,0 +1,11 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <node pkg="htbot" type="tlaser" name="tlaser" output="screen">
+		<param name="frame_id"            type="string" value="/tlaser"/>
+		<param name="Laserfile" value="$(find htbot)/data/topLaserfile.dat" />
+		<param name="Obs_Dist"    type="double"   value="0.15"/>	
+		<param name="saveTopLaserData" value="77"/> <!-- 77=save-->
+  	<remap from="scanin" to="scanT"/>
+		<remap from="scanout" to="TopScan"/>
+  </node>
+</launch>

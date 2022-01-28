@@ -1,0 +1,38 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	<param name="use_gui" value="False"/>
+	<param name="odom_pub_rate" value="10"/>
+	<param name="mstop_time" value="20.0"/>
+	<param name="RotateAngle" value="360.0"/>
+	<param name="MoveDistance" value="2.5"/>
+	<param name="targetDist" value="0.05"/>
+	<param name="slowDist" value="0.8"/>
+	<param name="slowRatio" value="0.65"/> <!-- 0.33 -->
+	<param name="Docking_Distance" value="0.25"/>
+	<param name="Docking_Speed" value="0.05"/>
+	<param name="Docking_SlowSpeed" value="0.04"/>
+	<param name="Front_Obs_Distance" value="0.25"/>
+	<param name="FrontObsslowRatio" value="1.0"/>
+	<param name="Docking_Retract_Distance" value="0.3"/>
+	<param name="Docking_Retract_Angle" value="180.0"/>
+
+	<param name="clear_time" value="3.0" /> <!-- 13 -->
+	<param name="charging_voltage" value="27.0" />
+	<param name="work_voltage" value="27.0" />  
+	<param name="lowpower_voltage" value="24.0" /> 
+	<param name="Abort_Retry" value="12" /> <!-- 12 -->
+	<param name="ALIGN_METHOD" value="10.0" /> <!--10.0=dx,dy. 11.0=dd -->
+	<param name="charging_type" value="0" /> <!-- 0=docking. 1=swap or wire-->
+	<param name="alignment_type" value="1" /> <!-- 0=no alignment, only at reference point. >0 : yes-->
+	<param name="DEGPERIDX" value="0.235" /> <!-- degree per index -->
+	<param name="FIRSTMOVE" value="1.0" /> <!-- stage 1 move to charger -->
+	<param name="FINALMOVE" value="1.0" /> <!-- final move to charger -->
+	<param name="OFFSET" value="0.19" /> <!-- docking mechanism dist offset 15cm-->
+
+	<param name="param_file" value="$(find htbot)/data/param.dat" />		
+	<param name="pose_file" value="$(find htbot)/data/posedata.dat" />		
+	<param name="posemark_file" value="$(find htbot)/data/posemark.dat" />
+
+	<param name="home_dir" value="/home/racnys/" />
+
+</launch>

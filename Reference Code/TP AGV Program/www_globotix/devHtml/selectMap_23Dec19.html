@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<style type="text/css" media="screen">
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+li {
+	float : left;
+}
+
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 10px 20px;
+  text-decoration: none;
+	font-size: 20px;
+}
+
+li a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+li a.active {
+  color: white;
+  background-color: #4CAF50;
+}
+.center {
+	margin: auto;
+  width: 40%;
+}
+
+
+.img-container {
+	text-align: center;
+}
+    
+
+button { 
+	color: #f00;
+	background:#ffffff; 
+	padding: 5px
+	font-size: 20px;
+	border: 0px
+}
+
+select {
+	text-align: center;
+}
+
+table {text-align: center;padding: 1px}
+
+</style>
+</head>
+<body onload="start()">
+<table border="0" style="width:100%">
+	<tr> 		
+		<td style="padding:1px"><button style="height:40px;width:250px;padding:1px" onclick="location.href=`navSetup.html`;"><h3>Navigation Setup Menu</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;width:120px;padding:1px" onclick="setMap"><h3>Select Map</h3></button></td>
+		<td style="padding:1px"><button style="height:40px;padding:1px"><h3></h3></button></td>
+	</tr>
+</table>
+<table border="0" style="width:100%">
+	<caption>View Map List for AGV</caption>
+	<tr> 
+		<td><select class="center" id="maplist" onchange="mapchange()"></select></td>
+		<!--td><select class="center" id="maplist"></select></td-->
+	</tr>
+</table>
+<div class="img-container">
+	<img id="map" src="cleanplan/rac_map.jpeg" width=90% height=300px>
+</div>
+<table border="0" style="width:100%">
+	<caption>View Cleaning Plan List for AGV</caption>
+	<tr> 
+		<td><select class="center" id="cleanlist"></select></td>
+	</tr>
+</table>
+<div class="img-container">
+	<img id="clean" src="/home/rac/catkin_ws/src/htbot/cleanplan/rac_map.jpeg" width=90% height=300px>
+</div>
+
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2djs.js"></script>
+<script type="text/javascript" src="js/nav2djs.js"></script>
+<script type="text/javascript" type="text/javascript">
+
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    autostart : 0.0 
+});
+
+
+function start() {
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Please Login First");
+			location.replace("index.html");
+		} 
+  });
+	cmdreq.cmd = 84;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == 84) {
+			var mbox = document.getElementById("maplist");
+			var cbox = document.getElementById("cleanlist");
+			var nm = result.nummap;
+			var ncp = result.numcplan;
+			var mapn;
+			var exist = false;
+			if (nm > 0) {
+				for (i=0;i<nm;i++) {
+					var option = document.createElement("option");	
+					option.value = i;
+					option.text = result.mapname[i];
+					mbox.add(option);
+				}
+				mbox.selectedIndex = 0;
+				var img = document.getElementById("map");					
+				img.src="cleanplan/"+mbox.options[mbox.selectedIndex].text+".jpeg";				
+				mapn = mbox.options[mbox.selectedIndex].text;
+				alert(" map name= "+mapn);
+			}
+			if (ncp > 0) {
+				var j = 0;
+				var cptext;
+				for (i=0;i<ncp;i++) {
+					cptext = result.cleanplan[i];
+					var rr = mapn.search(cptext);
+					if (rr >= 0) {
+						var option = document.createElement("option");
+						option.value = j;
+						option.text = cptext;
+						cbox.add(option);
+						exist = true;
+					}
+				}
+				if (exist) {
+					cbox.selectedIndex = 0;
+					var cimg = document.getElementById("clean");	
+					cimg.src="cleanplan/"+cbox.options[cbox.selectedIndex].text+".jpeg";
+				}
+			}
+		} 
+  });
+}
+
+function mapchange() {
+	var mbox = document.getElementById("maplist");
+	//alert("Selected : "+mbox.options[mbox.selectedIndex].text+" index = "+mbox.selectedIndex);
+	var img = document.getElementById("map");	
+	var mapn;
+	img.src="cleanplan/"+mbox.options[mbox.selectedIndex].text+".jpeg";
+	mapn = mbox.options[mbox.selectedIndex].text;
+	cmdreq.cmd = 85;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status == 85) {
+			var cbox = document.getElementById("cleanlist");
+			var ncp = result.numcplan;
+			if (ncp > 0) {
+				for (i=0;i<ncp;i++) {
+					var option = document.createElement("option");	
+					option.value = i;
+					option.text = result.cleanplan[i];
+					cbox.add(option);					
+				}
+			}
+		} 
+  });
+}
+
+</script>
+</body>
+</html>
+

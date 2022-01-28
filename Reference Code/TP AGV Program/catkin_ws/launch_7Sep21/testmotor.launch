@@ -1,0 +1,5 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	<node pkg="htbot" type="motorc" name="motorc" output="screen" required="true">									
+  </node>     
+</launch>

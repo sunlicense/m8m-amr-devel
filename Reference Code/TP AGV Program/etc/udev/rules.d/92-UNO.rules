@@ -1,0 +1,1 @@
+SUBSYSTEM=="tty", KERNEL=="ttyACM[0-9]*", ATTRS{manufacturer}=="SparkFun", ATTRS{product}=="SFE 9DOF-D21", MODE="0666", SYMLINK+="sensors/IMU"

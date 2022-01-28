@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!-- run pointcloud_to_laserscan node -->
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan_bottom">
+
+        <remap from="cloud_in" to="/bottomRS/depth/color/points"/> 
+        <remap from="scan" to="bottomRSscan"/>
+        <rosparam>
+            target_frame: bottomPRS #bottomPRS 
+            transform_tolerance: 0.01
+            min_height: -0.02 # -0.2
+            max_height: 0.2 #0.13
+
+            angle_min: -1.5708 # -M_PI/2
+            angle_max: 1.5708 # M_PI/2
+            angle_increment: 0.00576 #0.0087  rad per index
+            scan_time: 0.0667 #0.3333 15hz
+            range_min: 0.08
+            range_max: 2.0
+            use_inf: true
+
+            # Concurrency level, affects number of pointclouds queued for processing and number of threads used
+            # 0 : Detect number of cores
+            # 1 : Single threaded
+            # 2->inf : Parallelism level
+            concurrency_level: 1
+        </rosparam>
+
+    </node>
+		
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan_middle">
+
+        <remap from="cloud_in" to="/middleRS/depth/color/points"/> 
+        <remap from="scan" to="middleRSscan"/>
+        <rosparam>
+            target_frame: middlePRS
+            transform_tolerance: 0.01
+            min_height: -0.4
+            max_height: 0.4
+
+            angle_min: -1.5708 # -M_PI/2
+            angle_max: 1.5708 # M_PI/2
+            angle_increment: 0.00576 #0.0087 # M_PI/360.0
+            scan_time: 0.0667 #0.3333 15hz
+            range_min: 0.05
+            range_max: 2.0
+            use_inf: true
+
+            # Concurrency level, affects number of pointclouds queued for processing and number of threads used
+            # 0 : Detect number of cores
+            # 1 : Single threaded
+            # 2->inf : Parallelism level
+            concurrency_level: 1
+        </rosparam>
+    </node>
+		
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan_right">
+
+        <remap from="cloud_in" to="/rightRS/depth/color/points"/> 
+        <remap from="scan" to="rightRSscan"/>
+        <rosparam>
+            target_frame: rightPRS
+            transform_tolerance: 0.01
+            min_height: -0.3 # -0.2
+            max_height: 0.3
+
+            angle_min: -1.5708 # -M_PI/2
+            angle_max: 1.5708 # M_PI/2
+            angle_increment: 0.00576 #0.0087 # M_PI/360.0
+            scan_time: 0.0667 #0.3333 15hz
+            range_min: 0.05
+            range_max: 2.0 # 2.0
+            use_inf: true
+
+            # Concurrency level, affects number of pointclouds queued for processing and number of threads used
+            # 0 : Detect number of cores
+            # 1 : Single threaded
+            # 2->inf : Parallelism level
+            concurrency_level: 1
+        </rosparam>
+
+    </node>
+
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan_left">
+
+        <remap from="cloud_in" to="/leftRS/depth/color/points"/> 
+        <remap from="scan" to="leftRSscan"/>
+        <rosparam>
+            target_frame: leftPRS
+            transform_tolerance: 0.01
+            min_height: -0.3
+            max_height: 0.3
+
+            angle_min: -1.5708 # -M_PI/2
+            angle_max: 1.5708 # M_PI/2
+            angle_increment: 0.00576 #0.0087 # M_PI/360.0
+            scan_time: 0.0667 #0.3333 15hz
+            range_min: 0.05
+            range_max: 2.0
+            use_inf: true
+
+            # Concurrency level, affects number of pointclouds queued for processing and number of threads used
+            # 0 : Detect number of cores
+            # 1 : Single threaded
+            # 2->inf : Parallelism level
+            concurrency_level: 1
+        </rosparam>
+
+    </node>
+		
+    <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="bottomRS_filter">
+      <rosparam command="load" file="$(find videocontrol)/config/shadow_RS.yaml" />
+      <remap from="scan" to="bottomRSscan"/>
+      <remap from="scan_filtered" to="bottomRSscanShadow"/>
+    </node>
+    <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="bottomRS_median_filter">
+      <rosparam command="load" file="$(find videocontrol)/config/median_RS.yaml" />
+      <remap from="scan" to="bottomRSscanShadow"/>
+      <remap from="scan_filtered" to="bottomScan"/>
+    </node>
+		
+		
+    <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="middleRS_filter">
+      <rosparam command="load" file="$(find videocontrol)/config/shadow_RS.yaml" />
+      <remap from="scan" to="middleRSscan"/>
+      <remap from="scan_filtered" to="middleRSscanShadow"/>
+    </node>
+    <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="middleRS_median_filter">
+      <rosparam command="load" file="$(find videocontrol)/config/median_RS.yaml" />
+      <remap from="scan" to="middleRSscanShadow"/>
+      <remap from="scan_filtered" to="middleScan"/>
+    </node>
+		
+    <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="rightRS_filter">
+      <rosparam command="load" file="$(find videocontrol)/config/shadow_RS.yaml" />
+      <remap from="scan" to="rightRSscan"/>
+      <remap from="scan_filtered" to="rightRSscanShadow"/>
+    </node>
+    <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="rightRS_median_filter">
+      <rosparam command="load" file="$(find videocontrol)/config/median_RS.yaml" />
+      <remap from="scan" to="rightRSscanShadow"/>
+      <remap from="scan_filtered" to="rightScan"/>
+    </node>
+
+    <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="leftRS_filter">
+      <rosparam command="load" file="$(find videocontrol)/config/shadow_RS.yaml" />
+      <remap from="scan" to="leftRSscan"/>
+      <remap from="scan_filtered" to="leftRSscanShadow"/>
+    </node>
+    <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="leftRS_median_filter">
+      <rosparam command="load" file="$(find videocontrol)/config/median_RS.yaml" />
+      <remap from="scan" to="leftRSscanShadow"/>
+      <remap from="scan_filtered" to="leftScan"/>
+    </node>
+		
+</launch>

@@ -1,0 +1,20 @@
+# change directory to /usr/src
+cd /usr/src
+
+# if you have any other drivers installed,remove them like so:
+rm -r rtl8812AU-4.3.22/
+
+# get latest driver from github
+git clone https://github.com/aircrack-ng/rtl8812au
+
+# move into downloaded driver folder
+cd rtl8812au/
+
+# make drivers
+make
+
+sudo make install
+
+reboot
+
+It works

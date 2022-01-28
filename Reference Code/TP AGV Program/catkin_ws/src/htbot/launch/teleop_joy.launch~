@@ -1,0 +1,30 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	
+ <!--- Teleop Joystick -->
+  <node pkg="htbot" type="joy" name="joy" output="screen">
+	<!-- Scale -->
+	<param name="scale_linear" value = "0.3" type="double"/> <!--default starting vel mulitplier -->
+	<param name="scale_angular" value = "0.3" type="double"/> <!--default starting vel mulitplier -->
+	<param name="scale_linear_step" value = "0.05" type="double"/>
+	<param name="scale_angular_step" value = "0.05" type="double"/>
+	<param name="scale_linear_max" value = "0.7" type="double"/>
+	<param name="scale_angular_max" value = "0.6" type="double"/>
+
+    <!-- Axes -->
+	<param name="axis_linear" value="4" type="int"/>
+	<param name="axis_angular" value="0" type="int"/>
+	<param name="axis_deadman" value="4" type="int"/>
+	<param name="axis_scale_linear_inc" value="3" type="int"/>
+	<param name="axis_scale_linear_dec" value="0" type="int"/>
+	<param name="axis_scale_angular_inc" value="1" type="int"/>
+	<param name="axis_scale_angular_dec" value="2" type="int"/>
+
+  <remap from="cmd_vel" to="joycmd_vel"/>
+  </node>
+
+ <!-- joy node -->
+  <node pkg="joy" type="joy_node" name="joystick_driver" respawn="true">
+    <param name="dev" type="string" value="/dev/input/event10" />
+  </node>
+</launch>

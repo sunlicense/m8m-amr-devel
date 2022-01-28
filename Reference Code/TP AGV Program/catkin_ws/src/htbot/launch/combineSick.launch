@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+	<include file="$(find htbot)/launch/sick_tim_781S.launch" />
+	<node pkg="htbot" type="multisickpA" name="multisickpA" respawn="true" output="screen">	</node>
+	
+	<node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="sickC_shadow_filter">
+		<rosparam command="load" file="$(find htbot)/config/shadow_sick.yaml" />
+		<remap from="scan" to="scanC"/>
+		<remap from="scan_filtered" to="scanCS"/>
+	</node>
+	<node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="sickC_median_filter">
+		<rosparam command="load" file="$(find htbot)/config/median_sick.yaml" />
+		<remap from="scan" to="scanCS"/>
+		<remap from="scan_filtered" to="scanCC"/>
+	</node>
+	
+</launch>
+
+

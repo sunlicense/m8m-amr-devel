@@ -1,0 +1,26 @@
+/*
+ * This node is to service command request from websocket 
+ */
+/* 	History
+*		Date Modified : 3.12.2014
+*		Changes :
+*/
+
+#include <signal.h>
+#include <termios.h>
+#include <stdio.h>
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/thread.hpp"
+
+#include "boost/algorithm/string.hpp"
+
+
+int main(int argc, char **argv)
+{
+	printf("Starting tstartup.sh\n");
+	//system("roslaunch htbot htbot_service.launch &");
+	system("gnome-terminal -x ~/tstartup.sh &");
+  return 0;
+}
+
+

@@ -1,0 +1,29 @@
+<!-- -*- mode: XML -*- -->
+<launch>	
+	
+	<machine name="rac0" address="192.168.13.100" env-loader="/home/rac/globotix.sh" timeout="20" user="rac" password="rac"/>
+	<machine name="rac1" address="192.168.13.101" env-loader="/home/rac/globotix.sh" timeout="20" user="rac" password="rac" />
+	<!--param name="/use_sim_time" value="true"/-->
+	
+	<include file="$(find htbot)/launch/motor_params.launch" />
+	<include file="$(find htbot)/launch/joystick.launch" />	
+	
+		
+
+	<!--node name="clock" pkg="htbot" type="clock" respawn="true" output="screen" ></node-->
+	<!--include file="$(find videocontrol)/launch/ptcloudd435_globotix_rac1.launch" /-->	
+	<!--node name="monitor" pkg="htbot" type="monitor" respawn="true" output="screen" ></node-->
+	<!--
+	<node name="botLS" pkg="htbot" type="botLS" respawn="true" output="screen" ></node>
+	-->
+	
+	<!--node name="weblaser" pkg="htbot" type="weblaser" respawn="true" output="screen" ></node-->	
+	<!--node name="UnoNode" pkg="rosserial_python" type="serial_node.py" output="screen" >
+		<param name="port" value= "/dev/ttyACM0"/>
+	</node-->	
+
+	<!--
+							
+	
+	-->
+</launch>

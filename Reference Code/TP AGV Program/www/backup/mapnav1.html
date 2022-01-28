@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<style type="text/css" media="screen">
+<style>
+
+.center {
+  margin: auto;
+	float: center
+  width: 60%;
+}
+
+
+.img-container {
+	text-align: center;
+}
+    
+
+button { 
+	color: #f00;
+	background:#ffffff; 
+	padding: 1px
+	font-size: 20px;
+	border: 0px
+}
+
+table {text-align: center;padding: 1px}
+
+</style>
+</head>
+<body onload="start()">
+
+<canvas id="demoCanvas" width="800" height="500"></canvas>
+
+<script type="text/javascript" src="njs/easeljs-NEXT.js"></script>
+<script type="text/javascript" src="njs/eventemitter2.js"></script>
+<script type="text/javascript" src="njs/roslib.js"></script>
+<script type="text/javascript" src="njs/ros2d.js"></script>
+<script type="text/javascript" src="njs/nav2d.js"></script>
+<script type="text/javascript" type="text/javascript">
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+
+
+function start() {
+	
+	var stage = new createjs.Stage("demoCanvas");
+	//var circle = new createjs.Shape();
+	//circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
+	//circle.x = 100;
+	//circle.y = 100;
+	//stage.addChild(circle);
+	var g = new createjs.Graphics();
+	g.setStrokeStyle(1);
+ 	g.beginStroke("#000000");
+ 	g.beginFill("red");
+ 	g.drawCircle(0,0,30);
+	createjs.Shape.call(this, g);
+	stage.update();
+}
+
+</script>
+</body>
+</html>
+

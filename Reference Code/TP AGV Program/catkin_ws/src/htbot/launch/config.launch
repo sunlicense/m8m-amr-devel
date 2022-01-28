@@ -1,0 +1,209 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+	<!-- Date Change : 28.4.21 : 12.20pm -->
+	<param name="use_gui" value="False"/>
+	<param name="odom_pub_rate" value="15"/>
+	<param name="mstop_time" value="20.0"/>
+	<param name="RotateAngle" value="720.0"/>
+	<param name="MoveDistance" value="3.0"/>
+	<param name="targetDist" value="0.05"/>
+	<param name="slowDist" value="1.2"/>
+	<param name="slowRatio" value="0.75"/> <!-- 0.33 -->
+	<param name="Docking_Distance" value="-0.45"/>
+	<param name="Docking_Speed" value="-0.015"/>
+	<param name="Docking_SlowSpeed" value="0.04"/>
+	<param name="Front_Obs_Distance" value="0.25"/>
+	<param name="FrontObsslowRatio" value="1.0"/>
+	<param name="Docking_Retract_Distance" value="0.45"/>
+	<param name="Docking_Retract_Angle" value="0.0"/>
+	<param name="Front_Obs_Distance" value="0.6"/>
+	<param name="FrontObsslowRatio" value="0.45"/> 
+	<param name="current_offset" value="0.0"/>
+	<param name="readynav" value="1" />
+	<param name="saveTopLaserData" value="77"/> <!-- 77=saved-->
+	<param name="checkLocalisation" value="false" />
+	<param name="AutoLogin" value="true" />
+	<param name="AGVModel" value="1" /> 
+	<param name="NGZDist" value="0.2" />
+	<param name="AutoReference" value="false" />
+	<param name="maxVelocity" value="0.55" />  
+
+	<param name="clear_time" value="3.0" /> <!-- 13 -->
+	<param name="work_voltage" value="5.0" /><!-- 23.0 -->
+	<param name="lowpower_voltage" value="5.0" /> 
+	<param name="charging_voltage" value="70.0" />
+	<param name="Abort_Retry" value="12" /> <!-- 12 -->
+	<param name="ALIGN_METHOD" value="10.0" /> <!--10.0=dx,dy. 11.0=dd -->
+	<param name="charging_type" value="0" /> <!-- 0=docking. 1=swap or wire-->
+	<param name="alignment_type" value="1" /> <!-- 0=no alignment, only at reference point. >0 : yes-->
+	<param name="DEGPERIDX" value="0.235" /> <!-- degree per index -->
+	<param name="FIRSTMOVE" value="1.0" /> <!-- stage 1 move to charger -->
+	<param name="FINALMOVE" value="1.0" /> <!-- final move to charger -->
+	<param name="OFFSET" value="0.19" /> <!-- docking mechanism dist offset 15cm-->
+
+	<param name="param_file" value="$(find htbot)/data/param.dat" />		
+	<param name="pose_file" value="$(find htbot)/data/posedata.dat" />		
+	<param name="posemark_file" value="$(find htbot)/data/posemark.dat" />
+	<param name="volt_file" value="$(find htbot)/data/voltdata.dat" />
+	<param name="Resolution" value="0.05" />
+	<param name="Window" value="3.0" /> 
+	<param name="footwindow" value="0.4" /> 
+	<param name="MapObsRate" value="15.0" />
+	<param name="MapOffsetX" value="0.0" />
+	<param name="MapOffsetY" value="0.0" />
+	<param name="MapObsMinRange" value="0.33" />
+	<param name="MapObsMaxRange" value="3.0" />
+	<param name="PathIndex" value="15" />
+	<param name="home_dir" value="/home/rac/" />
+	<param name="pgmfile" value="catkin_ws/src/htbot/maps/docmap_obs.pgm" />
+	<param name="path_file" value="$(find htbot)/data/pathdata.dat" />
+	<param name="clean_file" value="$(find htbot)/data/cleanpathdata.dat" />			
+	<param name="NoGoZoneFile" value="$(find htbot)/maps/docmap_obs.bmp" />	
+	<param name="WEBLASERGAP" value="2" />
+	<param name="WEBLASER_Rate" value="10.0" /> 
+	<param name="sickCFrame" value="sickC" /> 
+	<param name="MultiSick_Rate" value="15.0" />
+
+	<param name="clean_dir" value="/home/rac/catkin_ws/src/htbot/cleanplan" />	
+	<param name="cleanplanDirectory" value="/home/rac/catkin_ws/src/htbot/cleanplanpath/" />
+	<param name="cleanplanfile" value="globotix.txt" />
+	<param name="docmap_dir" value="/home/rac/catkin_ws/src/htbot/MapStorage" />
+	<param name="TPGAPLIMIT" value="0.4" />
+	<param name="CPGAPLIMIT" value="2.5" />
+	<param name="RCGAPLIMIT" value="0.3" />
+	<param name="CPLOOKAHEAD" value="3.0" /> 
+	<param name="CLOSELIMIT" value="0.5" />
+
+	<!-- CleanSpace Reecording -->
+	<param name="numBrushpt" value="4" />
+	<param name="cleanspaceLoopRate" value="10.0" />
+
+	<!-- Lasers Connection 0=not connected. 1= connected -->
+	<param name="CentralLaserConnected" value="0" />
+	<param name="LeftLaserConnected" value="0" />
+	<param name="RightLaserConnected" value="0" />
+	<param name="MainLaserConnected" value="1" />
+
+	<param name="tm_hour" value="16"/>
+	<param name="tm_min" value="0"/>
+	<param name="tm_year" value="118"/>
+	<param name="tm_mon" value="5"/>
+	<param name="tm_mday" value="8"/>
+	<param name="time_file" value="$(find htbot)/data/time.dat" />
+
+	<param name="costx" value="10"/>
+	<param name="costy" value="10"/>
+
+	<param name="pidAngle" value="3.0"/>
+	<param name="pidAngleS" value="0.85"/>
+	<param name="pidDist" value="1.0"/>
+	<param name="maxAngleVel" value="0.4"/>
+	<param name="maxDistVel" value="0.6"/>
+	<param name="dAngleLimit" value="0.02"/>
+	<param name="dDistLimit" value="0.03"/> 
+	<param name="switchDist" value="0.3"/>
+	<param name="stopDist" value="0.45"/>
+	<param name="rePlanTime" value="10.0"/>
+	<param name="constVel" value="0.6"/>
+	<param name="redVel" value="0.3"/>
+	<param name="termVel" value="0.15"/>
+
+	<!-- amclpose node parameters -->
+	<param name="localise_x" value="0.1" />	
+	<param name="localise_y" value="0.1" />	
+	<param name="localise_a" value="0.1" />
+
+	<param name="border_x" value="0.08" />	
+	<param name="border_y" value="0.08" />	
+	<param name="border_a" value="0.08" />
+
+	<param name="relocalise_x" value="0.45" />
+	<param name="relocalise_y" value="0.45" />
+	<param name="relocalise_a" value="0.45" />
+
+	<param name="lostlocalise_x" value="0.85" />
+	<param name="lostlocalise_y" value="0.85" />
+	<param name="lostlocalise_a" value="0.85" />
+	
+	<param name="num_request_nomotion_update" value="40" /> 
+	<param name="num_lost_localization" value="3" />
+	<param name="RobotPose_Step" value="1.8" />
+
+	<param name="global_footprint_base0_x" value="-0.3" />
+	<param name="global_footprint_base0_y" value="0.3" />
+	<param name="global_footprint_base1_x" value="-0.3" />
+	<param name="global_footprint_base1_y" value="-0.3" />
+	<param name="global_footprint_base2_x" value="0.3" />
+	<param name="global_footprint_base2_y" value="-0.3" />
+	<param name="global_footprint_base3_x" value="0.39" />
+	<param name="global_footprint_base3_y" value="-0.09" />
+	<param name="global_footprint_base4_x" value="0.39" />
+	<param name="global_footprint_base4_y" value="0.09" />
+	<param name="global_footprint_base5_x" value="0.3" />
+	<param name="global_footprint_base5_y" value="0.3" />
+
+	<param name="global_footprint_fpA0_x" value="0.4" />
+	<param name="global_footprint_fpA0_y" value="0.4" />
+	<param name="global_footprint_fpA1_x" value="0.4" />
+	<param name="global_footprint_fpA1_y" value="0.4" />
+	<param name="global_footprint_fpA2_x" value="0.4" />
+	<param name="global_footprint_fpA2_y" value="0.4" />
+	<param name="global_footprint_fpA3_x" value="0.4" />
+	<param name="global_footprint_fpA3_y" value="0.4" />
+	<param name="global_footprint_fpA4_x" value="0.4" />
+	<param name="global_footprint_fpA4_y" value="0.4" />
+	<param name="global_footprint_fpA5_x" value="0.4" />
+	<param name="global_footprint_fpA5_y" value="0.4" />
+
+	<param name="local_footprint_base0_x" value="-0.3" />
+	<param name="local_footprint_base0_y" value="0.3" />
+	<param name="local_footprint_base1_x" value="-0.3" />
+	<param name="local_footprint_base1_y" value="-0.3" />
+	<param name="local_footprint_base2_x" value="0.3" />
+	<param name="local_footprint_base2_y" value="-0.3" />
+	<param name="local_footprint_base3_x" value="0.39" />
+	<param name="local_footprint_base3_y" value="-0.09" />
+	<param name="local_footprint_base4_x" value="0.39" />
+	<param name="local_footprint_base4_y" value="0.09" />
+	<param name="local_footprint_base5_x" value="0.3" />
+	<param name="local_footprint_base5_y" value="0.3" />
+
+	<param name="local_footprint_fpA0_x" value="0.5" />
+	<param name="local_footprint_fpA0_y" value="0.5" />
+	<param name="local_footprint_fpA1_x" value="0.5" />
+	<param name="local_footprint_fpA1_y" value="0.5" />
+	<param name="local_footprint_fpA2_x" value="0.5" />
+	<param name="local_footprint_fpA2_y" value="0.5" />
+	<param name="local_footprint_fpA3_x" value="0.5" />
+	<param name="local_footprint_fpA3_y" value="0.5" />
+	<param name="local_footprint_fpA4_x" value="0.5" />
+	<param name="local_footprint_fpA4_y" value="0.5" />
+	<param name="local_footprint_fpA5_x" value="0.5" />
+	<param name="local_footprint_fpA5_y" value="0.5" />
+
+	<param name="global_footprint_padbase" value="0.02" />
+	<param name="local_footprint_padbase" value="0.025" />
+	<param name="global_footprint_padA" value="0.15" />
+	<param name="local_footprint_padA" value="0.16" />
+
+	<param name="racpathDir" value="/home/rac/catkin_ws/src/htbot/data/" />
+	<param name="racpath" value="racpath.dat" />
+
+	<param name="uRRDist" value="0.45" />
+	<param name="testmode" value="false" />
+	<param name="recordvideo" value="true" />
+	<param name="zeroVideoData" value="true" />
+
+	<param name="mapLinear" value="0.4" />
+	<param name="mapAngular" value="0.4" />
+
+	<!-- NTUC -->
+	<param name="NTUCNav" value="true" /> 
+	<param name="NTUCDOCK" value="true" /> 
+	<param name="trolleyleg" value="0.3" />
+	<param name="DistClearance" value="1.5" />
+	<param name="LaundryDoorGapOut" value="1.8" />
+	<param name="LaundryDoorGapIn" value="1.65" />
+	<param name="LiftDoorGapOut" value="1.05" />
+	<param name="LiftDoorGapIn" value="0.9" />
+</launch>

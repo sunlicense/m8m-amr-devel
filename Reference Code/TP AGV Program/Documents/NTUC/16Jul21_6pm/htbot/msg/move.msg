@@ -1,0 +1,13 @@
+float32 x
+float32 y
+float32 z
+float32 rx
+float32 ry
+float32 rz
+float32 rw
+float32 pd
+float32 pa
+float32 gap
+int8 slp
+int8 elp
+int8 opt

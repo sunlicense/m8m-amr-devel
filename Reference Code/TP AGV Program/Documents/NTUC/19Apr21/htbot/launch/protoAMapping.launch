@@ -1,0 +1,28 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<machine name="rac0" address="192.168.13.100" env-loader="/home/rac/globotix.sh" timeout="20" user="rac" password="rac"/>
+	<machine name="rac1" address="192.168.13.101" env-loader="/home/rac/globotix.sh" timeout="20" user="rac" password="rac" />
+	<node name="rac2" pkg="videocontrol" type="rac2" output="screen" machine="rac1" ></node>	
+	<!--include file="$(find htbot)/launch/rosbridge_websocket.launch" /-->
+  <!--node pkg="htbot" type="webNode" name="webNode" output="screen" required="true">		
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />				
+  </node-->  
+	<include file="$(find htbot)/launch/config.launch" />
+	<include file="$(find htbot)/launch/motor_params.launch" />	
+	<include file="$(find htbot)/launch/laserlink.launch" />
+	<include file="$(find htbot)/launch/combineSick.launch" />
+	<node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher" ></node>
+	<node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <param name="freq" value="15.0"/>
+		<remap from="imu_data" to="/imu_3dm_node/imu/data"/>
+    <param name="sensor_timeout" value="1.0"/>
+    <param name="publish_tf" value="true"/>
+    <param name="odom_used" value="true"/>
+    <param name="imu_used" value="false"/>
+    <param name="vo_used" value="false"/>
+    <param name="output_frame" value="odom"/>
+  </node>
+	<!--include file="$(find htbot)/launch/joystick_ms.launch" /-->
+	<include file="$(find htbot)/launch/move_base.launch" />	
+	<include file="$(find htbot)/launch/gmapping.launch" />
+</launch>

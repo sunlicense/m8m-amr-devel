@@ -1,0 +1,8 @@
+prefix=/home/rac/catkin_ws/devel
+
+Name: ntuc
+Description: Description of ntuc
+Version: 0.0.0
+Cflags: -I/home/rac/catkin_ws/devel/include
+Libs: -L${prefix}/lib 
+Requires: 

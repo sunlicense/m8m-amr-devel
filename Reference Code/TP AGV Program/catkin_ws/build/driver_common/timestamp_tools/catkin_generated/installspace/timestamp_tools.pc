@@ -1,0 +1,8 @@
+prefix=/home/rac/catkin_ws/install
+
+Name: timestamp_tools
+Description: Description of timestamp_tools
+Version: 1.6.8
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: roslib roscpp

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RAC AGV</title>
+  <!--link rel="stylesheet" type="text/css" href="css/styles.css"-->  
+  <link rel="stylesheet" type="text/css" href="font/material-icons.css">
+  <!--link rel="stylesheet" type="text/css" href="css/nysKB.css"-->  
+  <link rel="stylesheet" type="text/css" href="css/common.css">
+  <script type="text/javascript" src="js/nysKB.js"></script>  
+  <script type="text/javascript" src="js/easeljs.js"></script>
+	<script type="text/javascript" src="js/eventemitter2.js"></script>
+	<script type="text/javascript" src="js/roslib.js"></script>
+	<script type="text/javascript" src="js/ros2djs.js"></script>
+	<script type="text/javascript" src="js/nav2djs.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+</head>
+<body>
+	<div id="login" class="center-login">
+	<table style="width:80%">
+  <caption><h1>RAC AGV Login</h1></caption>
+  <!--tr>
+  </tr-->
+  <tr>
+    <th colspan="3"><h1>Password</h1></th>
+  </tr>
+  <tr>
+  	<th colspan="3"><input type="password" id="pass" class="use-keyboard-input" style="width: 150px; height: 40px;"></th>
+    <!--td></td-->
+    <!--td><input type="password" id="in1" class="use-keyboard-input" style="width: 90px;"></td-->
+    <!--td><input type="text" [(ngModel)]="passwd" class="use-keyboard-input" style="width: 90px;"></td-->
+    <!--td><input type="text" [(ngModel)]="passwd" style="width: 110px;"></td-->    
+  </tr>
+  <!--tr>
+  </tr-->
+  <tr>
+    <td><buttonx onclick="login()" >Enter</buttonx></td>
+		<td><buttonx onclick="openKB()"><i style="font-size: 50px;" class='material-icons'>keyboard</i></buttonx></td>
+    <td><buttonx onclick="KeyclearInput()" >Clear</buttonx></td>
+  </tr>
+	</table>	
+	<p id="status" class="center" style="text-align: center;"></p>
+	<!--p><buttonx onclick="getTextWidth('Location',130)" >Clear</buttonx></p-->
+</div>
+</body>
+</html>

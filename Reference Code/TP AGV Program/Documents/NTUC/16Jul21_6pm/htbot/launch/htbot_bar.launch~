@@ -1,0 +1,7 @@
+<!-- -*- mode: XML -*- -->
+<launch>	
+	<!--include file="$(find htbot)/launch/nav.launch" /-->
+	
+	<node name="bar" pkg="htbot" type="bar" output="screen" ></node>
+	        
+</launch>

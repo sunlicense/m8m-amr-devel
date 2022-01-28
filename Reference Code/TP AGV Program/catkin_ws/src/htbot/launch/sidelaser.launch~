@@ -1,0 +1,29 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <node pkg="htbot" type="slaser" name="leftlaser" output="screen">
+		<param name="inverted"            type="bool"   value="true"/>
+		<param name="Detection_Range"    type="double"   value="2.2"/>
+		<param name="frame_id"            type="string" value="/llaser"/>
+		<param name="min_ang" type="double" value="0.0"/> <!-- 90 deg -->
+    <param name="max_ang" type="double" value="1.5359"/>
+		<param name="Dist2Center"    type="double"   value="0.2125"/>	<!-- 0.2425-->	
+		<param name="Laserfile" value="$(find htbot)/data/leftLaserfile.dat" />
+		<param name="Obs_Dist"    type="double"   value="0.13"/>	
+		<param name="StartRad"    type="double"   value="0.79159"/>
+  	<remap from="scanin" to="scanL"/>
+		<remap from="scanout" to="LeftScan"/>
+  </node>
+	<node pkg="htbot" type="slaser" name="rightlaser" output="screen">
+		<param name="inverted"            type="bool"   value="false"/>
+		<param name="Detection_Range"    type="double"   value="2.2"/>
+		<param name="frame_id"            type="string" value="/rlaser"/>
+		<param name="min_ang" type="double" value="-1.5359"/> <!-- 90 deg -->
+    <param name="max_ang" type="double" value="0.0"/>
+		<param name="Dist2Center"    type="double"   value="0.2125"/>		
+		<param name="Laserfile" value="$(find htbot)/data/rightLaserfile.dat" />
+		<param name="Obs_Dist"    type="double"   value="0.13"/>	
+		<param name="StartRad"    type="double"   value="0.55"/>
+  	<remap from="scanin" to="scanR"/>
+		<remap from="scanout" to="RightScan"/>
+  </node>
+</launch>

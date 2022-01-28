@@ -1,0 +1,9 @@
+<!-- -*- mode: XML -*- -->
+<launch>	
+  <node pkg="htbot" type="nvNode" name="nvNode" output="screen" required="true">        
+		<param name="path_distance" value= "4.0"/>
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />
+		<param name="landing_points_file" value="$(find htbot)/data/landdata.dat" />
+		<param name="param_file" value="$(find htbot)/data/param.dat" />
+  </node>
+</launch>

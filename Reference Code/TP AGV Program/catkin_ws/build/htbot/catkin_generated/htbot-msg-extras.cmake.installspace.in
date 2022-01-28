@@ -1,0 +1,2 @@
+set(htbot_MESSAGE_FILES "msg/Command.msg;msg/status.msg;msg/move.msg;msg/move_status.msg;msg/clear.msg;msg/sound.msg;msg/queue.msg;msg/go.msg;msg/debug.msg;msg/scanCmd.msg;msg/odom.msg;msg/stat.msg;msg/velstat.msg;msg/lumstatus.msg;msg/stat_speed.msg;msg/navstatus.msg;msg/goal.msg;msg/motorcmd.msg;msg/path.msg;msg/robot.msg;msg/weblaser.msg;msg/cleanlist.msg;msg/dyna.msg;msg/ultraSS.msg;msg/task.msg;msg/agv_status.msg;msg/lift.msg")
+set(htbot_SERVICE_FILES "srv/srvcmd.srv;srv/sendgoal.srv;srv/Empty.srv;srv/scanMcmd.srv;srv/mqueue.srv")

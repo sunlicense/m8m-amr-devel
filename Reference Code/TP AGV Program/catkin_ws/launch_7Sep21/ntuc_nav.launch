@@ -1,0 +1,60 @@
+<!-- -*- mode: XML -*- -->
+<launch>	
+	<include file="$(find htbot)/launch/config.launch" />
+	<node name="mapzone" pkg="htbot" type="mapzone" respawn="true" output="screen" launch-prefix="taskset -c 2" ></node>
+	<include file="$(find htbot)/launch/rosbridge_websocket.launch" />
+  <node pkg="htbot" type="webNode" name="webNode" output="screen" required="true" launch-prefix="taskset -c 3" >		
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />				
+  </node>  
+	<node name="talkNode" pkg="htbot" type="talkNode" respawn="true" output="screen" launch-prefix="taskset -c 3" ></node>	
+	<!--node name="soundn" pkg="htbot" type="soundn" respawn="true" output="screen" ></node-->
+	<include file="$(find htbot)/launch/hokuyo.launch" /> 
+	<include file="$(find htbot)/launch/sick_tim_781S_ntuc.launch" />
+	<node name="laserNode" pkg="htbot" type="laserNode" respawn="true" output="screen" launch-prefix="taskset -c 3" ></node>
+	<node name="RRlaserNode" pkg="htbot" type="RRlaserNode" respawn="true" output="screen" launch-prefix="taskset -c 3" ></node>
+	<node name="RSlaserNode" pkg="htbot" type="RSlaserNode" respawn="true" output="screen" launch-prefix="taskset -c 3" ></node>
+	<node name="LSlaserNode" pkg="htbot" type="LSlaserNode" respawn="true" output="screen" launch-prefix="taskset -c 3" ></node>
+	<include file="$(find htbot)/launch/event.launch" />
+	<include file="$(find htbot)/launch/laserlink_ntuc.launch" />
+	
+	<node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher" launch-prefix="taskset -c 2" >
+		<param name="publish_frequency" value="15.0"/>
+	</node>
+	<include file="$(find htbot)/launch/motor_params.launch" />
+	<include file="$(find htbot)/launch/joystick.launch" />	
+	<node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <param name="freq" value="15.0"/>
+		<remap from="imu_data" to="/imu_3dm_node/imu/data"/>
+    <param name="sensor_timeout" value="1.0"/>
+    <param name="publish_tf" value="true"/>
+    <param name="odom_used" value="true"/>
+    <param name="imu_used" value="false"/>
+    <param name="vo_used" value="false"/>
+    <param name="output_frame" value="odom"/>
+  </node>			
+	
+	<include file="$(find htbot)/launch/move_base.launch" />	
+	<include file="$(find htbot)/launch/amcl.launch" />				
+	<node name="mNodeRet" pkg="htbot" type="mNodeRet" output="screen" ></node>
+	
+	<node name="clearNode" pkg="htbot" type="clearNode" output="screen" ></node>		
+	<node name="match" pkg="htbot" type="match" output="screen" ></node>		
+	<node name="check" pkg="htbot" type="check" respawn="true" output="screen" ></node>	
+	<include file="$(find htbot)/launch/refscan.launch" />
+	<node name="sgoal" pkg="htbot" type="sgoal" respawn="false" output="screen" ></node>		
+	<node name="MegaNode" pkg="rosserial_python" type="serial_node.py" output="screen" >
+    <param name="port" value= "/dev/sensors/Uno"/>
+		<param name="baud" value="57600" />
+  </node>	
+	<node name="dash" pkg="htbot" type="dash" respawn="true" output="screen" ></node>
+	<node name="dyna" pkg="htbot" type="dyna" respawn="true" output="screen" ></node>
+	<node name="trolley" pkg="htbot" type="trolley" respawn="true" output="screen" ></node>
+	<!--
+	<include file="$(find ntuc)/launch/lift_proxy_105.launch" />	
+	<include file="$(find ntuc_fleet)/launch/fleet_proxy_101.launch" />
+	<include file="$(find htbot)/launch/obstacle_detect_opcua_client.launch" />
+	
+	<include file="$(find htbot)/launch/start_camera.launch" />
+  <node name="detectTagNode" pkg="htbot" type="detectTagNode" respawn="true" output="screen" ></node>
+	-->
+</launch>

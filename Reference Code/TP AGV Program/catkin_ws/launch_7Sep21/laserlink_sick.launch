@@ -1,0 +1,33 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+   
+	<node pkg="tf" type="static_transform_publisher" name="laser_joint" args="0.3 0 0.05 0 0 0 /base_link /laser 66"> 
+	</node>
+	<node pkg="tf" type="static_transform_publisher" name="imu_joint" args="0.0 0 0.05 0 0 0 /base_link /imu_link 66">  
+	</node>
+	<!--node pkg="tf" type="static_transform_publisher" name="llaser_joint" args="0.12 0.00 0.05 0 0 0 /base_link /llaser 20">
+  </node-->
+	<!--node pkg="tf" type="static_transform_publisher" name="rlaser_joint" args="0.12 0.0 0.05 0 0 0 /base_link /rlaser 20">
+  </node-->
+	<!--node pkg="tf" type="static_transform_publisher" name="tlaser_joint" args="0.255 0.0 0.05 0 0 0 /base_link /tlaser 20">
+  </node-->
+  <node pkg="tf" type="static_transform_publisher" name="baselink_joint" args="0.0 0 0.050 0 0 0 /base_footprint /base_link 66">
+  </node>
+	<node pkg="tf" type="static_transform_publisher" name="maplaser_joint" args="0.0 0.0 0.05 0 0 0 /base_link /maplaser 66">
+  </node>	
+	<node pkg="tf" type="static_transform_publisher" name="refscan_joint" args="0.27 0.0 0.05 0 0 0 /base_link /refscan 66">
+  </node>
+	<!--node pkg="tf" type="static_transform_publisher" name="depth_joint" args="-0.025 -0.26 1.0 -1.5708 0 -0.79 /base_link /depthcam 15"--> 
+	<node pkg="tf" type="static_transform_publisher" name="depth_joint" args="0 -0.25 1.08 -1.5708 -1.15 0.0 /base_link /colorcam 66">
+	</node>
+	<!--node pkg="tf" type="static_transform_publisher" name="color_joint" args="0.0 -0.25 0.05 -1.57 0.0 0.0 /base_link /colorscan 15">
+	</node-->
+	<node pkg="tf" type="static_transform_publisher" name="color_joint" args="0.24 0.0 0.67 0.0 0.0 0.0 /base_link /colorscan 66">
+	</node>
+	<!--node pkg="tf" type="static_transform_publisher" name="laserh_joint" args="-0.29 0 0.05 3.14159 0 0 /base_link /laserh 66"> 
+	</node-->
+	<node pkg="tf" type="static_transform_publisher" name="laserm_joint" args="0.0 0 0.05 0 0 0 /base_link /multilaser 66"> 
+	</node>
+	<node pkg="tf" type="static_transform_publisher" name="laserh_joint" args="-0.3 0 0.05 -3.1415 0 0 /base_link /laserh 66"> 
+	</node>
+</launch>

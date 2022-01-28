@@ -1,0 +1,8 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<include file="$(find htbot)/launch/rosbridge_websocket.launch" />
+  <node pkg="htbot" type="hrobot" name="hrobot" output="screen" required="true">
+		<param name="param_file" value="$(find htbot)/data/param.dat" />
+  </node>   
+	<include file="$(find htbot)/launch/nav.launch" />
+</launch>

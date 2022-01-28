@@ -1,0 +1,7 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  
+  <node pkg="htbot" type="multilaser" name="multilaser" respawn="true" output="screen">
+  </node>
+  
+</launch>

@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<style type="text/css" media="screen">
+<style>
+
+
+li {
+	float : left;
+}
+
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 10px 20px;
+  text-decoration: none;
+	font-size: 20px;
+}
+
+li a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+li a.active {
+  color: white;
+  background-color: #4CAF50;
+}
+.center {
+  margin: auto;
+	float: center
+  width: 60%;
+}
+
+
+.img-container {
+	text-align: center;
+}
+    
+
+button { 
+	color: #f00;
+	background:#ffffff; 
+	padding: 5px
+	font-size: 15px;
+	border: 0px
+}
+
+table {text-align: center;padding: 1px}
+
+</style>
+</head>
+<body onload="start()">
+<div id="page">
+ <div id="body">
+	<div class="img-container">
+		<img src="imgs/robotdata.jpeg" width=90% height=90px alt="rac">
+	</div>
+	<br>
+	<div class="img-container">
+  <table border="0" style="width:100%">
+	<tr>		
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">amcl_X</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">amcl_Y</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">amcl_A</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Delta Robot Pose</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Localisation</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Num of Trips</td>
+	</tr>
+
+	<tr>		
+		<td id="amclx" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="amcly" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="amcla" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="robotposediff" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="localstatus" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="tnumtrip" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+	</tr>
+  <tr>		
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Runtime-H:mm</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Downtime-H:mm</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Idletime-H:mm</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Triptime-H:mm</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Voltage-V</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Current-A</td>
+	</tr>
+	<tr>		
+		<td id="runtime" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="downtime" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="idletime" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="triptime" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="voltage" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="current" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+	</tr>
+	<tr>		
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Battery Level-%</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt">Battery Uptime-hr</td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt"></td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt"></td>
+		<td style="height:30px;width:140px;padding:1px;color:#00f;font-size:12pt"></td>
+		<td style="padding:1px"><button style="height:40px;width:160px;padding:1px" onclick="location.href=`navigation.html`;"><h2>Navigation Menu</h2></button></td>
+	</tr>
+	<tr>		
+		<td id="batlevel" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="batuptime" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="xxx" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="yyy" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="zzz" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+		<td id="aaa" style="height:30px;width:140px;padding:1px;color:#A52A2A;font-size:12pt"></td>
+	</tr>
+	</div>
+	<div class="img-container">
+	<table border="0" style="width:100%">
+	<tr>		
+		<td style="height:15px;width:10px;padding:2px;text-align:left;color:#f0f;font-size:10pt"></td>
+		<td style="height:15px;width:70px;padding:2px;text-align:left;color:#f0f;font-size:13pt">Status : </td>
+		<td id="stat" style="padding:2px;text-align:left;font-size: 13pt"></td>
+		<td style="height:15px;width:10px;padding:2px;text-align:left;color:#f0f;font-size:10pt"></td>
+	</tr>
+	</table> 
+	</div>
+ </div>
+</div>
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2djs.js"></script>
+<script type="text/javascript" src="js/nav2djs.js"></script>
+<script type="text/javascript" type="text/javascript">
+var hostIP = "ws://"+location.host+":8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    autostart : 0.0 
+});
+
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+var amcllistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/robotstatus',
+    messageType : 'htbot/robot'
+  });
+
+amcllistener.subscribe(function(message) {
+
+	document.getElementById("amclx").innerHTML = message.amclx.toFixed(3) ;
+	document.getElementById("amcly").innerHTML = message.amcly.toFixed(3) ;
+	document.getElementById("amcla").innerHTML = message.amcla.toFixed(3) ;
+	document.getElementById("robotposediff").innerHTML = message.robotposediff.toFixed(3) ;
+	document.getElementById("stat").innerHTML = message.localisationstatus;
+	
+});
+
+var statlistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/stat',
+    messageType : 'htbot/stat'
+  });
+
+statlistener.subscribe(function(message) {
+	var v1,v2,v3,v4;
+	v3 = message.totalruntime;
+	v2 = v3 / 60.0;
+	v2 = parseInt(v2);
+	v1 = v3 - v2*60.0;
+	v1 = parseInt(v1);
+	v4 = v2.toString();
+	v5 = v1.toString();
+	v4 = v4 + " : "+v5;
+  //document.getElementById("runtime").innerHTML = message.totalruntime.toFixed(2) ;
+	document.getElementById("runtime").innerHTML = v4 ;
+
+	v3 = message.totaldowntime;
+	v2 = v3 / 60.0;
+	v2 = parseInt(v2);
+	v1 = v3 - v2*60.0;
+	v1 = parseInt(v1);
+	v4 = v2.toString();
+	v5 = v1.toString();
+	v4 = v4 + " : "+v5;	
+	document.getElementById("downtime").innerHTML = v4 ;
+
+	v3 = message.totalidletime;
+	v2 = v3 / 60.0;
+	v2 = parseInt(v2);
+	v1 = v3 - v2*60.0;
+	v1 = parseInt(v1);
+	v4 = v2.toString();
+	v5 = v1.toString();
+	v4 = v4 + " - "+v5;	
+	document.getElementById("idletime").innerHTML = v4 ;
+
+	v3 = message.totaltriptime;
+	v2 = v3 / 60.0;
+	v2 = parseInt(v2);
+	v1 = v3 - v2*60.0;
+	v1 = parseInt(v1);
+	v4 = v2.toString();
+	v5 = v1.toString();
+	v4 = v4 + " : "+v5;	
+	document.getElementById("triptime").innerHTML = v4 ;
+
+	document.getElementById("voltage").innerHTML = message.avgvolt.toFixed(2) ;
+	document.getElementById("current").innerHTML = message.avgcurr.toFixed(2) ;
+	document.getElementById("batlevel").innerHTML = message.batlevel.toFixed(2) ;
+	document.getElementById("batuptime").innerHTML = message.uptime.toFixed(2) ;
+	document.getElementById("tnumtrip").innerHTML = message.tnumtrip ;	
+});
+
+var chkmodeTimer = function checkOpMode() {
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Operation Mode has Changed. The main webpage will be loaded");
+			location.replace("index.html");
+		}
+  });
+}
+
+setInterval(chkmodeTimer,1500);
+
+function start() {
+	cmdreq.cmd = 55;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		if (result.status != 1) {
+			alert("Please Login First");
+			location.replace("index.html");
+		} 
+  });
+}
+
+
+</script>
+</body>
+</html>

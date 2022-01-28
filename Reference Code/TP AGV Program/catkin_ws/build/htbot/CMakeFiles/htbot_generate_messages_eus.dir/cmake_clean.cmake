@@ -1,0 +1,41 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/htbot_generate_messages_eus"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/robot.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/Command.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/queue.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/motorcmd.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/lumstatus.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/go.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/path.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/move.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/debug.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/ultraSS.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/dyna.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/status.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/clear.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/odom.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/stat.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/scanCmd.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/task.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/agv_status.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/move_status.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/stat_speed.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/goal.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/weblaser.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/navstatus.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/sound.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/cleanlist.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/velstat.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/msg/lift.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/srv/mqueue.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/srv/scanMcmd.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/srv/sendgoal.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/srv/Empty.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/srv/srvcmd.l"
+  "/home/rac/catkin_ws/devel/share/roseus/ros/htbot/manifest.l"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang )
+  include(CMakeFiles/htbot_generate_messages_eus.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

@@ -1,0 +1,86 @@
+************ Setup of GigaByte for Transporter  ************
+
+1. Use USB Thumb Driver to install Ubuntu 16.04
+   a. Insert USB driver and Re-Boot CPU.
+   b. Press ESC/F10/F12 key to boot from USB driver
+   c. Install Third Party drivers 
+   d. Set to auto Login
+2. Update Ubuntu to the latest version (4.15.0-46 kernel)
+3. Install KolourPaint
+4. Install ROS (Kinetic)
+	 a. Go to ROS website and install Kinetic. 
+   b. sudo apt-get install ros-kinetic-desktop-full
+   c. sudo apt-get install ros-kinetic-navigation
+   d. sudo apt-get install ros-kinetic-vision-opencv
+   e. sudo apt-get install ros-kinetic-image-transport
+   f. sudo apt-get install ros-kinetic-joint-state-publisher
+   g. sudo apt-get install ros-kinetic-laser-filters
+   h. sudo apt-get install lighttpd
+   i. sudo apt-get install ros-kinetic-rosbridge-suite
+   j. sudo apt-get install ros-kinetic-joy
+   k. sudo apt-get install ros-kinetic-robot-pose-publisher
+   l. sudo apt-get install ros-kinetic-rosserial-python
+   m. sudo apt-get install ros-kinetic-rosserial-server
+   n. sudo apt-get install libgsl-dev  // gsl
+   o. sudo apt-get install ros-kinetic-csm
+	 p. sudo apt-get install ros-kinetic-sick-scan
+	 q. sudo apt-get install ros-kinetic-sick-tim
+   r. sudo apt-get install gamin  //solve lighttpd problem
+   s. sudo apt-get install ros-kinetic-self-test // needed to compile hokuyo node
+
+5. Configure lighttpd
+   a. sudo gedit /etc/lighttpd/lighttpd.conf
+      i. server.document-root = "/home/rac/www2"
+      ii. server.username = "rac"
+      iii. server.groupname = "rac"
+      iv. server.port = 80
+   b. sudo chown -R rac:rac /var/log/lighttpd/
+   c. sudo /etc/init.d/lighttpd start
+   d. sudo /etc/init.d/lighttpd stop
+   e. sudo /etc/init.d/lighttpd restart
+   f. copy www directory over and test lighttpd
+6. Creating a ROS workspace
+   a. mkdir -p ~/catkin_ws/src
+   b. cd ~/catkin_ws/src
+   c. catkin_init_workspace
+   d. cd ~/catkin_ws/
+   e. catkin_make
+7. Compile hokuyo_node
+   a. Download the latest driver_common and copy to catkin_ws/src and catkin_make
+   b. Download the latest hokuyo_node and copy to catkin_ws/src and catkin_make
+8. Copy htbot directory to catkin_ws/src and catkin_make
+9. Setup /etc/udev/rules.d rules for uno,joy,hokuyo lasers,epos2 and rfid
+10. Setup auto launch file
+11. Setup Alfa Awus036ach adaptor
+   a. sudo apt-get install build-essential git
+   b. git clone https://github.com/aircrack-ng/rtl8812au
+   c. cd rtl8812au
+   d. make
+   e. sudo make install
+   f. reboot
+   g. if you have any other drivers installed,remove them first :
+      i. cd /usr/src. Look for directory that has rtl8812au name
+      ii. sudo rm -r rtl8812AU-4.3.22/  (example)
+      iii. Or you can also go to the directory of the driver which was make and sudo make install
+           Then type sudo make uninstall
+      iv. Or sudo dkms remove rtl9912au/4.3.8.12175.20140902+dfsg --all to remove driver installed using dkms
+12. Tune Transporter
+   a. move straight for 2m and adjust WCC
+   b. rotate 180 degree and adjust WBC
+   c. Tune Main Laser and adjust distance from baselink. Also adjust obsdist
+   d. Tune side lasers 
+13. Test Navigation
+14. Test Docking and UnDocking
+15. Test Functional Specification
+16. Auto execution of sudo
+   a. sudo visudo
+   b. at the last line, add ssmc ALL=(ALL) NOPASSWD:ALL
+   c. ssmc is the user
+17. Copy .rviz files to system.
+
+
+
+
+
+
+

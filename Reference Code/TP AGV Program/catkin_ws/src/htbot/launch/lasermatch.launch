@@ -1,0 +1,8 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <node pkg="htbot" type="rfid" name="rfid" output="screen">
+    <param name="max_iterations" value="10"/>
+		<!--param name="fixed_frame" value="map"/-->
+		<!--param name="use_imu" value="false"/-->
+  </node>
+</launch>

@@ -1,0 +1,27 @@
+TARGETS = rsyslog uuidd unattended-upgrades killprocs binfmt-support apport speech-dispatcher irqbalance hddtemp lighttpd thermald kerneloops dbus chrony single whoopsie ssh cron acpid anacron rsync bluetooth lightdm avahi-daemon cups-browsed cups saned plymouth grub-common ondemand rc.local
+INTERACTIVE =
+speech-dispatcher: rsyslog
+irqbalance: rsyslog
+hddtemp: rsyslog
+lighttpd: rsyslog
+thermald: rsyslog
+kerneloops: rsyslog
+dbus: rsyslog
+chrony: rsyslog
+single: killprocs
+whoopsie: rsyslog
+ssh: rsyslog
+cron: rsyslog
+acpid: rsyslog
+anacron: rsyslog
+rsync: rsyslog
+bluetooth: rsyslog dbus
+lightdm: dbus acpid
+avahi-daemon: dbus rsyslog
+cups-browsed: rsyslog
+cups: rsyslog
+saned: rsyslog dbus
+plymouth: speech-dispatcher rsyslog irqbalance hddtemp uuidd cups-browsed unattended-upgrades lighttpd thermald kerneloops bluetooth dbus lightdm chrony avahi-daemon cups saned whoopsie ssh binfmt-support cron apport acpid anacron rsync
+grub-common: speech-dispatcher rsyslog irqbalance hddtemp uuidd cups-browsed unattended-upgrades lighttpd thermald kerneloops bluetooth dbus lightdm chrony avahi-daemon cups saned whoopsie ssh binfmt-support cron apport acpid anacron rsync
+ondemand: speech-dispatcher rsyslog irqbalance hddtemp uuidd cups-browsed unattended-upgrades lighttpd thermald kerneloops bluetooth dbus lightdm chrony avahi-daemon cups saned whoopsie ssh binfmt-support cron apport acpid anacron rsync
+rc.local: speech-dispatcher rsyslog irqbalance hddtemp uuidd cups-browsed unattended-upgrades lighttpd thermald kerneloops bluetooth dbus lightdm chrony avahi-daemon cups saned whoopsie ssh binfmt-support cron apport acpid anacron rsync

@@ -1,0 +1,42 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/htbot_generate_messages_py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_robot.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_Command.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_queue.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_motorcmd.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_lumstatus.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_go.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_path.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_move.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_debug.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_ultraSS.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_dyna.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_status.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_clear.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_odom.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_stat.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_scanCmd.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_task.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_agv_status.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_move_status.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_stat_speed.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_goal.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_weblaser.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_navstatus.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_sound.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_cleanlist.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_velstat.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/_lift.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/srv/_mqueue.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/srv/_scanMcmd.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/srv/_sendgoal.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/srv/_Empty.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/srv/_srvcmd.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/msg/__init__.py"
+  "/home/rac/catkin_ws/devel/lib/python2.7/dist-packages/htbot/srv/__init__.py"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang )
+  include(CMakeFiles/htbot_generate_messages_py.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

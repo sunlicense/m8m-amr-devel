@@ -1,0 +1,7 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <node pkg="htbot" type="refscan" name="refscan" respawn="true" output="screen">
+		<param name="min_angle" type="double" value="-1.57"/> <!--1.22 60 deg -->
+    <param name="max_angle" type="double" value="1.57"/> <!--1.22 60 deg -->
+  </node>
+</launch>

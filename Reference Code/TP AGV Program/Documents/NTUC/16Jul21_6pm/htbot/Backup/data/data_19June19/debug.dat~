@@ -1,0 +1,769 @@
+Move Node : Navigation Mode. Running Movement Node...
+SendGoal : gx=2.147. gy=6.049. grz=-0.693.
+BN Goal: x=2.147. y=6.049. rz=-0.693. rw=0.720
+Current Usage > 3.0A : 3.996
+Current Usage > 3.0A : 3.849
+Current Usage > 3.0A : 3.996
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 3.116
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.178.py=5.926.prz=-0.640.prw=0.768
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.118. outy=0.039. outa=0.136.
+Align35: alignX=7.801. alignDX=-0.123. alignAngle=-15.575
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=2.140.py=6.043.prz=-0.690.prw=0.724
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 3.262
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=1.998.py=1.862.prz=0.070.prw=0.998
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.186. outy=0.149. outa=0.095.
+Align35: alignX=28.876. alignDX=-0.225. alignAngle=-34.324
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.825.py=1.723.prz=0.017.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+Move Node : Navigation Mode. Running Movement Node...
+Move Node : Navigation Mode. Running Movement Node...
+SendGoal : gx=2.147. gy=6.049. grz=-0.693.
+BN Goal: x=2.147. y=6.049. rz=-0.693. rw=0.720
+Current Usage > 3.0A : 3.849
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.996
+Current Usage > 3.0A : 4.142
+Current Usage > 3.0A : 3.116
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.132.py=5.889.prz=-0.738.prw=0.675
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.166. outy=-0.071. outa=-0.106.
+Align35: alignX=-13.799. alignDX=-0.177. alignAngle=19.898
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=2.187.py=6.044.prz=-0.696.prw=0.718
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.409
+Current Usage > 3.0A : 4.729
+Current Usage > 3.0A : 4.216
+Current Usage > 3.0A : 3.922
+Current Usage > 3.0A : 4.729
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=1.997.py=1.836.prz=0.075.prw=0.997
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.183. outy=0.107. outa=0.103.
+Align35: alignX=20.563. alignDX=-0.205. alignAngle=-26.455
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.809.py=1.740.prz=0.010.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+Move Node : Navigation Mode. Running Movement Node...
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+ClearMap : Cleared Costmaps OK
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+Move Node : Navigation Mode. Running Movement Node...
+SendGoal : gx=10.550. gy=1.522. grz=1.000.
+BN Goal: x=10.550. y=1.522. rz=1.000. rw=-0.018
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 3.482
+Current Usage > 3.0A : 3.922
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.702
+Current Usage > 3.0A : 3.336
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.382.py=1.538.prz=0.996.prw=-0.084
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.130. outy=-0.042. outa=0.112.
+Align35: alignX=-21.827. alignDX=-0.134. alignAngle=15.428
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.512.py=1.515.prz=1.000.prw=-0.027
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.922
+Current Usage > 3.0A : 4.875
+Current Usage > 3.0A : 3.996
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 4.582
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 4.655
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=1.999.py=1.832.prz=0.077.prw=0.997
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.103. outy=0.136. outa=0.141.
+Align35: alignX=40.277. alignDX=-0.154. alignAngle=-48.382
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.888.py=1.700.prz=0.024.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+sendgoal : Move away from Docking Station 0.3m
+Move Away from Docking Station
+angle move complete
+SendGoal : gx=10.705. gy=5.165. grz=1.000.
+BN Goal: x=10.705. y=5.165. rz=1.000. rw=-0.022
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.556
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.556
+Current Usage > 3.0A : 3.336
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.409
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 4.802
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.575.py=5.201.prz=0.997.prw=-0.082
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.080. outy=-0.068. outa=0.113.
+Align35: alignX=-42.098. alignDX=-0.099. alignAngle=35.613
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.650.py=5.139.prz=1.000.prw=-0.022
+All Alignment Done
+SendGoal : gx=2.147. gy=6.049. grz=-0.693.
+BN Goal: x=2.147. y=6.049. rz=-0.693. rw=0.720
+Current Usage > 3.0A : 4.509
+Current Usage > 3.0A : 3.409
+Current Usage > 3.0A : 3.336
+Current Usage > 3.0A : 3.556
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 4.802
+Current Usage > 3.0A : 4.362
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.286.py=6.065.prz=-0.622.prw=0.783
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.036. outy=0.114. outa=0.188.
+Align35: alignX=59.034. alignDX=-0.103. alignAngle=-69.802
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=2.195.py=6.109.prz=-0.694.prw=0.720
+All Alignment Done
+SendGoal : gx=6.509. gy=1.717. grz=0.999.
+BN Goal: x=6.509. y=1.717. rz=0.999. rw=-0.041
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 3.776
+Current Usage > 3.0A : 3.482
+Current Usage > 3.0A : 5.022
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=6.374.py=1.648.prz=0.992.prw=-0.124
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.146. outy=0.080. outa=0.175.
+Align35: alignX=15.082. alignDX=-0.161. alignAngle=-25.130
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=6.517.py=1.724.prz=0.999.prw=-0.032
+All Alignment Done
+SendGoal : gx=4.622. gy=3.460. grz=1.000.
+BN Goal: x=4.622. y=3.460. rz=1.000. rw=-0.007
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=4.616.py=3.292.prz=0.995.prw=0.099
+ClearMap : Cleared Costmaps OK
+Align35: outx=-0.033. outy=0.144. outa=-0.221.
+Align35: alignX=-62.095. alignDX=0.127. alignAngle=74.737
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=4.587.py=3.382.prz=1.000.prw=0.008
+Align35: outx=0.004. outy=0.063. outa=-0.009.
+Align35: alignX=85.854. alignDX=-0.053. alignAngle=-85.360
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+All Alignment Done
+SendGoal : gx=5.356. gy=6.648. grz=0.036.
+BN Goal: x=5.356. y=6.648. rz=0.036. rw=0.999
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 3.043
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=5.397.py=6.518.prz=-0.042.prw=0.999
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.100. outy=-0.184. outa=-0.139.
+Align35: alignX=-49.427. alignDX=-0.186. alignAngle=57.411
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=5.313.py=6.686.prz=0.014.prw=1.000
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.556
+Current Usage > 3.0A : 5.389
+Current Usage > 3.0A : 3.189
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=1.974.py=1.821.prz=0.061.prw=0.998
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.109. outy=0.094. outa=0.088.
+Align35: alignX=31.325. alignDX=-0.135. alignAngle=-36.352
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.830.py=1.724.prz=0.009.prw=1.000
+All Alignment Done
+Move Node : Navigation Mode. Running Movement Node...
+SendGoal : gx=10.550. gy=1.522. grz=1.000.
+BN Goal: x=10.550. y=1.522. rz=1.000. rw=-0.018
+Current Usage > 3.0A : 4.509
+Current Usage > 3.0A : 5.315
+Current Usage > 3.0A : 3.556
+Current Usage > 3.0A : 3.409
+Current Usage > 3.0A : 4.949
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 3.849
+Current Usage > 3.0A : 5.315
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.391.py=1.526.prz=0.997.prw=-0.071
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.158. outy=-0.034. outa=0.089.
+Align35: alignX=-15.353. alignDX=-0.160. alignAngle=10.244
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.550.py=1.505.prz=1.000.prw=-0.026
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 5.462
+Current Usage > 3.0A : 6.635
+Current Usage > 3.0A : 4.289
+Current Usage > 3.0A : 5.315
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=1.972.py=1.812.prz=-0.069.prw=0.998
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.114. outy=0.089. outa=-0.134.
+Align35: alignX=41.333. alignDX=-0.136. alignAngle=-33.663
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.838.py=1.733.prz=-0.003.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+Move Node : Navigation Mode. Running Movement Node...
+SendGoal : gx=2.147. gy=6.049. grz=-0.693.
+BN Goal: x=2.147. y=6.049. rz=-0.693. rw=0.720
+Current Usage > 3.0A : 3.482
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 3.482
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.176.py=5.922.prz=-0.753.prw=0.658
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.141. outy=-0.002. outa=-0.144.
+Align35: alignX=7.577. alignDX=-0.141. alignAngle=0.688
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=2.180.py=6.060.prz=-0.707.prw=0.707
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.556
+Current Usage > 3.0A : 3.482
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.002.py=1.863.prz=0.064.prw=0.998
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.190. outy=0.129. outa=0.091.
+Align35: alignX=24.683. alignDX=-0.219. alignAngle=-29.880
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.805.py=1.745.prz=0.016.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+sendgoal : Move away from Docking Station 0.3m
+BTNode : Move away from Dock
+Move Away from Docking Station
+angle move complete
+SendGoal : gx=10.550. gy=1.522. grz=1.000.
+BN Goal: x=10.550. y=1.522. rz=1.000. rw=-0.018
+Current Usage > 3.0A : 3.336
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.776
+Current Usage > 3.0A : 4.069
+Current Usage > 3.0A : 5.242
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 4.216
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 3.996
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.189
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.349.py=1.531.prz=0.997.prw=-0.081
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.173. outy=-0.049. outa=0.116.
+Align35: alignX=-20.290. alignDX=-0.178. alignAngle=13.640
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.524.py=1.490.prz=1.000.prw=-0.002
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 5.022
+Current Usage > 3.0A : 3.996
+Current Usage > 3.0A : 3.409
+Current Usage > 3.0A : 4.875
+Current Usage > 3.0A : 3.189
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.022.py=1.783.prz=-0.073.prw=0.997
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.092. outy=0.056. outa=-0.168.
+Align35: alignX=37.173. alignDX=-0.104. alignAngle=-27.574
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.931.py=1.732.prz=0.011.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+sendgoal : Move away from Docking Station 0.3m
+BTNode : Move away from Dock
+Move Away from Docking Station
+angle move complete
+SendGoal : gx=10.705. gy=5.165. grz=1.000.
+BN Goal: x=10.705. y=5.165. rz=1.000. rw=-0.022
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 4.509
+Current Usage > 3.0A : 3.702
+Current Usage > 3.0A : 4.142
+Current Usage > 3.0A : 3.702
+Current Usage > 3.0A : 5.022
+Current Usage > 3.0A : 8.101
+Current Usage > 3.0A : 4.289
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.563.py=5.210.prz=0.994.prw=-0.105
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.061. outy=-0.101. outa=0.133.
+Align35: alignX=-62.025. alignDX=-0.105. alignAngle=54.426
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.628.py=5.132.prz=1.000.prw=-0.023
+All Alignment Done
+SendGoal : gx=10.705. gy=5.165. grz=1.000.
+BN Goal: x=10.705. y=5.165. rz=1.000. rw=-0.022
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.627.py=5.150.prz=1.000.prw=-0.031
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.001. outy=-0.034. outa=-0.001.
+Align35: alignX=-87.723. alignDX=-0.029. alignAngle=87.791
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.649.py=5.148.prz=1.000.prw=-0.017
+All Alignment Done
+SendGoal : gx=2.147. gy=6.049. grz=-0.693.
+BN Goal: x=2.147. y=6.049. rz=-0.693. rw=0.720
+Current Usage > 3.0A : 3.482
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 3.776
+Current Usage > 3.0A : 4.069
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.262
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.307.py=6.078.prz=-0.621.prw=0.784
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.038. outy=0.135. outa=0.240.
+Align35: alignX=58.143. alignDX=-0.121. alignAngle=-71.920
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=2.151.py=6.119.prz=-0.698.prw=0.717
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 4.069
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=1.946.py=1.841.prz=0.080.prw=0.997
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.171. outy=0.125. outa=0.137.
+Align35: alignX=23.899. alignDX=-0.202. alignAngle=-31.765
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.756.py=1.718.prz=0.001.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+sendgoal : Move away from Docking Station 0.3m
+BTNode : Move away from Dock
+Move Away from Docking Station
+angle move complete
+SendGoal : gx=10.550. gy=1.522. grz=1.000.
+BN Goal: x=10.550. y=1.522. rz=1.000. rw=-0.018
+Current Usage > 3.0A : 3.776
+Current Usage > 3.0A : 3.776
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.409
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.420.py=1.548.prz=0.999.prw=0.045
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.129. outy=-0.032. outa=-0.132.
+Align35: alignX=-4.337. alignDX=-0.132. alignAngle=11.889
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.551.py=1.526.prz=1.000.prw=-0.018
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.849
+Current Usage > 3.0A : 3.409
+Current Usage > 3.0A : 3.922
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 4.142
+Current Usage > 3.0A : 4.729
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.064.py=1.839.prz=0.069.prw=0.998
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.153. outy=0.142. outa=0.106.
+Align35: alignX=32.284. alignDX=-0.195. alignAngle=-38.362
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.914.py=1.702.prz=0.020.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+Move Node : Navigation Mode. Running Movement Node...
+SendGoal : gx=2.147. gy=6.049. grz=-0.693.
+BN Goal: x=2.147. y=6.049. rz=-0.693. rw=0.720
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.172.py=5.929.prz=-0.722.prw=0.692
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.133. outy=0.003. outa=-0.039.
+Align35: alignX=3.387. alignDX=-0.133. alignAngle=-1.174
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=2.170.py=6.062.prz=-0.708.prw=0.706
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.996
+Current Usage > 3.0A : 4.289
+Current Usage > 3.0A : 4.289
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=1.952.py=1.853.prz=0.100.prw=0.995
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.172. outy=0.141. outa=0.182.
+Align35: alignX=24.451. alignDX=-0.210. alignAngle=-34.882
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.780.py=1.723.prz=0.019.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+sendgoal : Move away from Docking Station 0.3m
+BTNode : Move away from Dock
+Move Away from Docking Station
+Current Usage > 3.0A : 3.043
+Move Node : OK. Ready for next Job
+angle move complete
+SendGoal : gx=6.509. gy=1.717. grz=0.999.
+BN Goal: x=6.509. y=1.717. rz=0.999. rw=-0.041
+Current Usage > 3.0A : 3.776
+Current Usage > 3.0A : 3.409
+Current Usage > 3.0A : 3.336
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 3.043
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=6.347.py=1.661.prz=0.993.prw=-0.116
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.082. outy=0.022. outa=0.175.
+Align35: alignX=2.639. alignDX=-0.084. alignAngle=-12.665
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=6.427.py=1.683.prz=0.999.prw=-0.035
+All Alignment Done
+SendGoal : gx=2.147. gy=6.049. grz=-0.693.
+BN Goal: x=2.147. y=6.049. rz=-0.693. rw=0.720
+Current Usage > 3.0A : 4.069
+Current Usage > 3.0A : 6.415
+Current Usage > 3.0A : 4.289
+Current Usage > 3.0A : 4.802
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.208.py=5.936.prz=-0.637.prw=0.771
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.138. outy=-0.010. outa=0.173.
+Align35: alignX=-13.497. alignDX=-0.138. alignAngle=3.560
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=2.215.py=6.074.prz=-0.705.prw=0.709
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 3.629
+Current Usage > 3.0A : 3.776
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=2.008.py=1.871.prz=0.094.prw=0.996
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.222. outy=0.136. outa=0.158.
+Align35: alignX=18.407. alignDX=-0.250. alignAngle=-27.443
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.787.py=1.757.prz=0.008.prw=1.000
+All Alignment Done
+BTNode : Move forward to Dock
+BotNode : Stop Robot
+sendgoal : Move away from Docking Station 0.3m
+BTNode : Move away from Dock
+Move Away from Docking Station
+Move Node : OK. Ready for next Job
+angle move complete
+SendGoal : gx=10.705. gy=5.165. grz=1.000.
+BN Goal: x=10.705. y=5.165. rz=1.000. rw=-0.022
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 4.289
+Current Usage > 3.0A : 3.336
+Current Usage > 3.0A : 3.702
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 4.582
+Current Usage > 3.0A : 6.268
+Current Usage > 3.0A : 3.336
+Current Usage > 3.0A : 4.582
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.605.py=5.214.prz=0.998.prw=0.058
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.007. outy=-0.114. outa=-0.170.
+Align35: alignX=-75.853. alignDX=-0.097. alignAngle=85.597
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.631.py=5.126.prz=1.000.prw=-0.023
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.336
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 3.043
+Current Usage > 3.0A : 3.776
+Current Usage > 3.0A : 3.262
+Current Usage > 3.0A : 4.802
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=1.964.py=1.830.prz=0.072.prw=0.997
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.099. outy=0.117. outa=0.124.
+Align35: alignX=38.196. alignDX=-0.140. alignAngle=-45.300
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.859.py=1.721.prz=0.009.prw=1.000
+All Alignment Done
+SendGoal : gx=10.550. gy=1.522. grz=1.000.
+BN Goal: x=10.550. y=1.522. rz=1.000. rw=-0.018
+Current Usage > 3.0A : 3.409
+Current Usage > 3.0A : 3.776
+Current Usage > 3.0A : 3.336
+Current Usage > 3.0A : 3.189
+Current Usage > 3.0A : 4.216
+Current Usage > 3.0A : 3.996
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.438.py=1.516.prz=0.992.prw=-0.124
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.090. outy=-0.007. outa=0.208.
+Align35: alignX=-15.464. alignDX=-0.091. alignAngle=3.570
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.529.py=1.514.prz=1.000.prw=-0.020
+Align35: outx=0.005. outy=-0.042. outa=0.002.
+Align35: alignX=-82.696. alignDX=-0.036. alignAngle=82.591
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+All Alignment Done
+SendGoal : gx=1.857. gy=1.736. grz=0.006.
+BN Goal: x=1.857. y=1.736. rz=0.006. rw=1.000
+Current Usage > 3.0A : 3.556
+Current Usage > 3.0A : 3.922
+Current Usage > 3.0A : 3.629
+Current Usage > 3.0A : 3.556
+Current Usage > 3.0A : 3.922
+Current Usage > 3.0A : 4.875
+Current Usage > 3.0A : 4.142
+Current Usage > 3.0A : 5.902
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=1.960.py=1.818.prz=-0.063.prw=0.998
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.093. outy=0.104. outa=-0.139.
+Align35: alignX=51.389. alignDX=-0.128. alignAngle=-43.436
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=1.885.py=1.732.prz=0.009.prw=1.000
+All Alignment Done
+SendGoal : gx=10.550. gy=1.522. grz=1.000.
+BN Goal: x=10.550. y=1.522. rz=1.000. rw=-0.018
+Current Usage > 3.0A : 3.116
+Current Usage > 3.0A : 5.315
+Current Usage > 3.0A : 4.289
+Current Usage > 3.0A : 3.702
+Current Usage > 3.0A : 4.435
+Current Usage > 3.0A : 4.069
+Current Usage > 3.0A : 3.629
+Sendgoal : Reached Goal
+Move_Node : Publish Clear Map
+Pose : px=10.409.py=1.547.prz=0.997.prw=-0.080
+ClearMap : Cleared Costmaps OK
+Align35: outx=0.143. outy=-0.059. outa=0.094.
+Align35: alignX=-24.769. alignDX=-0.151. alignAngle=19.388
+alignX angle done
+align dd
+align dd done
+align final angle
+align done
+Pose : px=10.554.py=1.506.prz=0.999.prw=-0.033
+All Alignment Done
+Move Node : Navigation Mode. Running Movement Node...
+Move Node : Navigation Mode. Running Movement Node...

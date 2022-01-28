@@ -1,0 +1,3 @@
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6015", ATTRS{serial}=="FTZ9TQFS", MODE:="666", SYMLINK+="sensors/LEFTMOTOR"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6015", ATTRS{serial}=="FT06HNIY",  MODE:="666", SYMLINK+="sensors/RIGHTMOTOR"
+# SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6015", MODE:="666", SYMLINK+="sensors/LEFTMOTOR"

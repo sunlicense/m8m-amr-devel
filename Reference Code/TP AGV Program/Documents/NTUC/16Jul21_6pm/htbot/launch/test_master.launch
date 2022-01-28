@@ -1,0 +1,8 @@
+<!-- -*- mode: XML -*- -->
+<launch>	
+	
+	<machine name="rac0" address="192.168.13.100" env-loader="/home/rac/globotix.sh" timeout="20" user="rac" password="rac"/>
+	<machine name="rac1" address="192.168.13.101" env-loader="/home/rac/globotix.sh" timeout="20" user="rac" password="rac" />	
+	<node name="rac1" pkg="videocontrol" type="rac1" output="screen" machine="rac1" ></node>
+	
+</launch>

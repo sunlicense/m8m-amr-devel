@@ -1,0 +1,23 @@
+* Determine the name of the WiFi interface *
+> nmcli d
+DEVICE             TYPE      STATE         CONNECTION
+...
+wlan0              wifi      disconnected     --
+
+* Make sure the WiFi radio is on (which is its default state) *
+nmcli r wifi on
+
+* Then, list the available WiFi networks *
+> nmcli d wifi list
+
+*  SSID           MODE   CHAN  RATE       SIGNAL  BARS  SECURITY
+   ...
+   my_wifi      Infra  5     54 Mbit/s  89      ▂▄▆█  WPA2
+
+* As an example, to connect to the access point 'my_wifi', you would use the following command *
+> nmcli d wifi connect racwifi password racwifi777
+
+* Issue the following command to create a connection associated with a hidden network <ssid> *
+nmcli c add type wifi con-name <name> ifname wlan0 ssid <ssid>
+$ nmcli c modify <name> wifi-sec.key-mgmt wpa-psk wifi-sec.psk <password>
+

@@ -1,0 +1,8 @@
+prefix=/home/rac/catkin_ws/devel
+
+Name: rac_planner
+Description: Description of rac_planner
+Version: 0.0.0
+Cflags: -I/home/rac/catkin_ws/src/rac_planner/include
+Libs: -L${prefix}/lib 
+Requires: nav_core roscpp rospy std_msgs

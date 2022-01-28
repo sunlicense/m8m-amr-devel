@@ -1,0 +1,10 @@
+<!-- -*- mode: XML -*- -->
+<launch>	  	
+	<include file="$(find htbot)/launch/rosbridge_websocket.launch" />
+  <node pkg="htbot" type="webNode" name="webNode" output="screen" required="true">		
+		<param name="pose_file" value="$(find htbot)/data/posedata.dat" />				
+  </node>  
+	<node name="talkNode" pkg="htbot" type="talkNode" respawn="true" output="screen" ></node>	
+	<include file="$(find htbot)/launch/config.launch" />
+	<include file="$(find htbot)/launch/htbot_event.launch" />
+</launch>

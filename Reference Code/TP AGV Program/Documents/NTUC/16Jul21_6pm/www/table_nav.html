@@ -1,0 +1,805 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Autonomous Transporter</title>
+<style type="text/css" media="screen">
+body { background: #e7e7e7; font-family: Verdana, sans-serif; font-size: 10pt; }
+#page { background: #ffffff; margin: 5px; border: 2px solid #c0c0c0; padding: 5px; }
+#header { background: #4b6983; border: 2px solid #7590ae; text-align: center; padding: 2px; color: #ffffff; }
+#header h1 { color: #ffffff; }
+#body { padding: 5px; }
+span.tt { font-family: monospace; }
+span.bold { font-weight: bold; }
+a:link { text-decoration: none; font-weight: bold; color: #C00; background: #ffc; }
+a:visited { text-decoration: none; font-weight: bold; color: #999; background: #ffc; }
+a:active { text-decoration: none; font-weight: bold; color: #F00; background: #FC0; }
+a:hover { text-decoration: none; color: #C00; background: #FC0; }
+button { border:5px solid black; color:#f00; background:#ccc; padding: 5px}
+table {text-align: center;padding: 1px}
+</style>
+</head>
+<!--body onload="start()"-->
+<body onload="start()">
+<div id="page">
+ <div id="header">
+ <h4> Navigation</h4>
+  
+ </div>
+ <div id="body">
+  <table border="0" style="width:100%">
+	<tr>		
+		<td style="height:20px;width:70px;padding:2px;text-align:left;color:#00f;font-size:10pt">Status : </td>
+		<td id="stat" style="padding:2px;text-align:left;font-size: 10pt"></td>
+		<td style="height:15px;width:90px;padding:2px;text-align:left;font-size:10pt">Stns in Q :</td>
+		<td id="qno" style="padding:2px;text-align:left;font-size: 10pt;width:70px"></td>
+	</tr>
+	</table> 
+	<table border="1" style="width:100%">
+	<tr>
+		<td style="height:20px;width:70px;padding:2px;text-align:left;color:#f00;font-size:10pt">Queue : </td>
+		<td id="queue1" style="padding:2px;width:120px;text-align:left;font-size: 10pt"></td>		
+		<td id="queue2" style="padding:2px;width:120px;text-align:left;font-size: 10pt"></td>		
+		<td id="queue3" style="padding:2px;width:120px;text-align:left;font-size: 10pt"></td>		
+	</tr>
+	</table> 
+	<!--table border="1" style="width:100%">
+	<tr>		
+		<td style="height:15px;width:60px;padding:2px;text-align:center;font-size:10pt">Volt</td>
+		<td id="volt" style="height:15px;width:70px;padding:2px;color:#00f;text-align:center;font-size: 10pt"></td>
+		<td style="height:15px;width:70px;padding:2px;text-align:center;font-size:10pt">Energy</td>
+		<td id="energy" style="height:15px;width:70px;padding:2px;color:#00f;text-align:center;font-size: 10pt"></td>
+		<td style="height:15px;width:60px;padding:2px;text-align:center;font-size:10pt">Current</td>
+		<td id="current" style="height:15px;width:70px;padding:2px;color:#00f;text-align:center;font-size: 10pt"></td>
+		<td style="height:15px;width:70px;padding:2px;text-align:center;font-size:10pt"></td>
+		<td id="xx" style="height:15px;width:70px;padding:2px;color:#00f;text-align:center;font-size: 10pt"></td>
+	</tr>	
+  </table--> 
+
+	<!--table border="1" style="width:100%">
+	<tr>
+		<td style="height:15px;width:30px;padding:2px;text-align:left;color:#f00;font-size:10pt">Station</td>
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">Power</td>		
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">STNL</td>	
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">STNI</td>
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">STNS</td>
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">STNM1</td>
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">STNM2</td>
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">STN1</td>
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">STN2</td>
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">STN3</td>
+		<td style="height:15px;width:30px;padding:2px;text-align:center;color:#f00;font-size:10pt">STN4</td>
+	</tr>
+	<tr>
+		<td style="height:15px;width:30px;padding:2px;text-align:left;color:#f00;font-size:10pt">Stn Status</td>
+		<td id="power" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>		
+		<td id="stnL" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>
+		<td id="stnI" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>	
+		<td id="stnS" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>
+		<td id="stnM1" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>
+		<td id="stnM2" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>
+		<td id="stn1" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>
+		<td id="stn2" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>
+		<td id="stn3" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>
+		<td id="stn4" style="height:15px;width:30px;padding:2px;text-align:center;color:#00f;font-size:10pt"></td>
+	</tr>
+	</table--> 
+
+	<table border="1" style="width:100%">		
+	<tr>		
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="Stn1()"><h3>STN1</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="Stn2()"><h3>STN2</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="Stn3()"><h3>STN3</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="Stn4()"><h3>STN4</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="Stn5()"><h3>STN5</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="Stn6()"><h3>STN6</h3></button></td>
+	</tr>
+	<tr>		
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="Stn7()"><h3>STN7</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="Docking()"><h3>Docking</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="Cancel()"><h3>Cancel</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="moveOn()"><h3>moveOn</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="refpoint()"><h3>Reference</h3></button></td>
+		<td style="padding:5px"><button style="height:60px;width:115px;padding:5px" onclick="location.href=`index.html`;"><h3>Main Menu</h3></button></td>
+	</tr>
+	</table>
+		
+ </div>
+</div>
+<script type="text/javascript" src="js/easeljs.js"></script>
+<script type="text/javascript" src="js/eventemitter2.js"></script>
+<script type="text/javascript" src="js/roslib.js"></script>
+<script type="text/javascript" src="js/ros2d.js"></script>
+<script type="text/javascript" src="js/nav2d.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+
+//var hostIP = "ws://"+location.host+":8080";
+var hostIP = "ws://192.168.1.120:8080";
+var ros = new ROSLIB.Ros();
+ros.connect(hostIP);
+
+var volt = 25.6;
+var v10, v1, v0, vt;
+v10 = Math.floor(volt / 10);
+vt = volt - v10 * 10;
+v1 = Math.floor(vt);
+vt = (vt - v1) * 10;
+v0 = Math.floor(vt);
+
+console.log("v10= " + v10 + " v1= "+v1+" v0= "+v0);
+
+var cmdsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/web_cmd',
+    serviceType : 'htbot/mqueue'
+});
+var cmdreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+    LP : 0,
+    GN : 0,
+    gps : "",
+    lps : "POWER",
+		pw : "",
+    tx : 1.0,
+    ty : 2.0,
+    tz : 3.0,
+    rx : 0.0,
+		ry : 0.0,
+    rz : 0.0,
+    rw : 0.0,
+    prd : 0.0,
+		pra : 0.0,
+    psd : 0.0,
+    psa : 0.0,
+    prd1 : 0.0,
+    pra1 : 0.0,
+    psd1 : 0.0,
+    psa1 : 0.0,
+    align : 0.0,
+    autostart : 0.0 
+});
+
+var movsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/move_service',
+    serviceType : 'htbot/srvcmd'
+});
+var movreq = new ROSLIB.ServiceRequest({
+    cmd : 1,
+		fromLP : "",
+		toLP : "",
+		cGP : 0,
+		cLP : 0,
+		fLP : 0,
+		tLP : 0
+});
+
+var scanMsrv = new ROSLIB.Service({
+    ros : ros,
+    name : '/scanMatch',
+    serviceType : 'htbot/scanMcmd'
+});
+
+var scanMreq = new ROSLIB.ServiceRequest({
+    cmd : 1
+});
+
+var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'mapflag'
+});
+
+//var bclistener = new ROSLIB.Topic({
+//    ros : ros,moveOn
+//    name : '/barcode',
+//    messageType : 'htbot/status'
+//});
+
+//bclistener.subscribe(function(message) {
+//    console.log('Received message on ' + bclistener.name + ': ' + message.msg);
+//		document.getElementById("bcode").innerHTML = message.msg ;
+//		document.getElementById("bcode").style.color = "blue";
+//    //listener.unsubscribe();
+//});
+
+var qlistener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/queue',
+    messageType : 'htbot/queue'
+  });
+
+qlistener.subscribe(function(message) {
+    console.log('Received message on ' + qlistener.name + ': ' + message.msg);
+		document.getElementById("qno").innerHTML = message.noQ ;
+		document.getElementById("queue1").innerHTML = message.fLP1 ;
+		document.getElementById("queue2").innerHTML = message.fLP2 ;
+		document.getElementById("queue3").innerHTML = message.fLP3 ;
+    //listener.unsubscribe();
+});
+
+//var flistener = new ROSLIB.Topic({
+//    ros : ros,
+//    name : '/feedback',
+//    messageType : 'htbot/status'
+//  });
+
+//flistener.subscribe(function(message) {
+//    console.log('Received message on ' + flistener.name + ': ' + message.msg);
+//		document.getElementById("stat").innerHTML = message.msg ;
+//		document.getElementById("stat").style.color = "blue";
+//});
+
+//var statlistener = new ROSLIB.Topic({
+//    ros : ros,
+//    name : '/stat',
+//    messageType : 'htbot/stat'
+//  });
+
+//statlistener.subscribe(function(message) {
+    //console.log('Received message on ' + statlistener.name + ': ' + message.msg);
+
+	//if (message.trip == 1) {
+	//document.getElementById("volt").innerHTML = message.avgvolt.toFixed(2) ;
+	//document.getElementById("energy").innerHTML = message.batlevel.toFixed(2) ;
+	//document.getElementById("current").innerHTML = message.avgcurr.toFixed(2) ;
+	//}
+    //listener.unsubscribe();
+//});
+
+//var voltlistener = new ROSLIB.Topic({
+//    ros : ros,
+//    name : '/voltage',
+//    messageType : 'std_msgs/Float32'
+//  });
+
+//voltlistener.subscribe(function(message) {
+//	document.getElementById("volt").innerHTML = message.data.toFixed(2) ;
+//});
+
+//var currentlistener = new ROSLIB.Topic({
+//    ros : ros,
+//    name : '/current',
+//    messageType : 'std_msgs/Float32'
+//  });
+
+//currentlistener.subscribe(function(message) {
+//	document.getElementById("current").innerHTML = message.data.toFixed(2) ;
+//});
+
+//var klistener = new ROSLIB.Topic({
+//    ros : ros,
+//   name : '/lumstatus',
+//    messageType : 'htbot/lumstatus'
+ // });
+
+//klistener.subscribe(function(message) {
+//		if (message.stn0 == 1) {
+//    	document.getElementById("power").innerHTML = "ON";
+//		} else {
+//			document.getElementById("power").innerHTML = "  ";
+//		}
+//		if (message.stn1 == 1) {
+//			document.getElementById("stn1").innerHTML = "ON" ;
+//		} else {
+//			document.getElementById("stn1").innerHTML = "  ";
+//		}
+//		if (message.stn2 == 1) {
+//    	document.getElementById("stn2").innerHTML = "ON";
+//		} else {
+//		document.getElementById("stn2").innerHTML = "  ";
+//		}
+//		if (message.stn3 == 1) {
+//    	document.getElementById("stn3").innerHTML = "ON";
+//		} else {
+//			document.getElementById("stn3").innerHTML = "  ";
+//		}
+//		if (message.stn4 == 1) {
+//    	document.getElementById("stn4").innerHTML = "ON";
+//		} else {
+//			document.getElementById("stn4").innerHTML = "  ";
+//		}
+//		if (message.stn5 == 1) {
+//    	document.getElementById("stnM1").innerHTML = "ON";
+//		} else {
+//			document.getElementById("stnM1").innerHTML = "  ";
+//		}
+//		if (message.stn6 == 1) {
+//    	document.getElementById("stnM2").innerHTML = "ON";
+//		} else {
+//			document.getElementById("stnM2").innerHTML = "  ";
+//		}webcmdServiceCallback
+//		if (message.stn7 == 1) {
+//    	document.getElementById("stnS").innerHTML = "ON";
+//		} else {
+//			document.getElementById("stnS").innerHTML = "  ";
+//		}
+//		if (message.stn8 == 1) {
+//    	document.getElementById("stnI").innerHTML = "ON";
+//		} else {
+//			document.getElementById("stnI").innerHTML = "  ";
+//		}
+//		if (message.stn9 == 1) {
+//    	document.getElementById("stnL").innerHTML = "ON";
+//		} else {
+//			document.getElementById("stnL").innerHTML = "  ";
+//		}
+//		document.getElementById("energy").innerHTML = message.batlevel.toFixed(2) ;
+//});
+
+//var listener = new ROSLIB.Topic({
+//    ros : ros,
+//    name : '/debug',
+//    messageType : 'htbot/debug'
+//  });
+
+//listener.subscribe(function(message) {
+//    console.log('Received message on ' + listener.name + ': ' + message.msg);
+//		document.getElementById("debug").innerHTML = message.msg ;
+//		document.getElementById("debug").style.color = "red";
+//    //listener.unsubscribe();
+//});
+
+//var listener = new ROSLIB.Topic({
+//    ros : ros,
+//    name : '/queue',
+//    messageType : 'htbot/queue'
+//  });
+
+//listener.subscribe(function(message) {
+//    console.log('Received message on ' + listener.name + ': ' + message.msg);
+//		document.getElementById("qno").innerHTML = message.noQ ;
+//		document.getElementById("queue1").innerHTML = message.fLP1 ;
+//		document.getElementById("queue2").innerHTML = message.fLP2 ;
+//		document.getElementById("queue3").innerHTML = message.fLP3 ;
+//});
+
+function start() {
+	//ros.connect("ws://192.168.1.122:8080");
+	ros.on('error', function(error) {
+		document.getElementById("stat").innerHTML = "Robot Not Ready. Please Wait ..." ;    
+		document.getElementById("stat").style.color = "red";
+  });
+	var status;
+	var PM = new ROSLIB.Param({
+    ros : ros,
+    name : 'RobotReady'
+	});
+	console.log('*** PM ***** ');	
+	PM.name = 'RobotReady';
+	
+	PM.get(function(value) {
+    console.log('RobotReady: ***** ' + value);		
+		
+		if (value == 77) {
+			
+			status = "Robot is Ready";
+			document.getElementById("stat").style.color = "green";
+			cmdreq.cmd = 77;		
+			cmdsrv.callService(cmdreq, function(result) {
+    	console.log('Result for service call on '
+      	+ cmdsrv.name
+      	+ ': '
+      	+ result.status);
+  		});
+		} else if (value == 88) {
+			status = "Robot is Ready";
+			document.getElementById("stat").style.color = "green";			
+		} else {
+			status = "Robot Not Ready. Please Wait...";
+			//*document.getElementById("stat").style.color = "red";
+		}
+		
+		document.getElementById("stat").innerHTML = status;
+		//document.getElementById("robotstatus").style.color = "green";
+  });
+	
+	
+}
+
+function notused() {	
+	alert("Function Not Used");
+}
+
+function moveOn() {	
+	cmdreq.cmd = 60;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function wait() {	
+	cmdreq.cmd = 61;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function StnL() {	
+	cmdreq.cmd = 11;
+	cmdreq.LP = 9;	
+	cmdreq.lps = "STNL";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });		
+}
+
+function Stn1() {	
+	alert("Move to Station 1");
+	cmdreq.cmd = 11;
+	cmdreq.LP = 2;	
+	cmdreq.lps = "STN1";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+	//alert("stn1");
+}
+
+function Stn2() {	
+	alert("Move to Station 2");
+	cmdreq.cmd = 11;
+	cmdreq.LP = 3;	
+	cmdreq.lps = "STN2";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function Stn3() {	
+	alert("Move to Station 3");
+	cmdreq.cmd = 11;
+	cmdreq.LP = 4;	
+	cmdreq.lps = "STN3";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function Stn4() {	
+	alert("Move to Station 4");
+	cmdreq.cmd = 11;
+	cmdreq.LP = 5;	
+	cmdreq.lps = "STN4";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });		
+}
+
+function Stn5() {	
+	alert("Move to Station 5");
+	cmdreq.cmd = 11;
+	cmdreq.LP = 6;	
+	cmdreq.lps = "STN5";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });		
+}
+
+function Stn6() {	
+	alert("Move to Station 6");
+	cmdreq.cmd = 11;
+	cmdreq.LP = 7;	
+	cmdreq.lps = "STN6";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });		
+}
+
+function Stn7() {	
+	alert("Move to Station 7");
+	cmdreq.cmd = 11;  //11;
+	cmdreq.LP = 8;	
+	cmdreq.lps = "STN7";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });			
+}
+
+function StnI() {	
+	cmdreq.cmd = 11;
+	cmdreq.LP = 8;	
+	cmdreq.lps = "STNI";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });		
+}
+
+function DELY() {	//Delivery
+	Stn1();	
+	Stn2();
+	Stn3();
+	Stn4();
+}
+
+function Poly1() {	//Delivery
+	movreq.cmd = 13;
+	movreq.cLP = 39;	
+	//movreq.toLP = "";	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });		
+}
+
+function Poly2() {	//Delivery
+	movreq.cmd = 13;
+	movreq.cLP = 40;	
+	//movreq.toLP = "";	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });		
+}
+
+function reach() {	//Delivery
+	movreq.cmd = 13;
+	movreq.cLP = 41;	
+	//movreq.toLP = "";	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });		
+}
+
+function StnJ() {	
+	movreq.cmd = 11;
+	movreq.cGP = 0;		
+	movreq.cLP = 10;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+
+function Docking() {	
+	alert("Move to Docking Station");
+	cmdreq.cmd = 11;
+	cmdreq.LP = 1;	
+	cmdreq.lps = "DOCK";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function refpoint() {	
+	alert("Move to Reference Point");
+	cmdreq.cmd = 11;
+	cmdreq.LP = 0;	
+	cmdreq.lps = "REF";	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function r180r() {	
+	cmdreq.cmd = 52;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function r180l() {	
+	cmdreq.cmd = 51;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });	
+}
+
+function straight() {	
+	cmdreq.cmd = 53;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });		
+}
+function back() {	
+	cmdreq.cmd = 54;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+  });		
+}
+function Cancel() {	
+	movreq.cmd = 55;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function ClearMap() {
+	
+	cmdreq.cmd = 3;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });
+	
+}
+
+function getmap() {
+	
+	cmdreq.cmd = 21;	
+	cmdsrv.callService(cmdreq, function(result) {
+    console.log('Result for service call on '
+      + cmdsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });
+	
+}
+
+function startnav() {	
+	movreq.cmd = 48;	
+	movsrv.callService(movreq, function(result) {
+    console.log('Result for service call on '
+      + movsrv.name
+      + ': '
+      + result.status);
+		//document.getElementById("robot").innerHTML = "Moving To : "+fr+" and Next To : "+to ;
+  });	
+}
+
+function lowpower() {
+	movreq.cmd = 4;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function fullpower() {
+	movreq.cmd = 41;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function laser() {
+	movreq.cmd = 42;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function mstn() {
+	movreq.cmd = 49;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function ref() {
+	movreq.cmd = 43;	
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function stop() {
+	movreq.cmd = 13;	
+	movreq.cLP = 42;
+	movsrv.callService(movreq, function(result) {						
+	});
+}
+
+function testBCA() {
+	
+	PM.name = 'Password';
+	PM.get(function(value) {
+    console.log('Password: ' + value);				
+		document.getElementById("stat").innerHTML = "Password : "+value ;
+		//document.getElementById("robotstatus").style.color = "green";
+  });
+	
+}
+
+function Slaser() {
+	var status;
+	PM.name = 'saveLeftSideLaserData';
+	PM.set(77);
+	PM.name = 'saveRightSideLaserData';
+	PM.set(77);
+}
+
+function lookObs() {
+	var status;
+	PM.name = 'lookforObs';
+	PM.set(1);
+}
+
+function stoplookObs() {
+	var status;
+	PM.name = 'lookforObs';
+	PM.set(0);
+}
+
+function getObsDist() {
+	var status;
+	PM.name = 'ProfileMoveObsDist';
+	PM.get(function(value) {
+    console.log('Obs Dist : ' + value);						
+		document.getElementById("debug").innerHTML = "Obs Dist : "+value ;
+		//document.getElementById("robotstatus").style.color = "green";
+  });
+}
+
+</script>
+</body>
+</html>

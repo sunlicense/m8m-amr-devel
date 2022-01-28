@@ -1,0 +1,14 @@
+int8 cmd
+float32 param1
+float32 param2
+float32 param3
+---
+int8 error
+int8 numtarget
+int8 bottle
+int8 dbin
+int8 man
+int16[20] midx
+float32[20] range
+float32[20] width
+float32[20] angle
